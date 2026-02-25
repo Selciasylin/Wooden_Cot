@@ -1,0 +1,512 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Wooden Cot</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    
+    <style>
+        /* Minimal Custom CSS */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f5f5;
+        }
+        
+        .sidebar {
+            background-color: white;
+            min-height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+            z-index: 1000;
+        }
+        
+        .sidebar-brand {
+            background-color: #AE946D;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 18px;
+        }
+        
+        .sidebar-menu .nav-link {
+            color: #666;
+            padding: 12px 25px;
+            transition: all 0.3s;
+            border-left: 3px solid transparent;
+        }
+        
+        .sidebar-menu .nav-link:hover {
+            background-color: #f8f8f8;
+            color: #AE946D;
+            border-left-color: #AE946D;
+        }
+        
+        .sidebar-menu .nav-link.active {
+            background-color: #f8f8f8;
+            color: #AE946D;
+            border-left-color: #AE946D;
+            font-weight: 600;
+        }
+        
+        .sidebar-menu .nav-link i {
+            margin-right: 10px;
+            font-size: 18px;
+        }
+        
+        .main-content {
+            margin-left: 250px;
+            padding: 30px;
+        }
+        
+        .stat-card {
+            background-color: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border: 2px solid #e0e0e0;
+        }
+        
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #AE946D;
+        }
+        
+        .chart-card {
+            background-color: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border: 2px solid #e0e0e0;
+        }
+        
+        .btn-custom {
+            background-color: #AE946D;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 5px;
+            font-weight: 600;
+        }
+        
+        .btn-custom:hover {
+            background-color: #AE946D;
+            color: white;
+        }
+        
+        .btn-apply {
+            background-color:#AE946D;
+            color: white;
+            border: none;
+        }
+        
+        .btn-apply:hover {
+            background-color:#AE946D;
+            color: white;
+        }
+        
+        .footer-custom {
+            background-color: #CDAF82;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            margin-left: 250px;
+        }
+        
+        .logout-link {
+            color:'#AE946D' !important;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 200px;
+            }
+            
+            .main-content,
+            .footer-custom {
+                margin-left: 200px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .sidebar {
+                width: 100%;
+                position: relative;
+            }
+            
+            .main-content,
+            .footer-custom {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-brand">
+            <i class="bi bi-tree-fill me-2"></i>
+            Wooden Cot
+        </div>
+        
+        <nav class="sidebar-menu">
+            <div class="nav flex-column">
+                <a class="nav-link active" href="/admin/dashboard">
+                    <i class="bi bi-speedometer2"></i> Dashboard
+                </a>
+                <a class="nav-link" href="/admin/products">
+                    <i class="bi bi-box-seam"></i> Products
+                </a>
+                <a class="nav-link" href="/admin/categories">
+                    <i class="bi bi-grid"></i> Categories
+                </a>
+                <a class="nav-link" href="/admin/orders">
+                    <i class="bi bi-receipt"></i> Orders
+                </a>
+                <a class="nav-link" href="/admin/customers">
+                    <i class="bi bi-people"></i> Customers
+                </a>
+                <a class="nav-link" href="/admin/offers">
+                    <i class="bi bi-tag"></i> Offers
+                </a>
+                <a class="nav-link" href="/admin/coupons">
+                    <i class="bi bi-ticket-perforated"></i> Coupons
+                </a>
+                <a class="nav-link" href="/admin/salesReport">
+                    <i class="bi bi-graph-up"></i> Sales Report
+                </a>
+                <a class="nav-link logout-link" href="/admin/logout">
+                    <i class="bi bi-box-arrow-right"></i> Logout
+                </a>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <h2 class="fw-bold mb-4">DASHBOARD</h2>
+
+        <!-- Stats Cards -->
+        <div class="row g-4 mb-4">
+            <!-- Total Revenue -->
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h3 class="fw-bold mb-1">₹16098.20</h3>
+                            <p class="text-muted small mb-0">Total revenue</p>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="bi bi-currency-rupee fs-4"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Total Orders -->
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h3 class="fw-bold mb-1">5</h3>
+                            <p class="text-muted small mb-0">Total Orders</p>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="bi bi-cart3 fs-4"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Users -->
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h3 class="fw-bold mb-1">17</h3>
+                            <p class="text-muted small mb-0">Active Users</p>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="bi bi-people fs-4"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Date Filter -->
+        <div class="row g-3 mb-4 align-items-end">
+            <div class="col-md-3">
+                <label class="form-label small">From</label>
+                <input type="date" class="form-control" value="2024-06-24">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small">To</label>
+                <input type="date" class="form-control" value="2026-02-02">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small">Time Period</label>
+                <select class="form-select">
+                    <option>Today</option>
+                    <option>This Week</option>
+                    <option>This Month</option>
+                    <option>This Year</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <button class="btn btn-apply w-100">Apply</button>
+                <button class="btn btn-outline-secondary w-100 mt-2">Clear filter</button>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="row g-4 mb-4">
+            <!-- Orders Chart -->
+            <div class="col-lg-7">
+                <div class="chart-card">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <h5 class="fw-bold mb-0">Orders</h5>
+                            <small class="text-muted">24-06-2024 - 02-02-2026</small>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <h4 class="fw-bold mb-0">5</h4>
+                        <small class="text-muted">Total Orders</small>
+                        <h4 class="fw-bold mb-0 mt-2">₹16098.20</h4>
+                        <small class="text-muted">Total Amount</small>
+                    </div>
+                     <div style="height: 300px;">
+                        <canvas id="ordersChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Selling Categories Pie Chart -->
+            <div class="col-lg-5">
+                <div class="chart-card">
+                    <h5 class="fw-bold mb-4">Top Selling Categories</h5>
+                    <div style="height: 300px;">
+                        <canvas id="categoriesPieChart"></canvas>
+                    </div>
+                    <div class="d-flex justify-content-center gap-4 mt-3">
+                        <div class="d-flex align-items-center gap-2">
+                            <div style="width: 15px; height: 15px; background-color: #ff6384; border-radius: 50%;"></div>
+                            <small>Teak</small>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <div style="width: 15px; height: 15px; background-color: #36a2eb; border-radius: 50%;"></div>
+                            <small>Oak</small>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <div style="width: 15px; height: 15px; background-color: #ffce56; border-radius: 50%;"></div>
+                            <small>Sheesham</small>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <div style="width: 15px; height: 15px; background-color: #4bc0c0; border-radius: 50%;"></div>
+                            <small>Pine</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tables Section -->
+        <div class="row g-4">
+            <!-- Top Selling Products -->
+            <div class="col-lg-7">
+                <div class="chart-card">
+                    <h5 class="fw-bold mb-3">Top Selling Products</h5>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Units Sold</th>
+                                    <th>Revenue</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Classic Teak Bed</td>
+                                    <td>13</td>
+                                    <td>₹2886.00</td>
+                                </tr>
+                                <tr>
+                                    <td>Premium Oak Cot</td>
+                                    <td>5</td>
+                                    <td>₹1665.00</td>
+                                </tr>
+                                <tr>
+                                    <td>Sheesham King Size</td>
+                                    <td>2</td>
+                                    <td>₹2.00</td>
+                                </tr>
+                                <tr>
+                                    <td>Pine Wood Bed</td>
+                                    <td>2</td>
+                                    <td>₹18000.00</td>
+                                </tr>
+                                <tr>
+                                    <td>Luxury Teak Frame</td>
+                                    <td>1</td>
+                                    <td>₹2000.00</td>
+                                </tr>
+                                <tr>
+                                    <td>Modern Oak Design</td>
+                                    <td>1</td>
+                                    <td>₹9000.00</td>
+                                </tr>
+                                <tr>
+                                    <td>Traditional Sheesham</td>
+                                    <td>1</td>
+                                    <td>₹7000.00</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Selling Categories Table -->
+            <div class="col-lg-5">
+                <div class="chart-card">
+                    <h5 class="fw-bold mb-3">Top Selling Categories</h5>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Category</th>
+                                    <th>Units Sold</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Teak</td>
+                                    <td>17</td>
+                                </tr>
+                                <tr>
+                                    <td>Oak</td>
+                                    <td>8</td>
+                                </tr>
+                                <tr>
+                                    <td>Sheesham</td>
+                                    <td>5</td>
+                                </tr>
+                                <tr>
+                                    <td>Pine</td>
+                                    <td>3</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer --> 
+     
+    <footer class="footer-custom">
+        <p class="mb-0 small">Copyright © Wooden Cot 2026</p>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Chart Scripts -->
+    <script>
+        // Orders Line Chart
+        const ordersCtx = document.getElementById('ordersChart').getContext('2d');
+        const ordersChart = new Chart(ordersCtx, {
+            type: 'line',
+            data: {
+                labels: ['24/06', '25/07', '26/08', '27/09', '28/10', '29/11', '30/12', '31/01', '01/02', '02/03', '03/04', '04/05', '05/06', '06/07', '07/08', '08/09'],
+                datasets: [{
+                    label: 'Orders Amount',
+                    data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2000, 4000, 7000, 3000, 0, 0],
+                    borderColor: '#AE946D',
+                    backgroundColor: 'rgba(174, 148, 109, 0.2)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return '₹' + value;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Categories Pie Chart
+        const pieCtx = document.getElementById('categoriesPieChart').getContext('2d');
+        const pieChart = new Chart(pieCtx, {
+            type: 'pie',
+            data: {
+                labels: ['Teak', 'Oak', 'Sheesham', 'Pine'],
+                datasets: [{
+                    data: [17, 8, 5, 3],
+                    backgroundColor: [
+                        '#ff6384',
+                        '#36a2eb',
+                        '#ffce56',
+                        '#4bc0c0'
+                    ],
+                    borderWidth: 2,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+
+        // Logout Confirmation
+        document.querySelector('.logout-link').addEventListener('click', function(e) {
+            e.preventDefault();
+            if (confirm('Are you sure you want to logout?')) {
+                alert('Logging out...');
+                window.location.href = 'admin-signin.html';
+            }
+        });
+    </script>
+</body>
+</html>
+

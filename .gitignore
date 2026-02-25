@@ -1,0 +1,27 @@
+# Node modules (VERY IMPORTANT)
+node_modules/
+
+# Environment variables (Secrets)
+.env
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+tmp/
+temp/
+
+# Coverage (if you use testing)
+coverage/
+
+# Optional: If you use uploads folder for images
+uploads/
+
+# Optional: VS Code settings
+.vscode/

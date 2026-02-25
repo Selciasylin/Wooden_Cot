@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Customers | Wooden Cot</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Minimal Custom CSS */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f5f5;
+        }
+        
+        .sidebar {
+            background-color: white;
+            min-height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+            z-index: 1000;
+        }
+        
+        .sidebar-brand {
+            background-color: #AE946D;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 18px;
+        }
+        
+        .sidebar-menu {
+            padding: 20px 0;
+        }
+        
+        .sidebar-menu .nav-link {
+            color: #666;
+            padding: 12px 25px;
+            transition: all 0.3s;
+            border-left: 3px solid transparent;
+        }
+        
+        .sidebar-menu .nav-link:hover {
+            background-color: #f8f8f8;
+            color: #AE946D;
+            border-left-color: #AE946D;
+        }
+        
+        .sidebar-menu .nav-link.active {
+            background-color: #f8f8f8;
+            color: #AE946D;
+            border-left-color: #AE946D;
+            font-weight: 600;
+        }
+        
+        .sidebar-menu .nav-link i {
+            margin-right: 10px;
+            font-size: 18px;
+        }
+        
+        .content-card {
+            background-color: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            width: 90%;
+            max-width: 1100px;   
+        }
+        
+        .page-title {
+            color: #AE946D;
+            font-weight: 600;
+            margin-bottom: 25px;
+        }
+        
+        .btn-block-custom {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 5px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        
+        .btn-unblock-custom {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 5px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        
+        .btn-block-custom:hover {
+            background-color: #218838;
+            color: white;
+        }
+        
+        .btn-unblock-custom:hover {
+            background-color: #c82333;
+            color: white;
+        }
+        
+        .search-box {
+            max-width: 300px;
+        }
+        
+        .table thead {
+            background-color: #f8f9fa;
+        }
+        
+        .pagination .page-link {
+            color: #666;
+        }
+        
+        .pagination .page-item.active .page-link {
+            background-color: #AE946D;
+            border-color: #AE946D;
+        }
+        
+        html, body {
+            height: 100%;
+        }
+
+        .page-wrapper {
+            margin-left: 250px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 40px 0;    
+            display: flex;
+            justify-content: center;  
+        }
+
+        .footer-custom {
+            background-color: #CDAF82;
+            color: white;
+            text-align: center;
+            padding: 15px;
+        }
+        .logout-link {
+            color: #dc3545 !important;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 200px;
+            }
+            
+            .main-content,
+            .footer-custom {
+                margin-left: 200px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .sidebar {
+                width: 100%;
+                position: relative;
+            }
+            
+            .main-content,
+            .footer-custom {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-brand">
+            <i class="bi bi-tree-fill me-2"></i>
+            Wooden Cot
+        </div>
+
+        <nav class="sidebar-menu">
+            <div class="nav flex-column">
+                <a class="nav-link" href="/admin/dashboard">
+                    <i class="bi bi-speedometer2"></i> Dashboard
+                </a>
+                <a class="nav-link" href="/admin/products">
+                    <i class="bi bi-box-seam"></i> Products
+                </a>
+                <a class="nav-link" href="/admin/categories">
+                    <i class="bi bi-grid"></i> Categories
+                </a>
+                <a class="nav-link" href="/admin/orders">
+                    <i class="bi bi-receipt"></i> Orders
+                </a>
+                <a class="nav-link active" href="/admin/customers">
+                    <i class="bi bi-people"></i> Customers
+                </a>
+                <a class="nav-link" href="/admin/offers">
+                    <i class="bi bi-tag"></i> Offers
+                </a>
+                <a class="nav-link" href="/admin/coupons">
+                    <i class="bi bi-ticket-perforated"></i> Coupons
+                </a>
+                <a class="nav-link" href="/admin/salesReport">
+                    <i class="bi bi-graph-up"></i> Sales Report
+                </a>
+                <a class="nav-link logout-link" href="/admin/logout">
+                    <i class="bi bi-box-arrow-right"></i> Logout
+                </a>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Page Wrapper -->
+    <div class="page-wrapper">
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="content-card">
+                <h2 class="page-title">Customers</h2>
+
+                <div class="mb-4">
+                    <input type="text" class="form-control search-box" id="searchCustomers" placeholder="Search Customers">
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>FirstName</th>
+                                <th>LastName</th>
+                                <th>Email</th>
+                                <th>Phone Number</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if (users.length > 0) { %>
+                                <% users.forEach(user => { %>
+                                    <tr>
+                                        <td><%= user.firstName %></td>
+                                        <td><%= user.lastName %></td>
+                                        <td><%= user.email %></td>
+                                        <td><%= user.phoneNumber %></td>
+                                        <td>
+                                            <button 
+                                                onclick="toggleBlock('<%= user._id %>', this)"
+                                                class="btn <%= user.isBlocked ? 'btn-unblock-custom' : 'btn-block-custom' %>">
+                                                <%= user.isBlocked ? 'Unblock' : 'Block' %>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                <% }) %>
+                            <% } else { %>
+                                <tr>
+                                    <td colspan="5" class="text-center">No Users Found</td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer-custom">
+            <p class="mb-0 small">Copyright © Wooden Cot 2026</p>
+        </footer>
+
+    </div>
+    <script>
+        function toggleBlock(userId, button) {
+
+            fetch(`/admin/toggleUser/${userId}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+
+                if (data.success) {
+
+                    if (data.isBlocked) {
+                        button.textContent = "Unblock";
+                        button.classList.remove("btn-block-custom");
+                        button.classList.add("btn-unblock-custom");
+                    } else {
+                        button.textContent = "Block";
+                        button.classList.remove("btn-unblock-custom");
+                        button.classList.add("btn-block-custom");
+                    }
+
+                } else {
+                    alert(data.message);
+                }
+
+            })
+            .catch(err => {
+                console.error("Error:", err);
+                alert("Something went wrong");
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTP Verification - Wooden Cot</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Minimal Custom CSS - Only for brand colors and logo */
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .logo-box {
+            width: 60px;
+            height: 45px;
+            background-color: #8B7355;
+        }
+        
+        .btn-custom {
+            background-color: #AE946D;
+            border-color: #AE946D;
+        }
+        
+        .btn-custom:hover {
+            background-color: #9a8260;
+            border-color: #9a8260;
+        }
+        
+        .btn-custom:disabled {
+            background-color: #d4c4b0;
+            border-color: #d4c4b0;
+        }
+        
+        .footer-custom {
+            background-color: #CDAF82;
+        }
+        
+        .link-custom {
+            color: #AE946D;
+            text-decoration: none;
+        }
+        
+        .link-custom:hover {
+            color: #9a8260;
+            text-decoration: underline;
+        }
+        
+        .form-control:focus {
+            border-color: #AE946D;
+            box-shadow: 0 0 0 0.2rem rgba(174, 148, 109, 0.2);
+        }
+        
+        .timer-text {
+            color: #AE946D;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="d-flex flex-column min-vh-100 bg-light">
+    
+    <!-- Main Content Area -->
+    <div class="flex-grow-1 d-flex align-items-center justify-content-center py-4 px-3">
+        <div class="bg-white rounded shadow-sm p-4" style="max-width: 420px; width: 100%;">
+            
+            <!-- Logo Section -->
+            <div class="text-center mb-3">
+                <div class="logo-box mx-auto mb-3 rounded"></div>
+                <h1 class="h4 fw-semibold mb-2">OTP VERIFICATION</h1>
+                <p class="text-muted small mb-4">Enter the OTP sent to your email address.</p>
+            </div>
+            <% if (message) { %>
+            <div 
+                class="alert <%= message.type === 'success' ? 'alert-success' : 'alert-danger' %> text-center">
+                <%= message.text %>
+            </div>
+            <% } %>
+
+            <!-- OTP Verification Form -->
+            <form action="/verifyOtp" method="POST">
+                <!-- OTP Input -->
+                <div class="mb-2">
+                    <label for="otp" class="form-label small text-secondary">Enter OTP</label>
+                    <input type="text" name="otp" class="form-control text-center" id="otp" placeholder="Enter 6-digit OTP" maxlength="6" pattern="\d{6}" required>
+                </div>
+
+                <!-- Timer Display -->
+                <div class="text-center mb-3">
+                    <small class="text-muted">Time remaining: <span id="timer" class="timer-text">02:00</span></small>
+                </div>
+
+                <!-- Verify OTP Button -->
+                <button type="submit" class="btn btn-custom text-white w-100 fw-semibold mb-2">VERIFY OTP</button>
+
+                <!-- Resend OTP Button -->
+                <button type="button" id="resendBtn" class="btn btn-outline-secondary w-100 fw-semibold" disabled>RESEND OTP</button>
+            </form>
+
+            <!-- Back to Sign In Link -->
+            <div class="text-center mt-3 small text-secondary">
+                Back to <a href="signup" class="link-custom fw-semibold">Sign In</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer-custom text-white py-3 mt-auto">
+        <p class="text-center small mb-0 opacity-75">© 2026 WOODEN COT. All Rights Reserved.</p>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- OTP Verification and Timer Script -->
+    <script>
+        const alertBox = document.querySelector(".alert");
+        if (alertBox) {
+            setTimeout(() => {
+                alertBox.style.display = "none";
+            }, 2000);
+        }
+        let timeLeft = 120; // 2 minutes in seconds
+        let timerInterval;
+
+        // Start Timer
+        function startTimer() {
+            timerInterval = setInterval(function() {
+                timeLeft--;
+                
+                let minutes = Math.floor(timeLeft / 60);
+                let seconds = timeLeft % 60;
+                
+                // Format timer display
+                document.getElementById('timer').textContent = 
+                    (minutes < 10 ? '0' + minutes : minutes) + ':' + 
+                    (seconds < 10 ? '0' + seconds : seconds);
+                
+                // When timer expires
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    document.getElementById('timer').textContent = '00:00';
+                    document.getElementById('resendBtn').disabled = false;
+                    document.getElementById('resendBtn').classList.remove('btn-outline-secondary');
+                    document.getElementById('resendBtn').classList.add('btn-custom', 'text-white');
+                }
+            }, 1000);
+        }
+
+        // Start timer on page load
+        startTimer();
+        // Only allow numbers in OTP field
+        document.getElementById('otp').addEventListener('input', function(e) {
+            this.value = this.value.replace(/[^0-9]/g, '');
+        });
+         // Resend OTP Button Click
+    document.getElementById("resendBtn").addEventListener("click", function () {
+
+        // Redirect to backend resend route
+        window.location.href = "/resendOtp";
+
+    });
+    </script>
+</body>
+</html>
