@@ -4,4 +4,10 @@
     }
     next();
 }
-module.exports={isLoggedIn}
+async function preventAuthAccess(req, res, next) {
+    if (req.session.userId) {
+        return res.redirect('/');
+    }
+    next();
+}
+module.exports={isLoggedIn,preventAuthAccess}

@@ -1,0 +1,409 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Addresses - Wooden Cot</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #f5f5f5; }
+        .navbar-custom { background-color: #AE946D; }
+        .btn-custom { background-color: #AE946D; border-color: #AE946D; color: white; }
+        .btn-custom:hover { background-color: #9a8260; border-color: #9a8260; color: white; }
+        .footer-custom { background-color: #CDAF82; }
+        .sidebar-menu { background-color: white; border-radius: 10px; }
+        .sidebar-menu .nav-link { color: #666; padding: 12px 20px; border-radius: 5px; margin-bottom: 5px; transition: all 0.3s; }
+        .sidebar-menu .nav-link:hover { background-color: #f8f8f8; color: #AE946D; }
+        .sidebar-menu .nav-link.active { background-color: #AE946D; color: white; }
+        .profile-img { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid #AE946D; }
+        .address-card { background-color: white; border-radius: 10px; position: relative; }
+        .address-badge { background-color: #D4B896; color: #333; padding: 4px 12px; border-radius: 15px; font-size: 11px; font-weight: 600; display: inline-block; }
+        .btn-icon { width: 35px; height: 35px; padding: 0; display: flex; align-items: center; justify-content: center; border-radius: 5px; }
+        .logo-text { font-weight: 700; font-size: 24px; color: white; }
+
+        /* Modal Styles */
+        .modal-header { background-color: #AE946D; color: #fff; border-radius: 8px 8px 0 0; }
+        .modal-header .btn-close { filter: brightness(0) invert(1); opacity: .85; }
+        .modal-title { font-size: .95rem; font-weight: 700; }
+        .form-label { font-size: .78rem; font-weight: 600; color: #555; margin-bottom: 3px; }
+        .form-control, .form-select { font-size: .82rem; padding: .32rem .6rem; }
+        .form-control:focus, .form-select:focus { border-color: #AE946D; box-shadow: 0 0 0 .15rem rgba(174,148,109,.25); }
+        .btn-save { background: #AE946D; border: none; color: #fff; font-size: .85rem; font-weight: 600; padding: .35rem 1.2rem; border-radius: 5px; cursor: pointer; }
+        .btn-save:hover { background: #9a8260; color: #fff; }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <%- include('../partials/header') %>
+
+    <!-- Address Content -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row g-4">
+                <!-- Sidebar -->
+                <div class="col-lg-3">
+                    <div class="sidebar-menu shadow-sm p-4">
+                        <!-- Profile Image and Name -->
+                        <div class="text-center mb-4">
+                            <img src="<%= user.profilePicture ? user.profilePicture : 'https://ui-avatars.com/api/?name=' + (user.firstName || 'User') + '&background=AE946D&color=fff' %>" class="profile-img mb-3">
+                            <h5 class="fw-semibold mb-1">
+                            <%= user.firstName || '' %> <%= user.lastName || '' %>
+                            </h5>
+                            <p class="text-muted small mb-0"><%= user.email %></p>
+                        </div>
+
+                        <hr class="my-3">
+
+                        <!-- Menu Items -->
+                        <nav class="nav flex-column">
+                            <a class="nav-link" href="/profile">
+                                <i class="bi bi-person me-2"></i> Account Details
+                            </a>
+                            <a class="nav-link" href="/wishlist">
+                                <i class="bi bi-heart me-2"></i> Wishlist
+                            </a>
+                            <a class="nav-link" href="/orders">
+                                <i class="bi bi-box-seam me-2"></i> Orders
+                            </a>
+                            <a class="nav-link active" href="/address">
+                                <i class="bi bi-geo-alt me-2"></i> Address
+                            </a>
+                            <a class="nav-link" href="/wallet">
+                                <i class="bi bi-wallet2 me-2"></i> My Wallet
+                            </a>
+                            <a class="nav-link text-danger" href="/signOut">
+                                <i class="bi bi-box-arrow-right me-2"></i> Sign Out
+                            </a>
+                        </nav>
+                    </div>
+                </div>
+                <% if (message) { %>
+                    <div 
+                        class="alert <%= message.type === 'success' ? 'alert-success' : 'alert-danger' %> text-center">
+                        <%= message.text %>
+                    </div>
+                <% } %>
+
+                <!-- Addresses Section -->
+                <div class="col-lg-9">
+                    <div class="bg-white shadow-sm rounded p-4 p-md-4">
+                        <h3 class="fw-bold mb-4">Addresses</h3>
+                        <div id="alertBox"></div>
+
+                        <!-- Add New Address Button -->
+                        <button class="btn btn-custom w-100 mb-4 py-3 fw-semibold"
+                            onclick="openModal('add'); resetAddressForm();"
+                            data-bs-toggle="modal" data-bs-target="#addressModal">
+                            <i class="bi bi-plus-circle me-2"></i> ADD A NEW ADDRESS
+                        </button>
+
+                        <!-- Address Cards -->
+                        <div class="row g-4" id="addressContainer">
+                            <% if(addresses.length === 0){ %>
+                            <div class="col-12 text-center text-muted">
+                            No addresses added yet
+                        </div>
+                        <% } %>
+                        <% addresses.forEach((addr,index)=>{ %>
+                            <div class="col-12" id="addressCard-<%= addr._id %>">
+                                <div class="address-card shadow-sm p-4">
+                                    <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <span class="address-badge">
+                                        ADDRESS <%= index+1 %>
+                                    </span>
+                                    <div class="d-flex gap-2">
+                                        <button 
+                                            class="btn btn-outline-secondary btn-icon"
+                                            data-address='<%- JSON.stringify(addr) %>'
+                                            onclick="openEditModal(this)"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#addressModal">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                        <button class="btn btn-outline-danger btn-icon"
+                                            onclick="deleteAddress('<%= addr._id %>')">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                    </div>
+                                        <h5 class="fw-semibold mb-2"><%= addr.addressType %></h5>
+                                        <p class="text-muted mb-1"><%= addr.fullName %></p>
+                                        <p class="text-muted mb-0">
+                                        <%= addr.addressLine1 %>, <%= addr.city %>, <%= addr.state %>, <%= addr.zip %>
+                                        </p>
+                                    </div>
+                                </div>
+                            <% }) %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== UNIFIED ADDRESS MODAL ===== -->
+    <div class="modal fade" id="addressModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered" style="max-width:500px;">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header">
+                    <h6 class="modal-title" id="modalTitle">Add New Address</h6>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addressForm" autocomplete="off">
+                    <div class="row g-2">
+                        <div class="col-12">
+                            <label class="form-label">Full Name *</label>
+                            <input type="text" class="form-control" name="fullName" id="fldName" placeholder="e.g. Shyam Sundar S"/>
+                            <small class="text-danger error-message"></small>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">Address Line 1 *</label>
+                            <input type="text" class="form-control" name="addressLine1" id="fldLine1" placeholder="Street / Apt No."/>
+                            <small class="text-danger error-message"></small>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">Address Line 2</label>
+                            <input type="text" class="form-control" name="addressLine2" id="fldLine2" placeholder="Landmark (optional)"/>
+                            <small class="text-danger error-message"></small>
+                        </div>
+                        <div class="col-5">
+                            <label class="form-label">City *</label>
+                            <input type="text" class="form-control" name="city" id="fldCity" placeholder="City"/>
+                            <small class="text-danger error-message"></small>
+                        </div>
+                        <div class="col-4">
+                            <label class="form-label">State *</label>
+                            <input type="text" class="form-control" name="state" id="fldState" placeholder="state"/>
+                            <small class="text-danger error-message"></small>
+                        </div>
+                        <div class="col-3">
+                            <label class="form-label">ZIP *</label>
+                            <input type="text" class="form-control" name="zip" id="fldZip" placeholder="10001"/>
+                            <small class="text-danger error-message"></small>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">Country *</label>
+                            <input type="text" class="form-control" name="country" id="fldCountry" placeholder="e.g. United States"/>
+                            <small class="text-danger error-message"></small>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">Phone Number *</label>
+                            <input type="tel" class="form-control" name="phone" id="fldPhone" placeholder="+1 000 000 0000"/>
+                            <small class="text-danger error-message"></small>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Address Type *</label>
+                            <select class="form-select" name="addressType" id="fldType">
+                                <option value="">Select Type</option>
+                                <option>Home</option>
+                                <option>Office</option>
+                            </select>
+                            <small class="text-danger error-message"></small>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                   <button type="submit" class="btn-save">Save Address</button>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <%- include('../partials/footer') %>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const fldName = document.getElementById("fldName")
+        const fldLine1 = document.getElementById("fldLine1")
+        const fldLine2 = document.getElementById("fldLine2")
+        const fldCity = document.getElementById("fldCity")
+        const fldState = document.getElementById("fldState")
+        const fldZip = document.getElementById("fldZip")
+        const fldCountry = document.getElementById("fldCountry")
+        const fldPhone = document.getElementById("fldPhone")
+        const fldType = document.getElementById("fldType")
+        const modalTitle = document.getElementById("modalTitle")
+        //resetTheModel
+        function resetAddressForm() {
+            const form = document.getElementById("addressForm");
+            form.reset();
+            document.querySelectorAll("#addressModal .error-message")
+            .forEach(el => el.textContent = "");
+        }
+        //frontend Validation
+        function validateAddressForm(){
+            let isValid = true;
+            document.querySelectorAll(".error-message").forEach(el => el.textContent = "");
+            const name = fldName.value.trim();
+            const line1 = fldLine1.value.trim();
+            const city = fldCity.value.trim();
+            const state = fldState.value.trim();
+            const zip = fldZip.value.trim();
+            const country = fldCountry.value.trim();
+            const phone = fldPhone.value.trim();
+            const type = fldType.value;
+            
+            if(!name){
+            showError(fldName,"Full name is required");
+            isValid=false;
+            }
+
+            if(!line1){
+            showError(fldLine1,"Address Line 1 required");
+            isValid=false;
+            }
+
+            if(!city){
+            showError(fldCity,"City required");
+            isValid=false;
+            }
+
+            if(!state){
+            showError(fldState,"State required");
+            isValid=false;
+            }
+
+            if(!zip || !/^[0-9]{6}$/.test(zip)){
+            showError(fldZip,"Invalid pincode");
+            isValid=false;
+            }
+
+            if(!country){
+            showError(fldCountry,"Country required");
+            isValid=false;
+            }
+
+            if(!phone || !/^[0-9]{10}$/.test(phone)){
+            showError(fldPhone,"Phone must be 10 digits");
+            isValid=false;
+            }
+
+            if(!type){
+            showError(fldType,"Select address type");
+            isValid=false;
+            }
+            console.log("validation result:", isValid)
+            return isValid;
+        }
+        function showError(input, message) {
+            const errorElement = input.parentElement.querySelector(".error-message");
+            if (errorElement) {
+                errorElement.textContent = message;
+            }
+        }
+        function showMessage(type, text){
+            const alertBox = document.getElementById("alertBox")
+            alertBox.innerHTML = `<div class="alert ${type === "success" ? "alert-success" : "alert-danger"} text-center">
+            ${text}
+            </div>`
+            setTimeout(()=>{
+                alertBox.innerHTML=""
+            },2000)
+
+            }
+        //editaddress
+        let editAddressId = null;
+        function openEditModal(button){
+            resetAddressForm()
+            const address = JSON.parse(button.dataset.address)
+            editAddressId = address._id
+            fldName.value = address.fullName
+            fldLine1.value = address.addressLine1
+            fldLine2.value = address.addressLine2 || ""
+            fldCity.value = address.city
+            fldState.value = address.state
+            fldZip.value = address.zip
+            fldCountry.value = address.country
+            fldPhone.value = address.phone
+            fldType.value = address.addressType
+
+            modalTitle.innerText = "Edit Address"
+        }
+        //addAddress
+        document.getElementById("addressForm").addEventListener("submit", async function(e){
+            e.preventDefault()
+            if(!validateAddressForm()) return
+            const data = {
+                fullName: fldName.value.trim(),
+                addressLine1: fldLine1.value.trim(),
+                addressLine2: fldLine2.value.trim(),
+                city: fldCity.value.trim(),
+                state: fldState.value.trim(),
+                zip: fldZip.value.trim(),
+                country: fldCountry.value.trim(),
+                phone: fldPhone.value.trim(),
+                addressType: fldType.value
+            }
+            let url = "/address"
+            let method = "POST"
+            if(editAddressId){
+                url = `/address/${editAddressId}`
+                method = "PUT"
+            }
+            try{
+                const res = await fetch(url,{
+                    method: method,
+                    headers:{
+                        "Content-Type":"application/json"
+                    },
+                    body: JSON.stringify(data)
+                })
+                const result = await res.json()
+                if(result.success){
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('addressModal'))
+                    modal.hide()
+                    showMessage("success", result.message)
+                    setTimeout(()=>{
+                        location.reload()
+                    },1500)
+                    }else{
+                        showMessage("error", result.message)
+                }
+            }
+            catch(error){
+                console.error("FETCH ERROR:", error)
+                alert("Server error")
+            }
+        })
+        async function deleteAddress(id){
+            if(!confirm("Delete this address?")) return
+            try{
+            const res = await fetch(`/address/${id}`,{
+            method: "DELETE"
+            })
+            const result = await res.json()
+            if(result.success){
+                const card = document.getElementById(`addressCard-${id}`)
+                card.remove()
+                showMessage("success", result.message || "Address deleted successfully")
+                const container = document.getElementById("addressContainer")
+                if(container.children.length === 0){
+                    container.innerHTML = `
+                    <div class="col-12 text-center text-muted">
+                    No addresses added yet
+                    </div>`
+                }
+            }else{
+                showMessage("error", result.message)
+            }
+            }catch(error){
+                console.error(error)
+                showMessage("error","Something went wrong")
+            }
+            }
+        function openModal(type){
+            resetAddressForm()
+            editAddressId = null
+            modalTitle.innerText = "Add New Address"
+        }
+    </script>
+</body>
+</html>

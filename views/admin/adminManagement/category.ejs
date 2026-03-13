@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -16,6 +16,9 @@
         body {
             font-family: 'Poppins', sans-serif;
             background-color: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
         
         .sidebar {
@@ -66,6 +69,7 @@
         .main-content {
             margin-left: 250px;
             padding: 30px;
+            flex: 1;
         }
         
         .content-card {
@@ -183,33 +187,33 @@
             Wooden Cot
         </div>
         
-        <nav class="sidebar-menu">
+         <nav class="sidebar-menu">
             <div class="nav flex-column">
-                <a class="nav-link" href="admin-dashboard.html">
+                <a class="nav-link" href="/admin/dashboard">
                     <i class="bi bi-speedometer2"></i> Dashboard
                 </a>
-                <a class="nav-link" href="#">
+                <a class="nav-link" href="/admin/products">
                     <i class="bi bi-box-seam"></i> Products
                 </a>
-                <a class="nav-link active" href="#">
+                <a class="nav-link active" href="/admin/categories">
                     <i class="bi bi-grid"></i> Categories
                 </a>
-                <a class="nav-link" href="#">
+                <a class="nav-link" href="/admin/orders">
                     <i class="bi bi-receipt"></i> Orders
                 </a>
-                <a class="nav-link" href="admin-customers.html">
+                <a class="nav-link" href="/admin/customers">
                     <i class="bi bi-people"></i> Customers
                 </a>
-                <a class="nav-link" href="#">
+                <a class="nav-link" href="/admin/offers">
                     <i class="bi bi-tag"></i> Offers
                 </a>
-                <a class="nav-link" href="#">
+                <a class="nav-link" href="/admin/coupons">
                     <i class="bi bi-ticket-perforated"></i> Coupons
                 </a>
-                <a class="nav-link" href="#">
+                <a class="nav-link" href="/admin/salesReport">
                     <i class="bi bi-graph-up"></i> Sales Report
                 </a>
-                <a class="nav-link logout-link" href="#">
+                <a class="nav-link logout-link" href="/admin/logout">
                     <i class="bi bi-box-arrow-right"></i> Logout
                 </a>
             </div>
@@ -226,6 +230,7 @@
                     <i class="bi bi-plus-circle me-2"></i>Add New Category
                 </button>
             </div>
+            <div id="alertBox"></div>
             
             <!-- Search Box with Clear Button -->
             <div class="mb-4">
@@ -236,7 +241,13 @@
                     </button>
                 </div>
             </div>
-            
+            <!--success-error-Message -->
+            <% if (message) { %>
+                <div 
+                    class="alert <%= message.type === 'success' ? 'alert-success' : 'alert-danger' %> text-center">
+                    <%= message.text %>
+                </div>
+            <% } %>
             <!-- Categories Table -->
             <div class="table-responsive">
                 <table class="table table-hover align-middle">
@@ -249,98 +260,43 @@
                             <th>Actions</th>
                         </tr>
                     </thead>
-                    <tbody id="categoriesTableBody">
-                        <tr>
-                            <td>Teak</td>
-                            <td><img src="https://images.unsplash.com/photo-1611048267451-e6ed903d4a79?w=100&h=60&fit=crop" alt="Teak" class="rounded" style="width: 60px; height: 40px; object-fit: cover;"></td>
-                            <td>Premium teak wood furniture</td>
-                            <td>
-                                <button class="btn btn-listed" onclick="toggleList(this)">Listed</button>
-                            </td>
-                            <td>
-                                <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#editCategoryModal" onclick="editCategory('Teak', 'Premium teak wood furniture', 'https://images.unsplash.com/photo-1611048267451-e6ed903d4a79?w=100&h=60&fit=crop')">
-                                    <i class="bi bi-pencil"></i>
-                                </button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Oak</td>
-                            <td><img src="https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=100&h=60&fit=crop" alt="Oak" class="rounded" style="width: 60px; height: 40px; object-fit: cover;"></td>
-                            <td>Durable oak wood products</td>
-                            <td>
-                                <button class="btn btn-listed" onclick="toggleList(this)">Listed</button>
-                            </td>
-                            <td>
-                                <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#editCategoryModal" onclick="editCategory('Oak', 'Durable oak wood products', 'https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=100&h=60&fit=crop')">
-                                    <i class="bi bi-pencil"></i>
-                                </button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Sheesham</td>
-                            <td><img src="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=100&h=60&fit=crop" alt="Sheesham" class="rounded" style="width: 60px; height: 40px; object-fit: cover;"></td>
-                            <td>Traditional sheesham wood items</td>
-                            <td>
-                                <button class="btn btn-listed" onclick="toggleList(this)">Listed</button>
-                            </td>
-                            <td>
-                                <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#editCategoryModal" onclick="editCategory('Sheesham', 'Traditional sheesham wood items', 'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=100&h=60&fit=crop')">
-                                    <i class="bi bi-pencil"></i>
-                                </button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Pine</td>
-                            <td><img src="https://images.unsplash.com/photo-1550335568-1cf8b8f8d4b4?w=100&h=60&fit=crop" alt="Pine" class="rounded" style="width: 60px; height: 40px; object-fit: cover;"></td>
-                            <td>Lightweight pine wood furniture</td>
-                            <td>
-                                <button class="btn btn-unlisted" onclick="toggleList(this)">Unlisted</button>
-                            </td>
-                            <td>
-                                <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#editCategoryModal" onclick="editCategory('Pine', 'Lightweight pine wood furniture', 'https://images.unsplash.com/photo-1550335568-1cf8b8f8d4b4?w=100&h=60&fit=crop')">
-                                    <i class="bi bi-pencil"></i>
-                                </button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Rosewood</td>
-                            <td><img src="https://images.unsplash.com/photo-1615529182904-14819c35db37?w=100&h=60&fit=crop" alt="Rosewood" class="rounded" style="width: 60px; height: 40px; object-fit: cover;"></td>
-                            <td>Luxury rosewood collections</td>
-                            <td>
-                                <button class="btn btn-listed" onclick="toggleList(this)">Listed</button>
-                            </td>
-                            <td>
-                                <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#editCategoryModal" onclick="editCategory('Rosewood', 'Luxury rosewood collections', 'https://images.unsplash.com/photo-1615529182904-14819c35db37?w=100&h=60&fit=crop')">
-                                    <i class="bi bi-pencil"></i>
-                                </button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Mahogany</td>
-                            <td><img src="https://images.unsplash.com/photo-1533090161767-e6ffed986c88?w=100&h=60&fit=crop" alt="Mahogany" class="rounded" style="width: 60px; height: 40px; object-fit: cover;"></td>
-                            <td>Rich mahogany wood pieces</td>
-                            <td>
-                                <button class="btn btn-listed" onclick="toggleList(this)">Listed</button>
-                            </td>
-                            <td>
-                                <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#editCategoryModal" onclick="editCategory('Mahogany', 'Rich mahogany wood pieces', 'https://images.unsplash.com/photo-1533090161767-e6ffed986c88?w=100&h=60&fit=crop')">
-                                    <i class="bi bi-pencil"></i>
-                                </button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Maple</td>
-                            <td><img src="https://images.unsplash.com/photo-1615529328331-f8917597711f?w=100&h=60&fit=crop" alt="Maple" class="rounded" style="width: 60px; height: 40px; object-fit: cover;"></td>
-                            <td>Elegant maple wood designs</td>
-                            <td>
-                                <button class="btn btn-unlisted" onclick="toggleList(this)">Unlisted</button>
-                            </td>
-                            <td>
-                                <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#editCategoryModal" onclick="editCategory('Maple', 'Elegant maple wood designs', 'https://images.unsplash.com/photo-1615529328331-f8917597711f?w=100&h=60&fit=crop')">
-                                    <i class="bi bi-pencil"></i>
-                                </button>
-                            </td>
-                        </tr>
+                   <tbody id="categoriesTableBody">
+                    <% if (categories && categories.length > 0) { %>
+                        <% categories.forEach(category => { %>
+                            <tr>
+                                <td><%= category.name %></td>
+                                <td>
+                                    <img src="<%= category.image %>" class="rounded" style="width:60px;height:40px;object-fit:cover;">
+                                </td>
+                                <td><%= category.description %></td>
+                                <td>
+                                    <button class="<%= category.isListed ? 'btn btn-listed' : 'btn btn-unlisted' %>" onclick="toggleList('<%= category._id %>')">
+                                        <%= category.isListed ? 'Listed' : 'Unlisted' %>
+                                    </button>
+                                </td>
+                                <td>
+                                    <button 
+                                        class="btn btn-sm btn-outline-secondary"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#editCategoryModal"
+                                        onclick="editCategory(
+                                            '<%= category._id %>',
+                                            '<%= category.name %>',
+                                            '<%= category.description %>',
+                                            '<%= category.image %>'
+                                        )">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    <% } else { %>
+                    <tr>
+                        <td colspan="5" class="text-center text-muted py-4">
+                            No category added
+                        </td>
+                    </tr>
+                    <% } %>
                     </tbody>
                 </table>
             </div>
@@ -351,7 +307,7 @@
                     Showing 1 to 7 of 12 entries
                 </div>
                 <nav>
-                    <ul class="pagination mb-0">
+                    <ul class="pagination mb-0" id="pagination">
                         <li class="page-item">
                             <a class="page-link" href="#">Previous</a>
                         </li>
@@ -380,15 +336,18 @@
                         <div class="mb-3">
                             <label for="addCategoryName" class="form-label small fw-semibold">Category Name</label>
                             <input type="text" class="form-control" id="addCategoryName" placeholder="Enter category name" required>
+                            <small class="text-danger error-message"></small>
                         </div>
                         <div class="mb-3">
                             <label for="addCategoryImage" class="form-label small fw-semibold">Category Image</label>
                             <input type="file" class="form-control" id="addCategoryImage" accept="image/*" required>
                             <small class="text-muted">Upload category image (JPG, PNG)</small>
+                            <small class="text-danger error-message"></small>
                         </div>
                         <div class="mb-3">
                             <label for="addCategoryDescription" class="form-label small fw-semibold">Description</label>
                             <textarea class="form-control" id="addCategoryDescription" rows="3" placeholder="Enter description" required></textarea>
+                            <small class="text-danger error-message"></small>
                         </div>
                     </form>
                 </div>
@@ -413,6 +372,7 @@
                         <div class="mb-3">
                             <label for="editCategoryName" class="form-label small fw-semibold">Category Name</label>
                             <input type="text" class="form-control" id="editCategoryName" required>
+                            <small class="text-danger error-message"></small>
                         </div>
                         <div class="mb-3">
                             <label for="editCategoryImage" class="form-label small fw-semibold">Category Image</label>
@@ -421,15 +381,16 @@
                             </div>
                             <input type="file" class="form-control" id="editCategoryImage" accept="image/*">
                             <small class="text-muted">Upload new image to replace current (JPG, PNG)</small>
+                            <small class="text-danger error-message"></small>
                         </div>
                         <div class="mb-3">
                             <label for="editCategoryDescription" class="form-label small fw-semibold">Description</label>
                             <textarea class="form-control" id="editCategoryDescription" rows="3" required></textarea>
+                            <small class="text-danger error-message"></small>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer border-0">
-                    <button type="button" class="btn btn-danger" onclick="deleteCategory()">Delete</button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     <button type="button" class="btn btn-custom" onclick="submitEditCategory()">Save Changes</button>
                 </div>
@@ -447,113 +408,147 @@
     
     <!-- Scripts -->
     <script>
-        // Toggle List/Unlist
-        function toggleList(button) {
-            if (button.textContent.trim() === 'Listed') {
-                button.textContent = 'Unlisted';
-                button.classList.remove('btn-listed');
-                button.classList.add('btn-unlisted');
-                
-                const row = button.closest('tr');
-                const categoryName = row.cells[0].textContent;
-                alert(`${categoryName} has been unlisted successfully!`);
-            } else {
-                button.textContent = 'Listed';
-                button.classList.remove('btn-unlisted');
-                button.classList.add('btn-listed');
-                
-                const row = button.closest('tr');
-                const categoryName = row.cells[0].textContent;
-                alert(`${categoryName} has been listed successfully!`);
+        function showError(input, message){
+            const error = input.parentElement.querySelector(".error-message")
+            if(error){
+                error.textContent = message
             }
         }
 
-        // Add Category
-        function submitAddCategory() {
-            const name = document.getElementById('addCategoryName').value;
-            const image = document.getElementById('addCategoryImage').files[0];
-            const description = document.getElementById('addCategoryDescription').value;
-            
-            if (name && image && description) {
-                alert(`Category "${name}" with image "${image.name}" added successfully!`);
-                bootstrap.Modal.getInstance(document.getElementById('addCategoryModal')).hide();
-                document.getElementById('addCategoryForm').reset();
-                console.log({ name, image: image.name, description });
-            } else {
-                alert('Please fill in all fields and upload an image!');
+        function clearErrors(){
+            document.querySelectorAll(".error-message")
+            .forEach(el => el.textContent = "")
+        }
+
+        function showMessage(type, text){
+            const alertBox = document.getElementById("alertBox")
+            alertBox.innerHTML = `
+                <div class="alert ${type === "success" ? "alert-success" : "alert-danger"} text-center">
+                    ${text}
+                </div>
+            `
+            setTimeout(()=>{
+                alertBox.innerHTML=""
+            },2000)
+        }
+        function validateCategoryForm(){
+            clearErrors()
+            let valid = true
+            const name = document.getElementById("addCategoryName")
+            const description = document.getElementById("addCategoryDescription")
+            const image = document.getElementById("addCategoryImage")
+
+            if(!name.value.trim()){
+                showError(name,"Category name is required")
+                valid=false
             }
-        }
 
-        // Edit Category
-        function editCategory(name, description, imageUrl) {
-            document.getElementById('editCategoryName').value = name;
-            document.getElementById('editCategoryDescription').value = description;
-            document.getElementById('currentCategoryImage').src = imageUrl;
-        }
-
-        function submitEditCategory() {
-            const name = document.getElementById('editCategoryName').value;
-            const newImage = document.getElementById('editCategoryImage').files[0];
-            const description = document.getElementById('editCategoryDescription').value;
-            
-            if (name && description) {
-                if (newImage) {
-                    alert(`Category "${name}" updated successfully with new image "${newImage.name}"!`);
-                    console.log({ name, newImage: newImage.name, description });
-                } else {
-                    alert(`Category "${name}" updated successfully!`);
-                    console.log({ name, description });
-                }
-                bootstrap.Modal.getInstance(document.getElementById('editCategoryModal')).hide();
-            } else {
-                alert('Please fill in all required fields!');
+            if(!description.value.trim()){
+                showError(description,"Description is required")
+                valid=false
             }
-        }
 
-        // Delete Category (Soft Delete)
-        function deleteCategory() {
-            const name = document.getElementById('editCategoryName').value;
-            if (confirm(`Are you sure you want to delete "${name}" category?`)) {
-                alert(`Category "${name}" deleted successfully!`);
-                bootstrap.Modal.getInstance(document.getElementById('editCategoryModal')).hide();
-                console.log('Soft delete:', name);
+            if(!image.files.length){
+                showError(image,"Category image is required")
+                valid=false
             }
-        }
 
-        // Search Functionality
-        document.getElementById('searchCategory').addEventListener('keyup', function() {
-            const searchValue = this.value.toLowerCase();
-            const tableRows = document.querySelectorAll('#categoriesTableBody tr');
-            
-            tableRows.forEach(row => {
-                const categoryName = row.cells[0].textContent.toLowerCase();
-                const description = row.cells[1].textContent.toLowerCase();
-                
-                if (categoryName.includes(searchValue) || description.includes(searchValue)) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
+            return valid
+        }
+        async function submitAddCategory() {
+            if(!validateCategoryForm()) return
+            const formData = new FormData();
+            formData.append("name", document.getElementById("addCategoryName").value);
+            formData.append("description", document.getElementById("addCategoryDescription").value);
+            formData.append("image", document.getElementById("addCategoryImage").files[0]);
+            try{
+            const res = await fetch("/admin/categories", {
+                method: "POST",
+                body: formData
             });
-        });
+            const data = await res.json();
+            if (data.status === "SUCCESS") {
+               showMessage("success", data.message)
+                setTimeout(()=>{location.reload()},1500)
+            } else{
+            showMessage("error", data.message)
+        }
+        }catch(err){
+            console.error(err)
+            showMessage("error","Server error")
+        }
+    }
+        let editingId = null;
+        function editCategory(id, name, description, image) {
+            editingId = id;
+            document.getElementById("editCategoryName").value = name;
+            document.getElementById("editCategoryDescription").value = description;
+            document.getElementById("currentCategoryImage").src = image;
+        }
+        function validateEditCategory(){
+            clearErrors()
+            let valid=true
+            const name=document.getElementById("editCategoryName")
+            const description=document.getElementById("editCategoryDescription")
 
-        // Clear Search
-        document.getElementById('clearSearch').addEventListener('click', function() {
-            document.getElementById('searchCategory').value = '';
-            const tableRows = document.querySelectorAll('#categoriesTableBody tr');
-            tableRows.forEach(row => {
-                row.style.display = '';
-            });
-        });
-
-        // Logout Confirmation
-        document.querySelector('.logout-link').addEventListener('click', function(e) {
-            e.preventDefault();
-            if (confirm('Are you sure you want to logout?')) {
-                alert('Logging out...');
-                window.location.href = 'admin-signin.html';
+            if(!name.value.trim()){
+                showError(name,"Category name required")
+                valid=false
             }
-        });
+
+            if(!description.value.trim()){
+                showError(description,"Description required")
+                valid=false
+            }
+
+            return valid
+        }
+        async function submitEditCategory() {
+            if(!validateEditCategory()) return
+            const formData = new FormData();
+            formData.append("name", document.getElementById("editCategoryName").value);
+            formData.append("description", document.getElementById("editCategoryDescription").value);
+            const file = document.getElementById("editCategoryImage").files[0];
+            if (file) formData.append("image", file);
+            try{
+            const res = await fetch(`/admin/categories/${editingId}`, {
+                method: "PUT",
+                body: formData
+            });
+            const data = await res.json();
+            if (data.status === "SUCCESS") {
+                showMessage("success", data.message)
+                setTimeout(()=>{
+                    location.reload()
+                },1500)
+            } else{
+            showMessage("error", data.message)
+        }
+        }catch(err){
+            console.error(err)
+            showMessage("error","Server error")
+        }
+    }
+        async function toggleList(id) {
+            try{
+            const res = await fetch(`/admin/categories/toggle/${id}`, {
+                method: "PATCH"
+            });
+            const data = await res.json();
+            if (data.status === "SUCCESS") {
+                showMessage("success", data.message)
+                setTimeout(()=>{
+                    location.reload()
+                },1000)
+            }else{
+                showMessage("error", data.message)
+            }
+        }catch(err){
+            console.error(err)
+            showMessage("error","Server error")
+
+        }
+    }
     </script>
 </body>
 </html>

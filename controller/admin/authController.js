@@ -11,10 +11,15 @@ async function renderDashboard(req,res){
  async function renderCustomers(req, res) {
     try {
         const users = await authService.getAllUsers();
-        res.render("admin/customers/customers", {users});
+        res.render("admin/adminManagement/customers", {users});
 
     } catch (error) {
-        res.render("admin/customers/customers", {users: []});
+        console.error("Internal Error:", error);
+        req.session.message = {
+            type: "error",
+            text: "Something went wrong"
+        };
+        return res.render("admin/adminManagement/customers", { users: [] });
     }
 }
 async function validateSignIn(req, res){
@@ -28,10 +33,18 @@ async function validateSignIn(req, res){
         };
         res.redirect("/admin/dashboard");
     } catch (error) {
-        req.session.message = {
-            type: "error",
-            text: error.message
-        };
+        if (error.isOperational) {
+            req.session.message = {
+                type: "error",
+                text: error.message
+            };
+        } else {
+            console.error("Internal Error:", error);
+            req.session.message = {
+                type: "error",
+                text: "Something went wrong"
+            };
+        }
         res.redirect("/admin/signin");
     }
 };
@@ -43,10 +56,17 @@ async function toggleUserBlock(req, res){
             isBlocked: user.isBlocked
         });
     } catch (error) {
+        if (error.isOperational) {
         return res.json({
-            success: false,
-            message: error.message
+          success: false,
+          message: error.message
         });
+      }
+      console.error("Internal Error:", error);
+      return res.json({
+        success: false,
+        message: "Something went wrong"
+      });
     }
 }
 module.exports = {renderSignIn,validateSignIn,renderDashboard,renderCustomers,toggleUserBlock}

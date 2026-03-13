@@ -5,7 +5,12 @@ async function renderProfile(req, res) {
     const user = await userService.getUserById(req.session.userId);
     res.render("user/profile/profileDetails", { user });
   } catch (error) {
-    res.redirect("/");
+    console.error("Internal Error:", error);
+    req.session.message = {
+      type: "error",
+      text: "Something went wrong"
+    };
+    return res.redirect("/");
   }
 }
 async function updateProfile(req, res) {
@@ -13,10 +18,17 @@ async function updateProfile(req, res) {
     await userService.updateUserProfile(req.session.userId,req.body);
     return res.json({ status: "SUCCESS" });
   } catch (error) {
-    return res.json({
-      status: "ERROR",
-      message: error.message
-    });
+      if (error.isOperational) {
+        return res.json({
+          status: "ERROR",
+          message: error.message
+        });
+      }
+      console.error("Internal Error:", error);
+      return res.json({
+        status: "ERROR",
+        message: "Something went wrong"
+      });
   }
 }
 async function changePassword(req, res) {
@@ -24,10 +36,17 @@ async function changePassword(req, res) {
         await userService.changeUserPassword(req.session.userId,req.body.currentPassword,req.body.newPassword);
         return res.json({ status: "SUCCESS" });
     } catch (error) {
+        if (error.isOperational) {
         return res.json({
-            status: "ERROR",
-            message: error.message
+          status: "ERROR",
+          message: error.message
         });
+      }
+      console.error("Internal Error:", error);
+      return res.json({
+        status: "ERROR",
+        message: "Something went wrong"
+      });
     }
 }
 module.exports = {renderProfile,updateProfile,changePassword}
