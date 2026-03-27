@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const passport = require("passport");
 const userController = require("../controller/user/userController");
+const homeController = require("../controller/user/homeController");
 const profileController = require("../controller/user/profileController");
 const addressController = require("../controller/user/addressController");
 const { isLoggedIn, preventAuthAccess } = require("../middleware/authMiddleware");
@@ -29,7 +30,7 @@ router.get("/auth/google",passport.authenticate("google", { scope: ["profile", "
 router.get("/auth/google/callback",passport.authenticate("google", {failureRedirect: "/login",}),userController.googleCallback);
 
 //home page
-router.get('/',userController.renderHome);
+router.get('/',homeController.renderHome);
 
 //profile
 router.get("/profile", isLoggedIn, profileController.renderProfile);

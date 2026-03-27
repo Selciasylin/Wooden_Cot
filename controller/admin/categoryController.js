@@ -76,7 +76,7 @@ async function updateCategory(req, res) {
 
 async function toggleCategory(req, res) {
   try {
-    const category = await categoryService.toggleCategory(req.params.id);
+    const category = await categoryService.toggleCategoryStatus(req.params.id);
     res.json({
       status: "SUCCESS",
       message: `Category ${category.isListed ? "listed" : "unlisted"} successfully`,
@@ -89,9 +89,30 @@ async function toggleCategory(req, res) {
     res.json({ status: "ERROR", message: "Something went wrong" });
   }
 }
+async function getCategories(req, res) {
+  try {
+    const search = req.query.search || "";
+    const page = parseInt(req.query.page) || 1;
+    const limit = 5;
+    const result = await categoryService.getCategories(search, page, limit);
+    res.json({
+      status: "SUCCESS",
+      categories: result.categories,
+      totalPages: result.totalPages,
+      currentPage: page
+    });
+  } catch (error) {
+    console.error(error);
+    res.json({
+      status: "ERROR",
+      message: "Failed to load categories"
+    });
+  }
+}
 module.exports = {
   renderCategoryPage,
   createCategory,
   updateCategory,
   toggleCategory,
+  getCategories,
 };

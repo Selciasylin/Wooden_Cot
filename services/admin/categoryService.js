@@ -39,9 +39,28 @@ async function toggleCategoryStatus(id) {
   return category;
 }
 
+async function getCategories(search, page, limit) {
+  const query = {
+    name: { $regex: search, $options: "i" }
+  };
+  const skip = (page - 1) * limit;
+  const categories = await Category
+    .find(query)
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limit);
+  const total = await Category.countDocuments(query);
+  return {
+    categories,
+    totalPages: Math.ceil(total / limit)
+  };
+}
+
 module.exports = {
   getAllCategories,
   createCategory,
   updateCategory,
   toggleCategoryStatus,
+  getCategories,
+
 };

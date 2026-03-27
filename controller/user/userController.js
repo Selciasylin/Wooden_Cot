@@ -15,9 +15,6 @@ async function renderforgotPassword(req, res) {
 async function renderResetPassword(req, res) {
   res.render("user/auth/newPassword");
 }
-async function renderHome(req, res) {
-  res.render("user/homePage");
-}
 
 async function register(req, res) {
   try {
@@ -221,7 +218,6 @@ module.exports = {
   renderResetPassword,
   register,
   login,
-  renderHome,
   forgotPassword,
   verifyOtp,
   resetPassword,

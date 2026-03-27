@@ -1,4 +1,3 @@
-const User = require("../../model/userSchema");
 const appError = require("../../utils/appError");
 async function loginAdmin(email, password){
     if (!email || !password) {
@@ -13,20 +12,4 @@ async function loginAdmin(email, password){
         email: adminEmail
     };
 };
-async function getAllUsers() {
-    const users = await User.find({}).sort({ createdAt: -1 }); 
-    return users;
-}
-async function toggleUserBlockStatus(userId){
-    const user = await User.findById(userId);
-    if (!user) {
-        throw new appError("User not found");
-    }
-    const updatedUser = await User.findByIdAndUpdate(
-        userId,
-        { isBlocked: !user.isBlocked },
-        { new: true }
-    );
-    return updatedUser;
-}
-module.exports={loginAdmin,getAllUsers,toggleUserBlockStatus}
+module.exports={loginAdmin}
