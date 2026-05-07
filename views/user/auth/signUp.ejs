@@ -7,6 +7,7 @@
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -63,13 +64,7 @@
             <img src="/images/wooden-cot-logo.png" alt="Wooden Cot Logo" class="img-fluid mb-2 rounded-3" style="max-width:80px;">
             <h1 class="h5 fw-semibold mb-3">SIGN UP HERE!!</h1>
         </div> 
-        <% if (message) { %>
-            <div 
-                class="alert <%= message.type === 'success' ? 'alert-success' : 'alert-danger' %> text-center">
-                <%= message.text %>
-            </div>
-        <% } %>
-
+       <%- include('../partials/toast') %>
         <!-- Google Sign Up Button -->
         <button type="button"
             class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center gap-2 mb-3 py-2">
@@ -120,16 +115,18 @@
             </div>
 
             <!-- Password -->
-            <div class="mt-2">
+            <div class="mt-2 position-relative">
                 <label class="form-label small text-secondary mb-1">Password</label>
-                <input type="password" name="password" class="form-control form-control-sm" placeholder="Enter your password" required>
+                <input type="password" name="password" class="form-control form-control-sm" id="password" placeholder="Enter your password" required>
+                <i class="bi bi-eye-slash position-absolute" id="togglePassword" style="top:30px; right:15px; cursor:pointer; font-size:18px;"></i>
                 <small class="text-danger error-message"></small>
             </div>
 
              <!-- confirmPassword -->
-            <div class="mt-2">
+            <div class="mt-2 position-relative">
                 <label class="form-label small text-secondary mb-1">confirmPassword</label>
-                <input type="password" name="confirmpassword" class="form-control form-control-sm" placeholder="Enter your password" required>
+                <input type="password" name="confirmpassword" class="form-control form-control-sm" id="confirmPassword" placeholder="Enter your password" required>
+                <i class="bi bi-eye-slash position-absolute" id="toggleConfirmPassword" style="top:30px; right:15px; cursor:pointer; font-size:18px;"></i>
                 <small class="text-danger error-message"></small>
             </div>
 
@@ -163,12 +160,35 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-     const alertBox = document.querySelector(".alert");
-        if (alertBox) {
-            setTimeout(() => {
-                alertBox.style.display = "none";
-            }, 2000);
-        }
+    const togglePassword = document.getElementById("togglePassword");
+        const passwordInput = document.getElementById("password");
+         const toggleConfirmPassword = document.getElementById("toggleConfirmPassword");
+        const confirmPassword  = document.getElementById("confirmPassword");
+
+        togglePassword.addEventListener("click", () => {
+            const isPassword = passwordInput.type === "password";
+
+            passwordInput.type = isPassword ? "text" : "password";
+
+            // Toggle icon
+            togglePassword.classList.toggle("bi-eye");
+            togglePassword.classList.toggle("bi-eye-slash");
+        });
+         toggleConfirmPassword.addEventListener("click", () => {
+            const isPassword = confirmPassword.type === "password";
+
+            confirmPassword.type = isPassword ? "text" : "password";
+
+            // Toggle icon
+            toggleConfirmPassword.classList.toggle("bi-eye");
+            toggleConfirmPassword.classList.toggle("bi-eye-slash");
+        });
+    //  const alertBox = document.querySelector(".alert");
+    //     if (alertBox) {
+    //         setTimeout(() => {
+    //             alertBox.style.display = "none";
+    //         }, 2000);
+    //     }
 document.getElementById("signupForm").addEventListener("submit", function (e) {
 
     const form = this;

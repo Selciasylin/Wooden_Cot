@@ -73,24 +73,19 @@
                 <h1 class="h4 fw-semibold mb-2">OTP VERIFICATION</h1>
                 <p class="text-muted small mb-4">Enter the OTP sent to your email address.</p>
             </div>
-            <% if (message) { %>
-            <div 
-                class="alert <%= message.type === 'success' ? 'alert-success' : 'alert-danger' %> text-center">
-                <%= message.text %>
-            </div>
-            <% } %>
-
+            <%- include('../partials/toast') %>
             <!-- OTP Verification Form -->
             <form action="/verifyOtp" method="POST">
                 <!-- OTP Input -->
                 <div class="mb-2">
                     <label for="otp" class="form-label small text-secondary">Enter OTP</label>
-                    <input type="text" name="otp" class="form-control text-center" id="otp" placeholder="Enter 6-digit OTP" maxlength="6" pattern="\d{6}" required>
+                    <input type="text" name="otp" class="form-control text-center" id="otp" placeholder="Enter 6-digit OTP" maxlength="6">
+                     <div id="otpError" class="text-danger small mt-1"></div>
                 </div>
 
                 <!-- Timer Display -->
                 <div class="text-center mb-3">
-                    <small class="text-muted">Time remaining: <span id="timer" class="timer-text">02:00</span></small>
+                    <small class="text-muted">Time remaining: <span id="timer" class="timer-text">01:00</span></small>
                 </div>
 
                 <!-- Verify OTP Button -->
@@ -117,52 +112,106 @@
     
     <!-- OTP Verification and Timer Script -->
     <script>
-        const alertBox = document.querySelector(".alert");
-        if (alertBox) {
-            setTimeout(() => {
-                alertBox.style.display = "none";
-            }, 2000);
+
+        document.querySelector("form").addEventListener("submit", function (e) {
+            const otp = document.getElementById("otp").value.trim();
+            const errorBox = document.getElementById("otpError");
+
+            errorBox.innerText = ""; // clear previous error
+
+            if (!otp || otp.length !== 6) {
+                e.preventDefault();
+                errorBox.innerText = "Please enter a valid 6-digit OTP";
+            }
+        });
+
+       let timerInterval;
+
+        // 1 minute = 60 seconds
+        const TOTAL_TIME = 60;
+
+        // Get saved expiry or set new
+       let endTime = localStorage.getItem("otpEndTime");
+
+        const now = new Date().getTime();
+
+        // If no time OR already expired → set new timer
+        if (!endTime || now > endTime) {
+            endTime = now + TOTAL_TIME * 1000;
+            localStorage.setItem("otpEndTime", endTime);
         }
-        let timeLeft = 120; // 2 minutes in seconds
-        let timerInterval;
 
         // Start Timer
         function startTimer() {
-            timerInterval = setInterval(function() {
-                timeLeft--;
-                
-                let minutes = Math.floor(timeLeft / 60);
-                let seconds = timeLeft % 60;
-                
-                // Format timer display
-                document.getElementById('timer').textContent = 
-                    (minutes < 10 ? '0' + minutes : minutes) + ':' + 
-                    (seconds < 10 ? '0' + seconds : seconds);
-                
-                // When timer expires
+            timerInterval = setInterval(function () {
+
+                const now = new Date().getTime();
+                let timeLeft = Math.floor((endTime - now) / 1000);
+
                 if (timeLeft <= 0) {
                     clearInterval(timerInterval);
                     document.getElementById('timer').textContent = '00:00';
-                    document.getElementById('resendBtn').disabled = false;
-                    document.getElementById('resendBtn').classList.remove('btn-outline-secondary');
-                    document.getElementById('resendBtn').classList.add('btn-custom', 'text-white');
+
+                    const resendBtn = document.getElementById('resendBtn');
+                    resendBtn.disabled = false;
+                    resendBtn.classList.remove('btn-outline-secondary');
+                    resendBtn.classList.add('btn-custom', 'text-white');
+
+                    return;
                 }
+
+                let minutes = Math.floor(timeLeft / 60);
+                let seconds = timeLeft % 60;
+
+                document.getElementById('timer').textContent =
+                    (minutes < 10 ? '0' + minutes : minutes) + ':' +
+                    (seconds < 10 ? '0' + seconds : seconds);
+
             }, 1000);
         }
 
-        // Start timer on page load
         startTimer();
         // Only allow numbers in OTP field
         document.getElementById('otp').addEventListener('input', function(e) {
             this.value = this.value.replace(/[^0-9]/g, '');
         });
          // Resend OTP Button Click
-    document.getElementById("resendBtn").addEventListener("click", function () {
+    document.getElementById("resendBtn").addEventListener("click", async function () {
 
-        // Redirect to backend resend route
-        window.location.href = "/resendOtp";
+    const btn = this;
 
-    });
+    btn.disabled = true;
+    btn.textContent = "Sending...";
+
+    try {
+        const res = await fetch("/resendOtp", {
+            method: "POST"
+        });
+
+        const data = await res.json();
+
+        if (data.status === "OTP_SENT") {
+
+            // Reset timer
+            const newEndTime = new Date().getTime() + 60 * 1000;
+            localStorage.setItem("otpEndTime", newEndTime);
+
+            clearInterval(timerInterval);
+            endTime = newEndTime;
+            startTimer();
+
+            btn.textContent = "RESEND OTP";
+            btn.classList.remove('btn-custom', 'text-white');
+            btn.classList.add('btn-outline-secondary');
+
+        } else {
+            btn.textContent = "Try Again";
+        }
+
+    } catch (err) {
+        btn.textContent = "Error";
+    }
+});
     </script>
 </body>
 </html>

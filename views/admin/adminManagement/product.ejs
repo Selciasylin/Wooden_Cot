@@ -1,911 +1,1828 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin - Products | Wooden Cot</title>
 
-    <!-- CSS Libraries -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css"
+      rel="stylesheet"
+    />
 
     <style>
-        /* ── Base ─────────────────────────────────────────────── */
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #f5f5f5;
-        }
+      body {
+        font-family: "Poppins", sans-serif;
+        background-color: #f5f5f5;
+      }
 
-        /* ── Sidebar ──────────────────────────────────────────── */
-        .sidebar {
-            width: 250px;
-            min-height: 100vh;
-            background: white;
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 1000;
-        }
+      /* ── Sidebar ── */
+      .sidebar {
+        width: 250px;
+        min-height: 100vh;
+        background: white;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1000;
+      }
+      .sidebar-brand,
+      .offcanvas-brand {
+        background-color: #ae946d;
+        color: white;
+        padding: 20px;
+        text-align: center;
+        font-weight: 700;
+        font-size: 18px;
+      }
+      .nav-link {
+        color: #666;
+        padding: 12px 25px;
+        border-left: 3px solid transparent;
+        transition: all 0.3s;
+      }
+      .nav-link:hover,
+      .nav-link.active {
+        background: #f8f8f8;
+        color: #ae946d;
+        border-left-color: #ae946d;
+        font-weight: 600;
+      }
+      .nav-link i {
+        margin-right: 10px;
+        font-size: 18px;
+      }
+      .logout-link {
+        color: #dc3545 !important;
+      }
 
-        .sidebar-brand,
-        .offcanvas-brand {
-            background-color: #AE946D;
-            color: white;
-            padding: 20px;
-            text-align: center;
-            font-weight: 700;
-            font-size: 18px;
-        }
-
-        /* ── Nav Links ────────────────────────────────────────── */
-        .nav-link {
-            color: #666;
-            padding: 12px 25px;
-            border-left: 3px solid transparent;
-            transition: all 0.3s;
-        }
-
-        .nav-link:hover,
-        .nav-link.active {
-            background: #f8f8f8;
-            color: #AE946D;
-            border-left-color: #AE946D;
-            font-weight: 600;
-        }
-
-        .nav-link i {
-            margin-right: 10px;
-            font-size: 18px;
-        }
-
-        .logout-link {
-            color: #dc3545 !important;
-        }
-
-        /* ── Layout ───────────────────────────────────────────── */
+      /* ── Layout ── */
+      .page-wrapper {
+        margin-left: 250px;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+      @media (max-width: 768px) {
         .page-wrapper {
-            margin-left: 250px;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+          margin-left: 0;
         }
+      }
+      .main-content {
+        flex: 1;
+        padding: 40px 0;
+        display: flex;
+        justify-content: center;
+      }
+      .content-card {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        width: 90%;
+        max-width: 1100px;
+      }
+      .page-title {
+        color: #ae946d;
+        font-weight: 600;
+        margin-bottom: 0;
+      }
+      .search-box {
+        max-width: 300px;
+      }
 
-        @media (max-width: 768px) {
-            .page-wrapper {
-                margin-left: 0;
-            }
-        }
+      /* ── Table ── */
+      .table thead {
+        background-color: #f8f9fa;
+      }
+      .table tbody tr {
+        vertical-align: middle;
+      }
+      .product-img {
+        width: 60px;
+        height: 50px;
+        object-fit: cover;
+        border-radius: 6px;
+      }
 
-        .main-content {
-            flex: 1;
-            padding: 40px 0;
-            display: flex;
-            justify-content: center;
-        }
+      /* ── Badges ── */
+      .badge-instock {
+        background-color: #d4edda;
+        color: #155724;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+      }
+      .badge-outofstock {
+        background-color: #f8d7da;
+        color: #721c24;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+      }
 
-        /* ── Content Card ─────────────────────────────────────── */
-        .content-card {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            width: 90%;
-            max-width: 1100px;
-        }
+      /* ── Pagination ── */
+      .pagination .page-link {
+        color: #666;
+      }
+      .pagination .page-item.active .page-link {
+        background-color: #ae946d;
+        border-color: #ae946d;
+      }
 
-        .page-title {
-            color: #AE946D;
-            font-weight: 600;
-            margin-bottom: 0;
-        }
+      /* ── Buttons ── */
+      .btn-custom {
+        background-color: #ae946d;
+        color: white;
+        border: none;
+        padding: 8px 20px;
+        border-radius: 5px;
+        font-weight: 600;
+      }
+      .btn-custom:hover {
+        background-color: #9a8260;
+        color: white;
+      }
+      .btn-listed {
+        background-color: #ae946d;
+        color: white;
+        border: none;
+        padding: 4px 12px;
+        border-radius: 5px;
+        font-size: 12px;
+        font-weight: 600;
+      }
+      .btn-unlisted {
+        background-color: #6c757d;
+        color: white;
+        border: none;
+        padding: 4px 12px;
+        border-radius: 5px;
+        font-size: 12px;
+        font-weight: 600;
+      }
+      .btn-listed:hover,
+      .btn-unlisted:hover {
+        opacity: 0.8;
+        color: white;
+      }
 
-        /* ── Search ───────────────────────────────────────────── */
-        .search-box {
-            max-width: 300px;
-        }
+      /* ── Mobile Topbar ── */
+      .mobile-topbar {
+        background: white;
+        padding: 12px 20px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        position: sticky;
+        top: 0;
+        z-index: 999;
+      }
+      .mobile-topbar .brand-name {
+        color: #ae946d;
+        font-weight: 700;
+      }
+      .toggle-btn {
+        background: none;
+        border: none;
+        font-size: 26px;
+        color: #ae946d;
+        cursor: pointer;
+      }
 
-        /* ── Table ────────────────────────────────────────────── */
-        .table thead {
-            background-color: #f8f9fa;
-        }
+      /* ── Footer ── */
+      .footer-custom {
+        background-color: #cdaf82;
+        color: white;
+        text-align: center;
+        padding: 15px;
+      }
 
-        .table tbody tr {
-            vertical-align: middle;
-        }
+      /* ── Image Slots ── */
+      .image-slot {
+        width: 100%;
+        aspect-ratio: 1;
+        border: 2px dashed #dee2e6;
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        background: #f8f9fa;
+        transition: border-color 0.2s;
+      }
+      .image-slot:hover {
+        border-color: #ae946d;
+      }
+      .image-slot img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+      .image-slot .slot-remove {
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        background: rgba(220, 53, 69, 0.9);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 22px;
+        height: 22px;
+        font-size: 11px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10;
+        cursor: pointer;
+      }
+      .image-slot .slot-placeholder {
+        color: #aaa;
+        font-size: 12px;
+        text-align: center;
+      }
+      .image-slot .slot-placeholder i {
+        font-size: 22px;
+        display: block;
+        margin-bottom: 4px;
+      }
 
-        .product-img {
-            width: 60px;
-            height: 50px;
-            object-fit: cover;
-            border-radius: 6px;
-        }
+      /* ── Size Cards ── */
+      .size-card {
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 12px;
+        margin-bottom: 10px;
+      }
+      .size-card .size-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        user-select: none;
+      }
+      .size-card .size-header input[type="checkbox"] {
+        accent-color: #ae946d;
+        width: 16px;
+        height: 16px;
+      }
+      .size-card-drawer .size-header {
+        cursor: pointer;
+      }
 
-        /* ── Badges ───────────────────────────────────────────── */
-        .badge-instock {
-            background-color: #d4edda;
-            color: #155724;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
+      .size-fields {
+        display: none;
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top: 1px solid #f0f0f0;
+      }
+      .size-fields.show {
+        display: block;
+      }
 
-        .badge-outofstock {
-            background-color: #f8d7da;
-            color: #721c24;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
+      /* ── Sub-type checkbox rows (With Drawer / Without Drawer) ── */
+      .subtype-row {
+        display: none;
+        margin-top: 10px;
+        padding-top: 8px;
+        border-top: 1px solid #f0f0f0;
+      }
+      .subtype-row.show {
+        display: block;
+      }
 
-        /* ── Pagination ───────────────────────────────────────── */
-        .pagination .page-link {
-            color: #666;
-        }
+      .subtype-check-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 0;
+        cursor: pointer;
+        user-select: none;
+      }
+      .subtype-check-header input[type="checkbox"] {
+        accent-color: #ae946d;
+        width: 15px;
+        height: 15px;
+        cursor: pointer;
+      }
+      .subtype-check-header label {
+        font-size: 13px;
+        font-weight: 600;
+        color: #555;
+        cursor: pointer;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+      .subtype-check-header label i {
+        color: #ae946d;
+        font-size: 15px;
+      }
 
-        .pagination .page-item.active .page-link {
-            background-color: #AE946D;
-            border-color: #AE946D;
-        }
+      .subtype-fields {
+        display: none;
+        margin-top: 8px;
+        padding: 10px 0 2px 24px;
+      }
+      .subtype-fields.show {
+        display: block;
+      }
 
-        /* ── Buttons ──────────────────────────────────────────── */
-        .btn-custom {
-            background-color: #AE946D;
-            color: white;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 5px;
-            font-weight: 600;
-        }
+      /* ── Crop Modal ── */
+      .crop-modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 9999;
+        align-items: center;
+        justify-content: center;
+      }
+      .crop-modal-overlay.show {
+        display: flex;
+      }
+      .crop-modal-box {
+        background: white;
+        border-radius: 12px;
+        padding: 24px;
+        width: 90%;
+        max-width: 560px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      }
+      .crop-modal-box h5 {
+        font-weight: 700;
+        margin-bottom: 16px;
+      }
+      .crop-container {
+        width: 100%;
+        height: 340px;
+        overflow: hidden;
+        background: #1a1a1a;
+        border-radius: 8px;
+        position: relative;
+      }
+      .crop-container img {
+        display: block;
+        max-width: 100%;
+      }
+      .crop-counter {
+        position: absolute;
+        bottom: 8px;
+        right: 10px;
+        color: white;
+        font-size: 12px;
+        background: rgba(0, 0, 0, 0.5);
+        padding: 2px 6px;
+        border-radius: 4px;
+      }
+      .crop-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 16px;
+      }
 
-        .btn-custom:hover {
-            background-color: #9a8260;
-            color: white;
-        }
-
-        .btn-listed {
-            background-color: #AE946D;
-            color: white;
-            border: none;
-            padding: 4px 12px;
-            border-radius: 5px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .btn-unlisted {
-            background-color: #6c757d;
-            color: white;
-            border: none;
-            padding: 4px 12px;
-            border-radius: 5px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .btn-listed:hover,
-        .btn-unlisted:hover {
-            opacity: 0.8;
-            color: white;
-        }
-
-        /* ── Mobile Topbar ────────────────────────────────────── */
-        .mobile-topbar {
-            background: white;
-            padding: 12px 20px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-            position: sticky;
-            top: 0;
-            z-index: 999;
-        }
-
-        .mobile-topbar .brand-name {
-            color: #AE946D;
-            font-weight: 700;
-        }
-
-        .toggle-btn {
-            background: none;
-            border: none;
-            font-size: 26px;
-            color: #AE946D;
-            cursor: pointer;
-        }
-
-        /* ── Footer ───────────────────────────────────────────── */
-        .footer-custom {
-            background-color: #CDAF82;
-            color: white;
-            text-align: center;
-            padding: 15px;
-        }
-
-        /* ── Image Slots ──────────────────────────────────────── */
-        .image-slot {
-            width: 100%;
-            aspect-ratio: 1;
-            border: 2px dashed #dee2e6;
-            border-radius: 8px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-            background: #f8f9fa;
-            transition: border-color 0.2s;
-        }
-
-        .image-slot:hover {
-            border-color: #AE946D;
-        }
-
-        .image-slot img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            position: absolute;
-            top: 0;
-            left: 0;
-        }
-
-        .image-slot .slot-remove {
-            position: absolute;
-            top: 4px;
-            right: 4px;
-            background: rgba(220, 53, 69, 0.9);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 22px;
-            height: 22px;
-            font-size: 11px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10;
-            cursor: pointer;
-        }
-
-        .image-slot .slot-placeholder {
-            color: #aaa;
-            font-size: 12px;
-            text-align: center;
-        }
-
-        .image-slot .slot-placeholder i {
-            font-size: 22px;
-            display: block;
-            margin-bottom: 4px;
-        }
-
-        /* ── Size Variant ─────────────────────────────────────── */
-        .size-card {
-            border: 1px solid #dee2e6;
-            border-radius: 8px;
-            padding: 12px;
-            margin-bottom: 10px;
-        }
-
-        .size-card .size-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-            user-select: none;
-        }
-
-        .size-card .size-header input[type="checkbox"] {
-            accent-color: #AE946D;
-            width: 16px;
-            height: 16px;
-        }
-
-        .size-fields {
-            display: none;
-            margin-top: 12px;
-            padding-top: 12px;
-            border-top: 1px solid #f0f0f0;
-        }
-
-        .size-fields.show {
-            display: block;
-        }
-
-        /* ── View Modal Product Detail ────────────────────────── */
-        .view-img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            border-radius: 8px;
-        }
-
-        .detail-label {
-            font-size: 12px;
-            color: #999;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .detail-value {
-            font-size: 14px;
-            color: #333;
-            font-weight: 500;
-        }
-
-        .size-tag {
-            display: inline-block;
-            background: #f8f9fa;
-            border: 1px solid #dee2e6;
-            border-radius: 5px;
-            padding: 4px 10px;
-            font-size: 13px;
-            margin: 2px;
-        }
+      /* ── Detail labels (view modal) ── */
+      .detail-label {
+        font-size: 12px;
+        color: #999;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      .detail-value {
+        font-size: 14px;
+        color: #333;
+        font-weight: 500;
+      }
+      .view-img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 8px;
+      }
     </style>
-</head>
-<body>
-
-    <!-- ── Sidebar (Desktop Only) ───────────────────────────── -->
+  </head>
+  <body>
+    <!-- ── Sidebar (Desktop) ── -->
     <div class="sidebar d-none d-md-block">
-        <div class="sidebar-brand">
-            <i class="bi bi-tree-fill me-2"></i>Wooden Cot
+      <div class="sidebar-brand">
+        <i class="bi bi-tree-fill me-2"></i>Wooden Cot
+      </div>
+      <nav class="py-3">
+        <div class="nav flex-column">
+          <a class="nav-link" href="/admin/dashboard"
+            ><i class="bi bi-speedometer2"></i> Dashboard</a
+          >
+          <a class="nav-link active" href="/admin/products"
+            ><i class="bi bi-box-seam"></i> Products</a
+          >
+          <a class="nav-link" href="/admin/categories"
+            ><i class="bi bi-grid"></i> Categories</a
+          >
+          <a class="nav-link" href="/admin/orders"
+            ><i class="bi bi-receipt"></i> Orders</a
+          >
+          <a class="nav-link" href="/admin/customers"
+            ><i class="bi bi-people"></i> Customers</a
+          >
+          <a class="nav-link" href="/admin/offers"
+            ><i class="bi bi-tag"></i> Offers</a
+          >
+          <a class="nav-link" href="/admin/coupons"
+            ><i class="bi bi-ticket-perforated"></i> Coupons</a
+          >
+          <a class="nav-link" href="/admin/salesReport"
+            ><i class="bi bi-graph-up"></i> Sales Report</a
+          >
+          <a class="nav-link logout-link" href="/admin/logout"
+            ><i class="bi bi-box-arrow-right"></i> Logout</a
+          >
         </div>
-        <nav class="py-3">
-            <div class="nav flex-column">
-                <a class="nav-link" href="/admin/dashboard"><i class="bi bi-speedometer2"></i> Dashboard</a>
-                <a class="nav-link active" href="/admin/products"><i class="bi bi-box-seam"></i> Products</a>
-                <a class="nav-link" href="/admin/categories"><i class="bi bi-grid"></i> Categories</a>
-                <a class="nav-link" href="/admin/orders"><i class="bi bi-receipt"></i> Orders</a>
-                <a class="nav-link" href="/admin/customers"><i class="bi bi-people"></i> Customers</a>
-                <a class="nav-link" href="/admin/offers"><i class="bi bi-tag"></i> Offers</a>
-                <a class="nav-link" href="/admin/coupons"><i class="bi bi-ticket-perforated"></i> Coupons</a>
-                <a class="nav-link" href="/admin/salesReport"><i class="bi bi-graph-up"></i> Sales Report</a>
-                <a class="nav-link logout-link" href="/admin/logout"><i class="bi bi-box-arrow-right"></i> Logout</a>
-            </div>
-        </nav>
+      </nav>
     </div>
 
-    <!-- ── Offcanvas Sidebar (Mobile Only) ──────────────────── -->
+    <!-- ── Offcanvas Sidebar (Mobile) ── -->
     <div class="offcanvas offcanvas-start" tabindex="-1" id="mobileSidebar">
-        <div class="offcanvas-brand">
-            <i class="bi bi-tree-fill me-2"></i>Wooden Cot
-        </div>
-        <div class="offcanvas-body p-0">
-            <nav class="py-3">
-                <div class="nav flex-column">
-                    <a class="nav-link" href="/admin/dashboard"><i class="bi bi-speedometer2"></i> Dashboard</a>
-                    <a class="nav-link active" href="/admin/products"><i class="bi bi-box-seam"></i> Products</a>
-                    <a class="nav-link" href="/admin/categories"><i class="bi bi-grid"></i> Categories</a>
-                    <a class="nav-link" href="/admin/orders"><i class="bi bi-receipt"></i> Orders</a>
-                    <a class="nav-link" href="/admin/customers"><i class="bi bi-people"></i> Customers</a>
-                    <a class="nav-link" href="/admin/offers"><i class="bi bi-tag"></i> Offers</a>
-                    <a class="nav-link" href="/admin/coupons"><i class="bi bi-ticket-perforated"></i> Coupons</a>
-                    <a class="nav-link" href="/admin/salesReport"><i class="bi bi-graph-up"></i> Sales Report</a>
-                    <a class="nav-link logout-link" href="/admin/logout"><i class="bi bi-box-arrow-right"></i> Logout</a>
-                </div>
-            </nav>
-        </div>
+      <div class="offcanvas-brand">
+        <i class="bi bi-tree-fill me-2"></i>Wooden Cot
+      </div>
+      <div class="offcanvas-body p-0">
+        <nav class="py-3">
+          <div class="nav flex-column">
+            <a class="nav-link" href="/admin/dashboard"
+              ><i class="bi bi-speedometer2"></i> Dashboard</a
+            >
+            <a class="nav-link active" href="/admin/products"
+              ><i class="bi bi-box-seam"></i> Products</a
+            >
+            <a class="nav-link" href="/admin/categories"
+              ><i class="bi bi-grid"></i> Categories</a
+            >
+            <a class="nav-link" href="/admin/orders"
+              ><i class="bi bi-receipt"></i> Orders</a
+            >
+            <a class="nav-link" href="/admin/customers"
+              ><i class="bi bi-people"></i> Customers</a
+            >
+            <a class="nav-link" href="/admin/offers"
+              ><i class="bi bi-tag"></i> Offers</a
+            >
+            <a class="nav-link" href="/admin/coupons"
+              ><i class="bi bi-ticket-perforated"></i> Coupons</a
+            >
+            <a class="nav-link" href="/admin/salesReport"
+              ><i class="bi bi-graph-up"></i> Sales Report</a
+            >
+            <a class="nav-link logout-link" href="/admin/logout"
+              ><i class="bi bi-box-arrow-right"></i> Logout</a
+            >
+          </div>
+        </nav>
+      </div>
     </div>
 
-    <!-- ── Page Wrapper ──────────────────────────────────────── -->
+    <!-- ── Page Wrapper ── -->
     <div class="page-wrapper">
+      <div
+        class="mobile-topbar d-flex d-md-none align-items-center justify-content-between"
+      >
+        <button
+          class="toggle-btn"
+          data-bs-toggle="offcanvas"
+          data-bs-target="#mobileSidebar"
+        >
+          <i class="bi bi-list"></i>
+        </button>
+        <span class="brand-name"
+          ><i class="bi bi-tree-fill me-1"></i>Wooden Cot</span
+        >
+      </div>
 
-        <!-- Mobile Topbar -->
-        <div class="mobile-topbar d-flex d-md-none align-items-center justify-content-between">
-            <button class="toggle-btn" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar">
-                <i class="bi bi-list"></i>
+      <div class="main-content">
+        <div class="content-card">
+          <div
+            class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3"
+          >
+            <h2 class="page-title">Products</h2>
+            <button
+              class="btn btn-custom"
+              data-bs-toggle="modal"
+              data-bs-target="#addProductModal"
+            >
+              <i class="bi bi-plus-circle me-2"></i>Add Product
             </button>
-            <span class="brand-name">
-                <i class="bi bi-tree-fill me-1"></i>Wooden Cot
-            </span>
-        </div>
+          </div>
 
-        <!-- Main Content -->
-        <div class="main-content">
-            <div class="content-card">
-
-                <!-- Header -->
-                <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
-                    <h2 class="page-title">Products</h2>
-                    <button class="btn btn-custom" data-bs-toggle="modal" data-bs-target="#addProductModal">
-                        <i class="bi bi-plus-circle me-2"></i>Add Product
-                    </button>
-                </div>
-
-                <!-- Search -->
-                <div class="mb-3">
-                    <div class="input-group search-box">
-                        <input type="text" class="form-control" id="searchCategory" placeholder="Search Products">
-                        <button class="btn btn-outline-secondary" type="button" id="clearSearch">
-                            <i class="bi bi-x-lg"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Table -->
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle w-100">
-                        <thead>
-                            <tr>
-                                <th style="width: 70px;">Image</th>
-                                <th>Product Name</th>
-                                <th>Category</th>
-                                <th>Availability</th>
-                                <th>Status</th>
-                                <th style="width: 120px;">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="productTableBody"></tbody>
-                    </table>
-                </div>
-
-                <!-- Pagination -->
-                <div class="d-flex flex-wrap justify-content-between align-items-center mt-3 gap-2">
-                    <div class="text-muted small">Showing 1 to 4 of 12 entries</div>
-                    <nav aria-label="Page navigation">
-                        <ul class="pagination mb-0 justify-content-end" id="pagination"></ul>
-                    </nav>
-                </div>
-
+          <div class="mb-3">
+            <div class="input-group search-box">
+              <input
+                type="text"
+                class="form-control"
+                id="searchCategory"
+                placeholder="Search Products"
+              />
+              <button
+                class="btn btn-outline-secondary"
+                type="button"
+                id="clearSearch"
+              >
+                <i class="bi bi-x-lg"></i>
+              </button>
             </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table table-hover align-middle w-100">
+              <thead>
+                <tr>
+                  <th style="width: 70px">Image</th>
+                  <th>Product Name</th>
+                  <th>Category</th>
+                  <th>Availability</th>
+                  <th>Status</th>
+                  <th style="width: 120px">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="productTableBody"></tbody>
+            </table>
+          </div>
+
+          <div
+            class="d-flex flex-wrap justify-content-between align-items-center mt-3 gap-2"
+          >
+            <div class="text-muted small">Showing 1 to 4 of 12 entries</div>
+            <nav>
+              <ul
+                class="pagination mb-0 justify-content-end"
+                id="pagination"
+              ></ul>
+            </nav>
+          </div>
         </div>
+      </div>
 
-        <!-- Footer -->
-        <footer class="footer-custom">
-            <p class="mb-0 small">Copyright &copy; Wooden Cot 2026</p>
-        </footer>
-
+      <footer class="footer-custom">
+        <p class="mb-0 small">Copyright &copy; Wooden Cot 2026</p>
+      </footer>
     </div>
 
     <!-- ══════════════════════════════════════════════════════════
          ADD PRODUCT MODAL
     ══════════════════════════════════════════════════════════ -->
-    <div class="modal fade" id="addProductModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
-            <div class="modal-content">
+    <div
+      class="modal fade"
+      id="addProductModal"
+      tabindex="-1"
+      aria-hidden="true"
+    >
+      <div
+        class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable"
+      >
+        <div class="modal-content">
+          <div class="modal-header border-0 pb-0">
+            <h5 class="modal-title fw-bold">Add New Product</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="addProductForm">
+              <div class="mb-3">
+                <label class="form-label small fw-semibold">Product Name</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="name"
+                  placeholder="Enter product name"
+                  required
+                />
+                <small class="error text-danger" id="error-name"></small>
+              </div>
 
-                <div class="modal-header border-0 pb-0">
-                    <h5 class="modal-title fw-bold">Add New Product</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+              <div class="mb-3">
+                <label class="form-label small fw-semibold">Category</label>
+                <select id="category" class="form-select" required>
+                <option value="" disabled selected>Select category</option>
+
+                <% categories.forEach(cat => { %>
+                  <option value="<%= cat._id %>"><%= cat.name %></option>
+                <% }) %>
+
+              </select>
+                <small class="error text-danger" id="error-category"></small>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label small fw-semibold">Description</label>
+                <textarea
+                  id="description"
+                  class="form-control"
+                  rows="3"
+                  placeholder="Enter product description"
+                  required
+                ></textarea>
+                <small class="error text-danger" id="error-description"></small>
+              </div>
+
+              <hr class="my-3" />
+              <label class="form-label small fw-semibold mb-2"
+                >Size &amp; Pricing</label
+              >
+              <small
+                class="error text-danger d-block mb-2"
+                id="error-size"
+              ></small>
+
+              <!-- ── SINGLE ─────────────────────────── -->
+              <div class="size-card">
+                <div class="size-header">
+                  <input
+                    type="checkbox"
+                    id="chk-single"
+                    onchange="onSizeCheck('add', 'single')"
+                  />
+                  <label
+                    for="chk-single"
+                    class="fw-semibold mb-0"
+                    style="cursor: pointer"
+                    >Single</label
+                  >
+                  <small id="error-single" class="error text-danger"></small>
                 </div>
-
-                <div class="modal-body">
-                    <form id="addProductForm">
-
-                        <!-- Product Name -->
-                        <div class="mb-3">
-                            <label class="form-label small fw-semibold">Product Name</label>
-                            <input type="text" class="form-control" id="name" placeholder="Enter product name" required>
-                            <small class="text-danger error" id="error-name"></small>
-                        </div>
-
-                        <!-- Category -->
-                        <div class="mb-3">
-                            <label class="form-label small fw-semibold">Category</label>
-                            <select id="category" class="form-select" required>
-                                <option value="" disabled selected>Select category</option>
-                                <option>Teak</option>
-                                <option>Sheesham</option>
-                                <option>Oak</option>
-                                <option>Pine</option>
-                            </select>
-                            <small class="text-danger error" id="error-category"></small>
-                        </div>
-
-                        <!-- Description -->
-                        <div class="mb-3">
-                            <label class="form-label small fw-semibold">Description</label>
-                            <textarea id="description" class="form-control" rows="3" placeholder="Enter product description" required></textarea>
-                            <small class="text-danger error" id="error-description"></small>
-                        </div>
-
-                        <hr class="my-3">
-
-                        <!-- Size Variants -->
-                        <label class="form-label small fw-semibold mb-2">Size & Pricing</label>
-                        <small class="text-danger error" id="error-size"></small>
-
-                        <!-- Single -->
-                        <div class="size-card">
-                            <div class="size-header" onclick="toggleSize('single')">
-                                <input type="checkbox" id="chk-single" onchange="toggleSize('single')">
-                                <label for="chk-single" class="fw-semibold mb-0" style="cursor:pointer;">Single</label>
-                            </div>
-                            <div class="size-fields" id="fields-single">
-                                <div class="row g-3">
-                                    <div class="col-6">
-                                        <label class="form-label small">Quantity</label>
-                                        <input type="number" class="form-control qty-single" placeholder="Qty" min="0">
-                                        <small class="text-danger error" id="error-qty-single"></small>
-                                    </div>
-                                    <div class="col-6">
-                                        <label class="form-label small">Price (₹)</label>
-                                        <input type="number" class="form-control price-single" placeholder="Price" min="0">
-                                        <small class="text-danger error" id="error-price-single"></small>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Queen -->
-                        <div class="size-card">
-                            <div class="size-header" onclick="toggleSize('queen')">
-                                <input type="checkbox" id="chk-queen" onchange="toggleSize('queen')">
-                                <label for="chk-queen" class="fw-semibold mb-0" style="cursor:pointer;">Queen</label>
-                            </div>
-                            <div class="size-fields" id="fields-queen">
-                                <div class="row g-3">
-                                    <div class="col-6">
-                                        <label class="form-label small">Quantity</label>
-                                        <input type="number" class="form-control qty-queen" placeholder="Qty" min="0">
-                                        <small class="text-danger error" id="error-qty-queen"></small>
-                                    </div>
-                                    <div class="col-6">
-                                        <label class="form-label small">Price (₹)</label>
-                                        <input type="number" class="form-control price-queen" placeholder="Price" min="0">
-                                        <small class="text-danger error" id="error-price-queen"></small>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- King -->
-                        <div class="size-card">
-                            <div class="size-header" onclick="toggleSize('king')">
-                                <input type="checkbox" id="chk-king" onchange="toggleSize('king')">
-                                <label for="chk-king" class="fw-semibold mb-0" style="cursor:pointer;">King</label>
-                            </div>
-                            <div class="size-fields" id="fields-king">
-                                <div class="row g-3">
-                                    <div class="col-6">
-                                        <label class="form-label small">Quantity</label>
-                                        <input type="number" class="form-control qty-king" placeholder="Qty" min="0">
-                                        <small class="text-danger error" id="error-qty-king"></small>
-                                    </div>
-                                    <div class="col-6">
-                                        <label class="form-label small">Price (₹)</label>
-                                        <input type="number" class="form-control price-king" placeholder="Price" min="0">
-                                        <small class="text-danger error" id="error-price-king"></small>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <hr class="my-3">
-
-                        <!-- Image Upload — 4 Fixed Slots -->
-                        <label class="form-label small fw-semibold mb-2">Product Images (up to 4)</label>
-                        <small class="text-danger error" id="error-image"></small>
-                        <div class="row g-2" id="imageSlots">
-                            <div class="col-3"><div class="image-slot" id="slot-0" onclick="triggerFileInput(0)"><span class="slot-placeholder"><i class="bi bi-image"></i>Add Photo</span></div></div>
-                            <div class="col-3"><div class="image-slot" id="slot-1" onclick="triggerFileInput(1)"><span class="slot-placeholder"><i class="bi bi-image"></i>Add Photo</span></div></div>
-                            <div class="col-3"><div class="image-slot" id="slot-2" onclick="triggerFileInput(2)"><span class="slot-placeholder"><i class="bi bi-image"></i>Add Photo</span></div></div>
-                            <div class="col-3"><div class="image-slot" id="slot-3" onclick="triggerFileInput(3)"><span class="slot-placeholder"><i class="bi bi-image"></i>Add Photo</span></div></div>
-                        </div>
-                        <!-- Hidden file inputs for each slot -->
-                        <input type="file" id="fileInput-0" accept="image/*" class="d-none" onchange="previewImage(0, this)">
-                        <input type="file" id="fileInput-1" accept="image/*" class="d-none" onchange="previewImage(1, this)">
-                        <input type="file" id="fileInput-2" accept="image/*" class="d-none" onchange="previewImage(2, this)">
-                        <input type="file" id="fileInput-3" accept="image/*" class="d-none" onchange="previewImage(3, this)">
-
-                    </form>
+                <div class="subtype-row" id="add-single-subtypes">
+                  <!-- With Drawer -->
+                  <div class="subtype-check-header">
+                    <input
+                      type="checkbox"
+                      id="add-chk-single-drawer"
+                      onchange="onSubCheck('add', 'single', 'drawer')"
+                    />
+                    <label for="add-chk-single-drawer"
+                      ><i class="bi bi-layout-sidebar-inset"></i>With
+                      Drawer</label
+                    >
+                  </div>
+                  <div class="subtype-fields" id="add-single-drawer-fields">
+                    <div class="row g-3">
+                      <div class="col-6">
+                        <label class="form-label small">Quantity</label>
+                        <input
+                          type="number"
+                          class="form-control"
+                          id="add-qty-single-drawer"
+                          placeholder="Qty"
+                          min="0"
+                        />
+                      </div>
+                      <div class="col-6">
+                        <label class="form-label small">Price (₹)</label>
+                        <input
+                          type="number"
+                          class="form-control"
+                          id="add-price-single-drawer"
+                          placeholder="Price"
+                          min="0"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Without Drawer -->
+                  <div class="subtype-check-header">
+                    <input
+                      type="checkbox"
+                      id="add-chk-single-nodrawer"
+                      onchange="onSubCheck('add', 'single', 'nodrawer')"
+                    />
+                    <label for="add-chk-single-nodrawer"
+                      ><i class="bi bi-layout-text-window"></i>Without
+                      Drawer</label
+                    >
+                  </div>
+                  <div class="subtype-fields" id="add-single-nodrawer-fields">
+                    <div class="row g-3">
+                      <div class="col-6">
+                        <label class="form-label small">Quantity</label>
+                        <input
+                          type="number"
+                          class="form-control"
+                          id="add-qty-single-nodrawer"
+                          placeholder="Qty"
+                          min="0"
+                        />
+                      </div>
+                      <div class="col-6">
+                        <label class="form-label small">Price (₹)</label>
+                        <input
+                          type="number"
+                          class="form-control"
+                          id="add-price-single-nodrawer"
+                          placeholder="Price"
+                          min="0"
+                        />
+                      </div>
+                    </div>
+                  </div>
                 </div>
+                <small class="text-danger" id="error-qty-single"></small>
+              </div>
 
-                <div class="modal-footer border-0">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-custom" id="addProductBtn">Add Product</button>
+              <!-- ── QUEEN ──────────────────────────── -->
+              <div class="size-card">
+                <div class="size-header">
+                  <input
+                    type="checkbox"
+                    id="chk-queen"
+                    onchange="onSizeCheck('add', 'queen')"
+                  />
+                  <label
+                    for="chk-queen"
+                    class="fw-semibold mb-0"
+                    style="cursor: pointer"
+                    >Queen</label
+                  >
+                  <small id="error-queen" class="error text-danger"></small>
                 </div>
+                <div class="subtype-row" id="add-queen-subtypes">
+                  <div class="subtype-check-header">
+                    <input
+                      type="checkbox"
+                      id="add-chk-queen-drawer"
+                      onchange="onSubCheck('add', 'queen', 'drawer')"
+                    />
+                    <label for="add-chk-queen-drawer"
+                      ><i class="bi bi-layout-sidebar-inset"></i>With
+                      Drawer</label
+                    >
+                  </div>
+                  <div class="subtype-fields" id="add-queen-drawer-fields">
+                    <div class="row g-3">
+                      <div class="col-6">
+                        <label class="form-label small">Quantity</label>
+                        <input
+                          type="number"
+                          class="form-control"
+                          id="add-qty-queen-drawer"
+                          placeholder="Qty"
+                          min="0"
+                        />
+                      </div>
+                      <div class="col-6">
+                        <label class="form-label small">Price (₹)</label>
+                        <input
+                          type="number"
+                          class="form-control"
+                          id="add-price-queen-drawer"
+                          placeholder="Price"
+                          min="0"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div class="subtype-check-header">
+                    <input
+                      type="checkbox"
+                      id="add-chk-queen-nodrawer"
+                      onchange="onSubCheck('add', 'queen', 'nodrawer')"
+                    />
+                    <label for="add-chk-queen-nodrawer"
+                      ><i class="bi bi-layout-text-window"></i>Without
+                      Drawer</label
+                    >
+                  </div>
+                  <div class="subtype-fields" id="add-queen-nodrawer-fields">
+                    <div class="row g-3">
+                      <div class="col-6">
+                        <label class="form-label small">Quantity</label>
+                        <input
+                          type="number"
+                          class="form-control"
+                          id="add-qty-queen-nodrawer"
+                          placeholder="Qty"
+                          min="0"
+                        />
+                      </div>
+                      <div class="col-6">
+                        <label class="form-label small">Price (₹)</label>
+                        <input
+                          type="number"
+                          class="form-control"
+                          id="add-price-queen-nodrawer"
+                          placeholder="Price"
+                          min="0"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <small class="text-danger" id="error-qty-queen"></small>
+                </div>
+              </div>
 
-            </div>
+              <!-- ── KING ───────────────────────────── -->
+              <div class="size-card">
+                <div class="size-header">
+                  <input
+                    type="checkbox"
+                    id="chk-king"
+                    onchange="onSizeCheck('add', 'king')"
+                  />
+                  <label
+                    for="chk-king"
+                    class="fw-semibold mb-0"
+                    style="cursor: pointer"
+                    >King</label
+                  >
+                  <small id="error-king" class="error text-danger"></small>
+                </div>
+                <div class="subtype-row" id="add-king-subtypes">
+                  <div class="subtype-check-header">
+                    <input
+                      type="checkbox"
+                      id="add-chk-king-drawer"
+                      onchange="onSubCheck('add', 'king', 'drawer')"
+                    />
+                    <label for="add-chk-king-drawer"
+                      ><i class="bi bi-layout-sidebar-inset"></i>With
+                      Drawer</label
+                    >
+                  </div>
+                  <div class="subtype-fields" id="add-king-drawer-fields">
+                    <div class="row g-3">
+                      <div class="col-6">
+                        <label class="form-label small">Quantity</label>
+                        <input
+                          type="number"
+                          class="form-control"
+                          id="add-qty-king-drawer"
+                          placeholder="Qty"
+                          min="0"
+                        />
+                      </div>
+                      <div class="col-6">
+                        <label class="form-label small">Price (₹)</label>
+                        <input
+                          type="number"
+                          class="form-control"
+                          id="add-price-king-drawer"
+                          placeholder="Price"
+                          min="0"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div class="subtype-check-header">
+                    <input
+                      type="checkbox"
+                      id="add-chk-king-nodrawer"
+                      onchange="onSubCheck('add', 'king', 'nodrawer')"
+                    />
+                    <label for="add-chk-king-nodrawer"
+                      ><i class="bi bi-layout-text-window"></i>Without
+                      Drawer</label
+                    >
+                  </div>
+                  <div class="subtype-fields" id="add-king-nodrawer-fields">
+                    <div class="row g-3">
+                      <div class="col-6">
+                        <label class="form-label small">Quantity</label>
+                        <input
+                          type="number"
+                          class="form-control"
+                          id="add-qty-king-nodrawer"
+                          placeholder="Qty"
+                          min="0"
+                        />
+                      </div>
+                      <div class="col-6">
+                        <label class="form-label small">Price (₹)</label>
+                        <input
+                          type="number"
+                          class="form-control"
+                          id="add-price-king-nodrawer"
+                          placeholder="Price"
+                          min="0"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <small class="text-danger" id="error-qty-king"></small>
+                </div>
+              </div>
+
+              <hr class="my-3" />
+              <label class="form-label small fw-semibold mb-2"
+                >Product Images (up to 4)</label
+              >
+              <small class="text-danger d-block mb-2" id="error-image"></small>
+              <div class="row g-2">
+                <div class="col-3">
+                  <div class="image-slot" id="slot-0">
+                    <span class="slot-placeholder"
+                      ><i class="bi bi-image"></i>Add Photo</span
+                    >
+                  </div>
+                </div>
+                <div class="col-3">
+                  <div class="image-slot" id="slot-1">
+                    <span class="slot-placeholder"
+                      ><i class="bi bi-image"></i>Add Photo</span
+                    >
+                  </div>
+                </div>
+                <div class="col-3">
+                  <div class="image-slot" id="slot-2">
+                    <span class="slot-placeholder"
+                      ><i class="bi bi-image"></i>Add Photo</span
+                    >
+                  </div>
+                </div>
+                <div class="col-3">
+                  <div class="image-slot" id="slot-3">
+                    <span class="slot-placeholder"
+                      ><i class="bi bi-image"></i>Add Photo</span
+                    >
+                  </div>
+                </div>
+              </div>
+              <input
+                type="file"
+                name="images"
+                id="fileInput-0"
+                class="d-none"
+              />
+              <input
+                type="file"
+                name="images"
+                id="fileInput-1"
+                class="d-none"
+              />
+              <input
+                type="file"
+                name="images"
+                id="fileInput-2"
+                class="d-none"
+              />
+              <input
+                type="file"
+                name="images"
+                id="fileInput-3"
+                class="d-none"
+              />
+            </form>
+          </div>
+          <div class="modal-footer border-0">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancel
+            </button>
+            <button type="button" class="btn btn-custom" id="addProductBtn">
+              Add Product
+            </button>
+          </div>
         </div>
+      </div>
     </div>
 
     <!-- ══════════════════════════════════════════════════════════
          EDIT PRODUCT MODAL
     ══════════════════════════════════════════════════════════ -->
-    <div class="modal fade" id="editProductModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
-            <div class="modal-content">
+    <div
+      class="modal fade"
+      id="editProductModal"
+      tabindex="-1"
+      aria-hidden="true"
+    >
+      <div
+        class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable"
+      >
+        <div class="modal-content">
+          <div class="modal-header border-0 pb-0">
+            <h5 class="modal-title fw-bold">Edit Product</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="editProductForm">
+              <div class="mb-3">
+                <label class="form-label small fw-semibold">Product Name</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="editProductName"
+                  value="Heritage Teak Bed"
+                  required
+                />
+                <small class="text-danger" id="edit-error-name"></small>
+              </div>
 
-                <div class="modal-header border-0 pb-0">
-                    <h5 class="modal-title fw-bold">Edit Product</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+              <div class="mb-3">
+                <label class="form-label small fw-semibold">Category</label>
+                <select class="form-select" id="editProductCategory" required>
+                <% categories.forEach(cat => { %>
+                  <option value="<%= cat._id %>"><%= cat.name %></option>
+                <% }) %>
+              </select>
+                <small class="text-danger" id="edit-error-category"></small>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label small fw-semibold">Description</label>
+                <textarea
+                  class="form-control"
+                  id="editProductDesc"
+                  rows="3"
+                  required
+                >
+A beautiful heritage teak bed crafted with premium quality wood.</textarea
+                >
+                <small class="text-danger" id="edit-error-description"></small>
+              </div>
+
+              <hr class="my-3" />
+              <label class="form-label small fw-semibold mb-2"
+                >Size &amp; Pricing</label
+              >
+              <small
+                class="text-danger d-block mb-2"
+                id="edit-error-size"
+              ></small>
+
+              <!-- ── SINGLE ─────────────────────────── -->
+              <div class="size-card">
+                <div class="size-header">
+                  <input
+                    type="checkbox"
+                    id="chk-edit-single"
+                    checked
+                    onchange="onSizeCheck('edit', 'single')"
+                  />
+                  <label
+                    for="chk-edit-single"
+                    class="fw-semibold mb-0"
+                    style="cursor: pointer"
+                    >Single</label
+                  >
                 </div>
-
-                <div class="modal-body">
-                    <form id="editProductForm">
-
-                        <div class="mb-3">
-                            <label class="form-label small fw-semibold">Product Name</label>
-                            <input type="text" class="form-control" id="editProductName" value="Heritage Teak Bed" required>
-                            <small class="text-danger error" id="error-name"></small>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label small fw-semibold">Category</label>
-                            <select class="form-select" id="editProductCategory" required>
-                                <option>Teak</option>
-                                <option>Sheesham</option>
-                                <option>Oak</option>
-                                <option>Pine</option>
-                            </select>
-                            <small class="text-danger error" id="error-category"></small>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label small fw-semibold">Description</label>
-                            <textarea class="form-control" id="editProductDesc" rows="3" required>A beautiful heritage teak bed crafted with premium quality wood.</textarea>
-                            <small class="text-danger error" id="error-description"></small>
-                        </div>
-
-                        <hr class="my-3">
-
-                        <label class="form-label small fw-semibold mb-2">Size & Pricing</label>
-                        <small class="text-danger error" id="edit-error-size"></small>
-
-                        <div class="size-card">
-                            <div class="size-header" onclick="toggleSize('edit-single')">
-                                <input type="checkbox" id="chk-edit-single" checked onchange="toggleSize('edit-single')">
-                                <label for="chk-edit-single" class="fw-semibold mb-0" style="cursor:pointer;">Single</label>
-                            </div>
-                            <div class="size-fields show" id="fields-edit-single">
-                                <div class="row g-3">
-                                    <div class="col-6">
-                                        <label class="form-label small">Quantity</label>
-                                        <input type="number" class="form-control edit-qty-single" value="10" min="0">
-                                        <small class="text-danger error"></small>
-                                    </div>
-                                    <div class="col-6">
-                                        <label class="form-label small">Price (₹)</label>
-                                        <input type="number" class="form-control edit-price-single" value="1800" min="0">
-                                        <small class="text-danger error"></small>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="size-card">
-                            <div class="size-header" onclick="toggleSize('edit-queen')">
-                                <input type="checkbox" id="chk-edit-queen" onchange="toggleSize('edit-queen')">
-                                <label for="chk-edit-queen" class="fw-semibold mb-0" style="cursor:pointer;">Queen</label>
-                            </div>
-                            <div class="size-fields" id="fields-edit-queen">
-                                <div class="row g-3">
-                                    <div class="col-6">
-                                        <label class="form-label small">Quantity</label>
-                                        <input type="number" class="form-control edit-qty-queen" placeholder="Qty" min="0">
-                                        <small class="text-danger error"></small>
-                                    </div>
-                                    <div class="col-6">
-                                        <label class="form-label small">Price (₹)</label>
-                                        <input type="number" class="form-control edit-price-queen" placeholder="Price" min="0">
-                                        <small class="text-danger error"></small>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="size-card">
-                            <div class="size-header" onclick="toggleSize('edit-king')">
-                                <input type="checkbox" id="chk-edit-king" onchange="toggleSize('edit-king')">
-                                <label for="chk-edit-king" class="fw-semibold mb-0" style="cursor:pointer;">King</label>
-                            </div>
-                            <div class="size-fields" id="fields-edit-king">
-                                <div class="row g-3">
-                                    <div class="col-6">
-                                        <label class="form-label small">Quantity</label>
-                                        <input type="number" class="form-control edit-qty-king" placeholder="Qty" min="0">
-                                        <small class="text-danger error"></small>
-                                    </div>
-                                    <div class="col-6">
-                                        <label class="form-label small">Price (₹)</label>
-                                        <input type="number" class="form-control edit-price-king" placeholder="Price" min="0">
-                                        <small class="text-danger error"></small>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <hr class="my-3">
-
-                        <label class="form-label small fw-semibold mb-2">Product Images (up to 4)</label>
-                        <small class="text-danger error" id="edit-error-image"></small>
-                        <div class="row g-2" id="editImageSlots">
-                            <div class="col-3">
-                                <div class="image-slot" id="edit-slot-0" onclick="triggerEditFileInput(0)">
-                                    <img src="https://placehold.co/120x120/e8ddd0/AE946D?text=Img1" alt="">
-                                    <button class="slot-remove" onclick="removeEditSlot(event, 0)"><i class="bi bi-x"></i></button>
-                                </div>
-                            </div>
-                            <div class="col-3">
-                                <div class="image-slot" id="edit-slot-1" onclick="triggerEditFileInput(1)">
-                                    <img src="https://placehold.co/120x120/e8ddd0/AE946D?text=Img2" alt="">
-                                    <button class="slot-remove" onclick="removeEditSlot(event, 1)"><i class="bi bi-x"></i></button>
-                                </div>
-                            </div>
-                            <div class="col-3"><div class="image-slot" id="edit-slot-2" onclick="triggerEditFileInput(2)"><span class="slot-placeholder"><i class="bi bi-image"></i>Add Photo</span></div></div>
-                            <div class="col-3"><div class="image-slot" id="edit-slot-3" onclick="triggerEditFileInput(3)"><span class="slot-placeholder"><i class="bi bi-image"></i>Add Photo</span></div></div>
-                        </div>
-                        <input type="file" id="editFileInput-0" accept="image/*" class="d-none" onchange="previewEditImage(0, this)">
-                        <input type="file" id="editFileInput-1" accept="image/*" class="d-none" onchange="previewEditImage(1, this)">
-                        <input type="file" id="editFileInput-2" accept="image/*" class="d-none" onchange="previewEditImage(2, this)">
-                        <input type="file" id="editFileInput-3" accept="image/*" class="d-none" onchange="previewEditImage(3, this)">
-
-                    </form>
+                <div class="subtype-row show" id="edit-single-subtypes">
+                  <div class="subtype-check-header">
+                    <input
+                      type="checkbox"
+                      id="edit-chk-single-drawer"
+                      checked
+                      onchange="onSubCheck('edit', 'single', 'drawer')"
+                    />
+                    <label for="edit-chk-single-drawer"
+                      ><i class="bi bi-layout-sidebar-inset"></i>With
+                      Drawer</label
+                    >
+                  </div>
+                  <div
+                    class="subtype-fields show"
+                    id="edit-single-drawer-fields"
+                  >
+                    <div class="row g-3">
+                      <div class="col-6">
+                        <label class="form-label small">Quantity</label>
+                        <input
+                          type="number"
+                          class="form-control"
+                          id="edit-qty-single-drawer"
+                          value="10"
+                          min="0"
+                        />
+                      </div>
+                      <div class="col-6">
+                        <label class="form-label small">Price (₹)</label>
+                        <input
+                          type="number"
+                          class="form-control"
+                          id="edit-price-single-drawer"
+                          value="1800"
+                          min="0"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div class="subtype-check-header">
+                    <input
+                      type="checkbox"
+                      id="edit-chk-single-nodrawer"
+                      onchange="onSubCheck('edit', 'single', 'nodrawer')"
+                    />
+                    <label for="edit-chk-single-nodrawer"
+                      ><i class="bi bi-layout-text-window"></i>Without
+                      Drawer</label
+                    >
+                  </div>
+                  <div class="subtype-fields" id="edit-single-nodrawer-fields">
+                    <div class="row g-3">
+                      <div class="col-6">
+                        <label class="form-label small">Quantity</label>
+                        <input
+                          type="number"
+                          class="form-control"
+                          id="edit-qty-single-nodrawer"
+                          placeholder="Qty"
+                          min="0"
+                        />
+                      </div>
+                      <div class="col-6">
+                        <label class="form-label small">Price (₹)</label>
+                        <input
+                          type="number"
+                          class="form-control"
+                          id="edit-price-single-nodrawer"
+                          placeholder="Price"
+                          min="0"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <small class="text-danger" id="edit-error-qty-single"></small>
                 </div>
+              </div>
 
-                <div class="modal-footer border-0">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-custom" id="editProductBtn">Save Changes</button>
+              <!-- ── QUEEN ──────────────────────────── -->
+              <div class="size-card">
+                <div class="size-header">
+                  <input
+                    type="checkbox"
+                    id="chk-edit-queen"
+                    onchange="onSizeCheck('edit', 'queen')"
+                  />
+                  <label
+                    for="chk-edit-queen"
+                    class="fw-semibold mb-0"
+                    style="cursor: pointer"
+                    >Queen</label
+                  >
                 </div>
+                <div class="subtype-row" id="edit-queen-subtypes">
+                  <div class="subtype-check-header">
+                    <input
+                      type="checkbox"
+                      id="edit-chk-queen-drawer"
+                      onchange="onSubCheck('edit', 'queen', 'drawer')"
+                    />
+                    <label for="edit-chk-queen-drawer"
+                      ><i class="bi bi-layout-sidebar-inset"></i>With
+                      Drawer</label
+                    >
+                  </div>
+                  <div class="subtype-fields" id="edit-queen-drawer-fields">
+                    <div class="row g-3">
+                      <div class="col-6">
+                        <label class="form-label small">Quantity</label>
+                        <input
+                          type="number"
+                          class="form-control"
+                          id="edit-qty-queen-drawer"
+                          placeholder="Qty"
+                          min="0"
+                        />
+                      </div>
+                      <div class="col-6">
+                        <label class="form-label small">Price (₹)</label>
+                        <input
+                          type="number"
+                          class="form-control"
+                          id="edit-price-queen-drawer"
+                          placeholder="Price"
+                          min="0"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div class="subtype-check-header">
+                    <input
+                      type="checkbox"
+                      id="edit-chk-queen-nodrawer"
+                      onchange="onSubCheck('edit', 'queen', 'nodrawer')"
+                    />
+                    <label for="edit-chk-queen-nodrawer"
+                      ><i class="bi bi-layout-text-window"></i>Without
+                      Drawer</label
+                    >
+                  </div>
+                  <div class="subtype-fields" id="edit-queen-nodrawer-fields">
+                    <div class="row g-3">
+                      <div class="col-6">
+                        <label class="form-label small">Quantity</label>
+                        <input
+                          type="number"
+                          class="form-control"
+                          id="edit-qty-queen-nodrawer"
+                          placeholder="Qty"
+                          min="0"
+                        />
+                      </div>
+                      <div class="col-6">
+                        <label class="form-label small">Price (₹)</label>
+                        <input
+                          type="number"
+                          class="form-control"
+                          id="edit-price-queen-nodrawer"
+                          placeholder="Price"
+                          min="0"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <small class="text-danger" id="edit-error-qty-queen"></small>
+                </div>
+              </div>
 
-            </div>
+              <!-- ── KING ───────────────────────────── -->
+              <div class="size-card">
+                <div class="size-header">
+                  <input
+                    type="checkbox"
+                    id="chk-edit-king"
+                    onchange="onSizeCheck('edit', 'king')"
+                  />
+                  <label
+                    for="chk-edit-king"
+                    class="fw-semibold mb-0"
+                    style="cursor: pointer"
+                    >King</label
+                  >
+                </div>
+                <div class="subtype-row" id="edit-king-subtypes">
+                  <div class="subtype-check-header">
+                    <input
+                      type="checkbox"
+                      id="edit-chk-king-drawer"
+                      onchange="onSubCheck('edit', 'king', 'drawer')"
+                    />
+                    <label for="edit-chk-king-drawer"
+                      ><i class="bi bi-layout-sidebar-inset"></i>With
+                      Drawer</label
+                    >
+                  </div>
+                  <div class="subtype-fields" id="edit-king-drawer-fields">
+                    <div class="row g-3">
+                      <div class="col-6">
+                        <label class="form-label small">Quantity</label>
+                        <input
+                          type="number"
+                          class="form-control"
+                          id="edit-qty-king-drawer"
+                          placeholder="Qty"
+                          min="0"
+                        />
+                      </div>
+                      <div class="col-6">
+                        <label class="form-label small">Price (₹)</label>
+                        <input
+                          type="number"
+                          class="form-control"
+                          id="edit-price-king-drawer"
+                          placeholder="Price"
+                          min="0"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div class="subtype-check-header">
+                    <input
+                      type="checkbox"
+                      id="edit-chk-king-nodrawer"
+                      onchange="onSubCheck('edit', 'king', 'nodrawer')"
+                    />
+                    <label for="edit-chk-king-nodrawer"
+                      ><i class="bi bi-layout-text-window"></i>Without
+                      Drawer</label
+                    >
+                  </div>
+                  <div class="subtype-fields" id="edit-king-nodrawer-fields">
+                    <div class="row g-3">
+                      <div class="col-6">
+                        <label class="form-label small">Quantity</label>
+                        <input
+                          type="number"
+                          class="form-control"
+                          id="edit-qty-king-nodrawer"
+                          placeholder="Qty"
+                          min="0"
+                        />
+                      </div>
+                      <div class="col-6">
+                        <label class="form-label small">Price (₹)</label>
+                        <input
+                          type="number"
+                          class="form-control"
+                          id="edit-price-king-nodrawer"
+                          placeholder="Price"
+                          min="0"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <small class="text-danger" id="edit-error-qty-king"></small>
+                </div>
+              </div>
+
+              <hr class="my-3" />
+              <label class="form-label small fw-semibold mb-2"
+                >Product Images (up to 4)</label
+              >
+              <small
+                class="text-danger d-block mb-2"
+                id="edit-error-image"
+              ></small>
+              <div class="row g-2">
+                <div class="col-3">
+                  <div class="image-slot" id="edit-slot-0">
+                    <button
+                      class="slot-remove"
+                      onclick="removeEditSlot(event, 0)"
+                    >
+                      <i class="bi bi-x"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="col-3">
+                  <div class="image-slot" id="edit-slot-1">
+                    <button
+                      class="slot-remove"
+                      onclick="removeEditSlot(event, 1)"
+                    >
+                      <i class="bi bi-x"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="col-3">
+                  <div class="image-slot" id="edit-slot-2">
+                    <span class="slot-placeholder"
+                      ><i class="bi bi-image"></i>Add Photo</span
+                    >
+                  </div>
+                </div>
+                <div class="col-3">
+                  <div class="image-slot" id="edit-slot-3">
+                    <span class="slot-placeholder"
+                      ><i class="bi bi-image"></i>Add Photo</span
+                    >
+                  </div>
+                </div>
+              </div>
+              <input
+                type="file"
+                name="images"
+                id="editFileInput-0"
+                class="d-none"
+              />
+              <input
+                type="file"
+                name="images"
+                id="editFileInput-1"
+                class="d-none"
+              />
+              <input
+                type="file"
+                name="images"
+                id="editFileInput-2"
+                class="d-none"
+              />
+              <input
+                type="file"
+                name="images"
+                id="editFileInput-3"
+                class="d-none"
+              />
+            </form>
+          </div>
+          <div class="modal-footer border-0">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancel
+            </button>
+            <button type="button" class="btn btn-custom" id="editProductBtn">
+              Save Changes
+            </button>
+          </div>
         </div>
+      </div>
     </div>
 
     <!-- ══════════════════════════════════════════════════════════
          VIEW PRODUCT MODAL
     ══════════════════════════════════════════════════════════ -->
-    <div class="modal fade" id="viewProductModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
-            <div class="modal-content">
-
-                <div class="modal-header border-0 pb-0">
-                    <h5 class="modal-title fw-bold">Product Details</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-
-                <div class="modal-body">
-
-                    <!-- Images -->
-                    <div class="row g-2 mb-4">
-                        <div class="col-6">
-                            <img id="viewMainImage" src="https://placehold.co/400x250/e8ddd0/AE946D?text=Product" class="view-img" alt="Product">
-                        </div>
-                        <div class="col-6">
-                            <div class="row g-2">
-                                <div class="col-6" id="viewImg1"><img src="https://placehold.co/200x120/e8ddd0/AE946D?text=Img2" class="w-100 rounded" style="height:80px;object-fit:cover;" alt=""></div>
-                                <div class="col-6" id="viewImg2"><img src="https://placehold.co/200x120/e8ddd0/AE946D?text=Img3" class="w-100 rounded" style="height:80px;object-fit:cover;" alt=""></div>
-                                <div class="col-6" id="viewImg3"><img src="https://placehold.co/200x120/e8ddd0/AE946D?text=Img4" class="w-100 rounded" style="height:80px;object-fit:cover;" alt=""></div>
-                                <div class="col-6 d-flex align-items-center justify-content-center bg-light rounded text-muted small">No Image</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Details -->
-                    <div class="row g-3">
-                        <div class="col-6">
-                            <div class="detail-label">Product Name</div>
-                            <div class="detail-value" id="viewName">Heritage Teak Bed</div>
-                        </div>
-                        <div class="col-6">
-                            <div class="detail-label">Category</div>
-                            <div class="detail-value" id="viewCategory">Teak</div>
-                        </div>
-                        <div class="col-12">
-                            <div class="detail-label">Description</div>
-                            <div class="detail-value" id="viewDescription">A beautiful heritage teak bed crafted with premium quality wood and traditional joinery techniques.</div>
-                        </div>
-                        <div class="col-6">
-                            <div class="detail-label">Availability</div>
-                            <div class="detail-value" id="viewAvailability"><span class="badge-instock">In Stock</span></div>
-                        </div>
-                        <div class="col-6">
-                            <div class="detail-label">Status</div>
-                            <div class="detail-value" id="viewStatus"><span class="badge bg-success">Listed</span></div>
-                        </div>
-                    </div>
-
-                    <hr class="my-3">
-
-                    <!-- Size & Pricing -->
-                    <div class="detail-label mb-2">Size & Pricing</div>
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-sm align-middle">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>Size</th>
-                                    <th>Quantity</th>
-                                    <th>Price</th>
-                                </tr>
-                            </thead>
-                            <tbody id="viewSizeTable"></tbody>
-                        </table>
-                    </div>
-
-                </div>
-
-                <div class="modal-footer border-0">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                </div>
-
+    <div
+      class="modal fade"
+      id="viewProductModal"
+      tabindex="-1"
+      aria-hidden="true"
+    >
+      <div
+        class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable"
+      >
+        <div class="modal-content">
+          <div class="modal-header border-0 pb-0">
+            <h5 class="modal-title fw-bold">Product Details</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="row g-2 mb-4">
+              <div class="col-6">
+                <img
+                  id="viewMainImage"
+                  src="https://placehold.co/400x250/e8ddd0/AE946D?text=Product"
+                  class="view-img"
+                  alt="Product"
+                />
+              </div>
+              <div class="col-6">
+                <div class="row g-2" id="viewImagesContainer"></div>
+              </div>
             </div>
+
+            <div class="row g-3">
+              <div class="col-6">
+                <div class="detail-label">Product Name</div>
+                <div class="detail-value" id="viewName">Heritage Teak Bed</div>
+              </div>
+              <div class="col-6">
+                <div class="detail-label">Category</div>
+                <div class="detail-value" id="viewCategory">Teak</div>
+              </div>
+              <div class="col-12">
+                <div class="detail-label">Description</div>
+                <div class="detail-value" id="viewDescription">
+                  A beautiful heritage teak bed crafted with premium quality
+                  wood.
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="detail-label">Availability</div>
+                <div class="detail-value" id="viewAvailability">
+                  <span class="badge-instock">In Stock</span>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="detail-label">Status</div>
+                <div class="detail-value" id="viewStatus">
+                  <span class="badge bg-success">Listed</span>
+                </div>
+              </div>
+            </div>
+            <hr class="my-3" />
+            <label class="form-label small fw-semibold mb-2">
+              Size & Pricing
+            </label>
+
+            <div class="table-responsive">
+              <table class="table table-bordered align-middle text-center">
+                <thead class="table-light">
+                  <tr>
+                    <th>Size</th>
+                    <th>Variant</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                  </tr>
+                </thead>
+                <tbody id="viewSizeTableBody">
+                  <!-- Dynamic data -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <!-- closes modal-body -->
         </div>
+        <!-- closes modal-content -->
+      </div>
+      <!-- closes modal-dialog -->
     </div>
 
-    <!-- ── Scripts ───────────────────────────────────────────── -->
+    <!-- ── Crop Modal ── -->
+    <div class="crop-modal-overlay" id="cropOverlay">
+      <div class="crop-modal-box">
+        <h5><i class="bi bi-crop me-2"></i>Crop Image</h5>
+        <div class="crop-container">
+          <img id="cropImage" src="" alt="crop" />
+          <span class="crop-counter" id="cropCounter"></span>
+        </div>
+        <div class="crop-actions">
+          <button class="btn btn-secondary" onclick="cancelCrop()">
+            Cancel
+          </button>
+          <button class="btn btn-custom" onclick="applyCrop()">Apply</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Delete Confirm Modal ── -->
+    <div class="modal fade" id="confirmDeleteModal">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-body text-center">
+            <p>Are you sure you want to delete?</p>
+            <button class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+            <button class="btn btn-secondary" data-bs-dismiss="modal">
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="toggleStatusModal">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-body text-center">
+          <p id="toggleStatusText"></p>
+
+          <button class="btn btn-custom" id="confirmToggleBtn">
+            Confirm
+          </button>
+
+          <button class="btn btn-secondary" data-bs-dismiss="modal">
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
     <script>
-        /* ── Size Toggle ──────────────────────────────────────── */
-        function toggleSize(id) {
-            const checkbox = document.getElementById('chk-' + id);
-            const fields   = document.getElementById('fields-' + id);
-            if (checkbox.checked) {
-                fields.classList.add('show');
-            } else {
-                fields.classList.remove('show');
-            }
+      /* ══════════════════════════════════════════════
+         SIZE checkbox (Single / Queen / King) — top level
+         shows/hides the subtype row beneath it
+      ══════════════════════════════════════════════ */
+      function onSizeCheck(prefix, size) {
+        const chkId =
+          size === "single"
+            ? prefix === "add"
+              ? "chk-single"
+              : "chk-edit-single"
+            : prefix + "-" + size === "add-queen"
+              ? "chk-queen"
+              : prefix === "add"
+                ? "chk-" + size
+                : "chk-edit-" + size;
+        // simpler direct approach:
+        const chk = document.getElementById(
+          size === "single"
+            ? prefix === "add"
+              ? "chk-single"
+              : "chk-edit-single"
+            : prefix === "add"
+              ? "chk-" + size
+              : "chk-edit-" + size,
+        );
+        const subtypes = document.getElementById(
+          prefix + "-" + size + "-subtypes",
+        );
+        if (!subtypes) return;
+        subtypes.classList.toggle("show", chk.checked);
+        // If unchecked, also collapse all sub-checkboxes
+        if (!chk.checked) {
+          subtypes.querySelectorAll('input[type="checkbox"]').forEach((c) => {
+            c.checked = false;
+          });
+          subtypes
+            .querySelectorAll(".subtype-fields")
+            .forEach((f) => f.classList.remove("show"));
+        }
+      }
+
+      /* ══════════════════════════════════════════════
+         SUB-TYPE checkbox (With Drawer / Without Drawer)
+         shows/hides the qty+price fields beneath it
+      ══════════════════════════════════════════════ */
+      function onSubCheck(prefix, size, type) {
+        const chk = document.getElementById(
+          prefix + "-chk-" + size + "-" + type,
+        );
+        const fields = document.getElementById(
+          prefix + "-" + size + "-" + type + "-fields",
+        );
+        if (!chk || !fields) return;
+        fields.classList.toggle("show", chk.checked);
+      }
+
+      /* ══════════════════════════════════════════════
+         VIEW modal — Queen/King header click toggle
+      ══════════════════════════════════════════════ */
+      function toggleViewSize(size) {
+        const fields = document.getElementById("viewFields" + size);
+        const chk = document.getElementById("viewChk" + size);
+        const open = fields.classList.toggle("show");
+        if (chk) chk.checked = open;
+      }
+
+      /* ══════════════════════════════════════════════
+         IMAGE CROP — shared state
+      ══════════════════════════════════════════════ */
+      let cropperInstance = null;
+      let cropSlotIndex = 0;
+      let cropModalPrefix = "add"; // 'add' or 'edit'
+      let totalSlots = 4;
+
+      function triggerFileInput(i) {
+        document.getElementById("fileInput-" + i).click();
+      }
+      function triggerEditFileInput(i) {
+        document.getElementById("editFileInput-" + i).click();
+      }
+
+      function openCrop(index, input, prefix) {
+        if (!input.files || !input.files[0]) return;
+
+        const file = input.files[0];
+        const imageError =
+          prefix === "add"
+            ? document.getElementById("error-image")
+            : document.getElementById("edit-error-image");
+        imageError.textContent = "";
+        const validationError = validateImageFile(file);
+
+        if (validationError) {
+          imageError.textContent = validationError;
+          input.value = "";
+          return;
+        }
+        cropSlotIndex = index;
+        cropModalPrefix = prefix;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const cropImg = document.getElementById("cropImage");
+
+          if (cropperInstance) {
+            cropperInstance.destroy();
+            cropperInstance = null;
+          }
+
+          cropImg.src = ""; // ← RESET first
+          cropImg.src = e.target.result;
+
+          document.getElementById("cropCounter").textContent =
+            index + 1 + "/" + totalSlots;
+          document.getElementById("cropOverlay").classList.add("show");
+
+          cropImg.onload = () => {
+            cropperInstance = new Cropper(cropImg, {
+              aspectRatio: 332.65 / 288.3,
+              viewMode: 1,
+              autoCropArea: 0.85,
+            });
+          };
+        };
+        reader.readAsDataURL(input.files[0]);
+        input.value = "";
+      }
+
+      function applyCrop() {
+        if (!cropperInstance) return;
+
+        const canvas = cropperInstance.getCroppedCanvas({
+          width: 600,
+          height: 600,
+        });
+
+        const prefix = cropModalPrefix;
+        const i = cropSlotIndex;
+
+        const inputId =
+          prefix === "add" ? `fileInput-${i}` : `editFileInput-${i}`;
+
+        const slotId = prefix === "add" ? `slot-${i}` : `edit-slot-${i}`;
+
+        const removeFn = prefix === "add" ? "removeSlot" : "removeEditSlot";
+
+        // 🔥 IMPORTANT PART (THIS FIXES YOUR BUG)
+        canvas.toBlob(
+          (blob) => {
+            const file = new File([blob], "cropped.jpg", {
+              type: "image/jpeg",
+            });
+
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(file);
+
+            // ✅ Assign file to input (VERY IMPORTANT)
+            document.getElementById(inputId).files = dataTransfer.files;
+
+            // ✅ Preview
+            const url = URL.createObjectURL(blob);
+
+            document.getElementById(slotId).innerHTML = `
+      <img src="${url}" alt="Preview">
+      <button class="slot-remove" onclick="${removeFn}(event,${i})">
+        <i class="bi bi-x"></i>
+      </button>
+    `;
+          },
+          "image/jpeg",
+          0.9,
+        );
+
+        cancelCrop();
+      }
+
+      function cancelCrop() {
+        if (cropperInstance) {
+          cropperInstance.destroy();
+          cropperInstance = null;
+        }
+        document.getElementById("cropOverlay").classList.remove("show");
+      }
+
+      function removeSlot(event, i) {
+        event.stopPropagation();
+
+        document.getElementById(`fileInput-${i}`).value = ""; // 🔥 clear file
+
+        document.getElementById("slot-" + i).innerHTML =
+          `<span class="slot-placeholder"><i class="bi bi-image"></i>Add Photo</span>`;
+      }
+
+      function removeEditSlot(event, i) {
+        event.stopPropagation();
+
+        document.getElementById(`editFileInput-${i}`).value = "";
+
+        // remove existing image from array
+        if (window.currentImages && window.currentImages[i]) {
+          window.currentImages.splice(i, 1);
         }
 
-        /* ── Image Slots (Add Modal) ──────────────────────────── */
-        function triggerFileInput(index) {
-            document.getElementById('fileInput-' + index).click();
-        }
+        document.getElementById(`edit-slot-${i}`).innerHTML = `
+          <span class="slot-placeholder">
+            <i class="bi bi-image"></i>Add Photo
+          </span>
+        `;
+      }
+      /* ══════════════════════════════════════════════
+         OPEN MODALS
+      ══════════════════════════════════════════════ */
+      function openViewModal() {
+        // Single — With Drawer data
+        document.getElementById("viewSingleDrawerQty").textContent = "10";
+        document.getElementById("viewSingleDrawerPrice").textContent = "₹1,800";
+        // Single — Without Drawer data
+        document.getElementById("viewSingleNoDrawerQty").textContent = "8";
+        document.getElementById("viewSingleNoDrawerPrice").textContent =
+          "₹1,500";
 
-        function previewImage(index, input) {
-            if (!input.files || !input.files[0]) return;
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                const slot = document.getElementById('slot-' + index);
-                slot.innerHTML = `
-                    <img src="${e.target.result}" alt="Preview">
-                    <button class="slot-remove" onclick="removeSlot(event, ${index})">
-                        <i class="bi bi-x"></i>
-                    </button>`;
-            };
-            reader.readAsDataURL(input.files[0]);
-        }
+        // Queen has data
+        document.getElementById("viewQueenDrawerQty").textContent = "5";
+        document.getElementById("viewQueenDrawerPrice").textContent = "₹2,400";
+        document.getElementById("viewQueenNoDrawerQty").textContent = "3";
+        document.getElementById("viewQueenNoDrawerPrice").textContent =
+          "₹2,100";
+        document.getElementById("viewChkQueen").checked = true;
+        document.getElementById("viewFieldsQueen").classList.add("show");
 
-        function removeSlot(event, index) {
-            event.stopPropagation();
-            const slot = document.getElementById('slot-' + index);
-            slot.innerHTML = `<span class="slot-placeholder"><i class="bi bi-image"></i>Add Photo</span>`;
-            document.getElementById('fileInput-' + index).value = '';
-        }
+        // King — no data, stays collapsed
+        document.getElementById("viewChkKing").checked = false;
+        document.getElementById("viewFieldsKing").classList.remove("show");
 
-        /* ── Image Slots (Edit Modal) ─────────────────────────── */
-        function triggerEditFileInput(index) {
-            document.getElementById('editFileInput-' + index).click();
-        }
+        new bootstrap.Modal(document.getElementById("viewProductModal")).show();
+      }
 
-        function previewEditImage(index, input) {
-            if (!input.files || !input.files[0]) return;
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                const slot = document.getElementById('edit-slot-' + index);
-                slot.innerHTML = `
-                    <img src="${e.target.result}" alt="Preview">
-                    <button class="slot-remove" onclick="removeEditSlot(event, ${index})">
-                        <i class="bi bi-x"></i>
-                    </button>`;
-            };
-            reader.readAsDataURL(input.files[0]);
-        }
-
-        function removeEditSlot(event, index) {
-            event.stopPropagation();
-            const slot = document.getElementById('edit-slot-' + index);
-            slot.innerHTML = `<span class="slot-placeholder"><i class="bi bi-image"></i>Add Photo</span>`;
-            document.getElementById('editFileInput-' + index).value = '';
-        }
-
-        /* ── Open Modals ──────────────────────────────────────── */
-        function openViewModal() {
-            new bootstrap.Modal(document.getElementById('viewProductModal')).show();
-        }
-
-        function openEditModal() {
-            new bootstrap.Modal(document.getElementById('editProductModal')).show();
-        }
+      function openEditModal() {
+        new bootstrap.Modal(document.getElementById("editProductModal")).show();
+      }
     </script>
 
     <script src="/js/admin/product.js"></script>
-</body>
+  </body>
 </html>

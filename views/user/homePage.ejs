@@ -130,12 +130,7 @@
 
     <!-- Navbar -->
    <%- include('./partials/header') %>
-      <% if (message) { %>
-        <div 
-            class="alert <%= message.type === 'success' ? 'alert-success' : 'alert-danger' %> text-center">
-            <%= message.text %>
-        </div>
-       <% } %>
+   <%- include('./partials/toast') %>
 
     <!-- Hero Section -->
     <section class="hero-section d-flex align-items-center">

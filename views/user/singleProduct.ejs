@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solid Teak Wood Bed - Wooden Cot</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Minimal Custom CSS */
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .navbar-custom {
+            background-color: #AE946D;
+        }
+        
+        .btn-custom {
+            background-color: #AE946D;
+            border-color: #AE946D;
+            color: white;
+        }
+        
+        .btn-custom:hover {
+            background-color: #9a8260;
+            border-color: #9a8260;
+            color: white;
+        }
+        
+        .footer-custom {
+            background-color: #CDAF82;
+        }
+        
+        .logo-text {
+            font-weight: 700;
+            font-size: 24px;
+            color: white;
+        }
+        
+        .main-image {
+            width: 100%;
+            height: 500px;
+            object-fit: cover;
+            border-radius: 12px;
+            cursor: pointer;
+        }
+        
+        .thumbnail {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .thumbnail:hover,
+        .thumbnail.active {
+            border-color: #AE946D;
+        }
+        
+        .price-original {
+            text-decoration: line-through;
+            color: #999;
+        }
+        
+        /* SHOP STYLE RELATED PRODUCT CARD */
+
+        .product-card {
+            background: #fdfcfa;
+            border: 1px solid #e8e0d5;
+            border-radius: 14px;
+            overflow: hidden;
+            transition: transform 0.25s, box-shadow 0.25s;
+            height: 100%;
+        }
+
+        .product-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(174,148,109,0.18);
+        }
+
+        .product-card .card-img-wrap {
+            position: relative;
+            overflow: hidden;
+            background: #f0ebe3;
+            height: 200px;
+        }
+
+        .product-card .card-img-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s;
+        }
+
+        .product-card:hover .card-img-wrap img {
+            transform: scale(1.05);
+        }
+
+        .product-card .card-actions {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            opacity: 0;
+            transform: translateX(10px);
+            transition: all 0.25s;
+        }
+
+        .product-card:hover .card-actions {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .card-action-btn {
+            width: 34px;
+            height: 34px;
+            background: white;
+            border: 1px solid #e8e0d5;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: #555;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .card-action-btn:hover {
+            background: #AE946D;
+            color: white;
+            border-color: #AE946D;
+        }
+
+        .discount-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: #e63946;
+            color: white;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 6px;
+            letter-spacing: 0.3px;
+        }
+
+        .product-card .card-body {
+            padding: 14px 16px 16px;
+        }
+
+        .product-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #2c2c2c;
+            margin-bottom: 8px;
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .price-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .price-current {
+            font-size: 16px;
+            font-weight: 700;
+            color: #2e7d32;
+        }
+
+        .btn-add-cart {
+            margin-top: 10px;
+            width: 100%;
+            background: #AE946D;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-add-cart:hover {
+            background: #9a8260;
+        }
+        
+        .size-option,
+        .storage-option {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .size-option:hover,
+        .storage-option:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .quantity-input {
+            width: 150px;
+        }
+        
+        .breadcrumb-custom {
+            background-color: transparent;
+            padding: 0;
+        }
+        
+        .breadcrumb-custom .breadcrumb-item + .breadcrumb-item::before {
+            content: ">";
+        }
+        
+        .discount-badge {
+            background-color: #dc3545;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        
+        .review-rating {
+            background-color: #28a745;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 6px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 600;
+        }
+       .main-image-wrapper {
+            overflow: hidden;
+            border-radius: 12px;
+            position: relative;
+            cursor: zoom-in;
+        }
+
+        .main-image {
+            width: 100%;
+            height: 500px;
+            object-fit: cover;
+            transition: transform 0.05s linear;
+            will-change: transform;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <%- include('./partials/header') %>
+
+    <!-- Breadcrumb -->
+    <section class="py-3 bg-light">
+        <div class="container">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb breadcrumb-custom mb-0">
+                    <li class="breadcrumb-item"><a href="/" class="text-decoration-none text-muted">Home</a></li>
+                    <li class="breadcrumb-item"><a href="/shop" class="text-decoration-none text-muted">Shop</a></li>
+                    <li class="breadcrumb-item active" aria-current="page"><%= product.name %></li>
+                </ol>
+            </nav>
+        </div>
+    </section>
+
+    <!-- Product Detail Section -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row g-4">
+                <!-- Left - Image Gallery -->
+                <div class="col-lg-6">
+                    <div class="main-image-wrapper mb-3" id="imageContainer">
+                        <img src="<%= product.images?.[0] %>" 
+                            id="mainImage" 
+                            class="main-image">
+                    </div>
+                        <div class="row g-2">
+                        <% product.images.forEach((img, index) => { %>
+                            <div class="col-3">
+                            <img src="<%= img %>"
+                                class="thumbnail <%= index === 0 ? 'active' : '' %>"
+                                onclick="changeImage(this)">
+                            </div>
+                        <% }) %>
+                        </div>
+                    </div>
+
+                <!-- Right - Product Details -->
+                <div class="col-lg-6">
+                    <!-- Category -->
+                    <p class="text-muted mb-2 small text-uppercase"><%= product.category ? product.category.name : "Category unavailable" %></p>
+                    
+                    <!-- Product Name -->
+                   <h2 class="fw-bold mb-3"><%= product.name %></h2>
+                    
+                    <!-- Price -->
+                    <div class="mb-3">
+                        <%
+                        const defaultSize = product.sizes[0];
+                        const defaultVariant = defaultSize?.variants?.withDrawer || defaultSize?.variants?.withoutDrawer;
+                        %>
+
+                        <span id="price" class="text-success fw-bold fs-3">
+                        ₹<%= defaultVariant?.price || "N/A" %>
+                        </span>
+                    </div>
+                    
+                    <!-- Description -->
+                    <p class="text-muted mb-4"><%= product.description %></p>
+                    
+                    <!-- Size Selection -->
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold mb-2">Size</label>
+                        <div class="d-flex gap-2">
+                            <div class="d-flex gap-2">
+
+                            <% const allSizes = ["single","queen","king"]; %>
+
+                            <% allSizes.forEach(sizeName => { 
+                                const sizeData = product.sizes.find(s => s.size === sizeName);
+                            %>
+
+                                <button 
+                                class="btn btn-outline-secondary size-option px-4 py-2"
+                                onclick="selectSize(this)"
+                                <%= !sizeData ? "disabled" : "" %>
+                                data-size="<%= sizeName %>">
+
+                                <%= sizeName.toUpperCase() %>
+
+                                </button>
+
+                            <% }) %>
+
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Storage Selection -->
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold mb-2">Storage</label>
+                        <div class="d-flex gap-2">
+                            <%
+                            const firstSize = product.sizes[0];
+                            const hasWithDrawer = firstSize?.variants?.withDrawer;
+                            const hasWithoutDrawer = firstSize?.variants?.withoutDrawer;
+                            %>
+
+                            <button 
+                            class="btn btn-outline-secondary storage-option px-4 py-2"
+                            onclick="selectStorage(this)"
+                            <%= !hasWithDrawer ? "disabled" : "" %>
+                            data-type="withDrawer">
+
+                            With Drawer
+                            </button>
+
+                            <button 
+                            class="btn btn-outline-secondary storage-option px-4 py-2"
+                            onclick="selectStorage(this)"
+                            <%= !hasWithoutDrawer ? "disabled" : "" %>
+                            data-type="withoutDrawer">
+
+                            Without Drawer
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Quantity -->
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold mb-2">Quantity</label>
+                        <div class="input-group quantity-input">
+                            <button class="btn btn-outline-secondary" type="button" onclick="decreaseQty()">
+                                <i class="bi bi-dash"></i>
+                            </button>
+                            <input type="text" class="form-control text-center" value="1" id="quantity" readonly>
+                            <button class="btn btn-outline-secondary" type="button" onclick="increaseQty()">
+                                <i class="bi bi-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Stock Status -->
+                    <div class="mb-4">
+                        <span id="stockStatus" class="badge px-3 py-2"></span>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="d-flex gap-3 mb-4">
+                        <button class="btn btn-custom btn-lg flex-fill" onclick="addToCart()">
+                            <i class="bi bi-cart-plus me-2"></i>Add to Cart
+                        </button>
+                        <button class="btn btn-outline-danger btn-lg" onclick="addToWishlist()">
+                            <i class="bi bi-heart"></i>
+                        </button>
+                    </div>
+                    
+                    <!-- Additional Info -->
+                    <div class="border-top pt-3">
+                        <p class="small mb-2">
+                            <i class="bi bi-truck me-2 text-muted"></i>
+                            <span class="text-muted">Free shipping on orders above ₹50,000</span>
+                        </p>
+                        <p class="small mb-2">
+                            <i class="bi bi-arrow-repeat me-2 text-muted"></i>
+                            <span class="text-muted">7 days easy return policy</span>
+                        </p>
+                        <p class="small mb-0">
+                            <i class="bi bi-shield-check me-2 text-muted"></i>
+                            <span class="text-muted">1 year warranty on manufacturing defects</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Reviews Section -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            <h3 class="fw-bold mb-4">Customer Reviews</h3>
+            
+            <div class="row mb-4">
+                <div class="col-md-4 mb-3 mb-md-0">
+                    <div class="text-center p-4 bg-white rounded">
+                        <h1 class="display-4 fw-bold mb-2">4.5</h1>
+                        <div class="mb-2">
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-half text-warning"></i>
+                        </div>
+                        <p class="text-muted mb-0">Based on 156 reviews</p>
+                    </div>
+                </div>
+                
+                <div class="col-md-8">
+                    <div class="bg-white p-4 rounded">
+                        <div class="mb-3">
+                            <div class="d-flex align-items-center mb-2">
+                                <span class="me-2 small">5</span>
+                                <div class="progress flex-fill" style="height: 8px;">
+                                    <div class="progress-bar bg-warning" style="width: 70%"></div>
+                                </div>
+                                <span class="ms-2 small text-muted">109</span>
+                            </div>
+                            <div class="d-flex align-items-center mb-2">
+                                <span class="me-2 small">4</span>
+                                <div class="progress flex-fill" style="height: 8px;">
+                                    <div class="progress-bar bg-warning" style="width: 20%"></div>
+                                </div>
+                                <span class="ms-2 small text-muted">31</span>
+                            </div>
+                            <div class="d-flex align-items-center mb-2">
+                                <span class="me-2 small">3</span>
+                                <div class="progress flex-fill" style="height: 8px;">
+                                    <div class="progress-bar bg-warning" style="width: 7%"></div>
+                                </div>
+                                <span class="ms-2 small text-muted">11</span>
+                            </div>
+                            <div class="d-flex align-items-center mb-2">
+                                <span class="me-2 small">2</span>
+                                <div class="progress flex-fill" style="height: 8px;">
+                                    <div class="progress-bar bg-warning" style="width: 2%"></div>
+                                </div>
+                                <span class="ms-2 small text-muted">3</span>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <span class="me-2 small">1</span>
+                                <div class="progress flex-fill" style="height: 8px;">
+                                    <div class="progress-bar bg-warning" style="width: 1%"></div>
+                                </div>
+                                <span class="ms-2 small text-muted">2</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Individual Reviews -->
+            <div class="row g-3">
+                <div class="col-12">
+                    <div class="bg-white p-4 rounded">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="review-rating me-3">
+                                <i class="bi bi-star-fill"></i>
+                                <span>4.5</span>
+                            </div>
+                            <div>
+                                <h6 class="mb-0 fw-semibold">Excellent Quality</h6>
+                                <small class="text-muted">By Rajesh Kumar • 2 weeks ago</small>
+                            </div>
+                        </div>
+                        <p class="text-muted mb-0">
+                            Amazing craftsmanship! The teak wood quality is top-notch. Very sturdy and the finish is beautiful. 
+                            Delivery was on time and assembly was easy. Highly recommend!
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="col-12">
+                    <div class="bg-white p-4 rounded">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="review-rating me-3">
+                                <i class="bi bi-star-fill"></i>
+                                <span>5.0</span>
+                            </div>
+                            <div>
+                                <h6 class="mb-0 fw-semibold">Perfect for my bedroom</h6>
+                                <small class="text-muted">By Priya Sharma • 1 month ago</small>
+                            </div>
+                        </div>
+                        <p class="text-muted mb-0">
+                            Love this bed! The storage drawers are very spacious and the wood grain is gorgeous. 
+                            It's exactly what I was looking for. Worth every penny!
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-5 bg-light">
+
+  <div class="container">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+      <h3 class="fw-bold mb-0">
+        Related Products
+      </h3>
+
+      <a
+        href="/shop"
+        class="text-decoration-none fw-semibold"
+        style="color:#AE946D;"
+      >
+        View More
+      </a>
+
+    </div>
+
+    <div class="row g-4">
+
+      <% relatedProducts.forEach(product => { %>
+
+        <div class="col-lg-3 col-md-6 col-6">
+
+          <div class="product-card h-100">
+
+            <!-- IMAGE -->
+            <div class="card-img-wrap">
+
+              <img
+                src="<%= product.images[0] %>"
+                alt="<%= product.name %>"
+              >
+
+              <!-- DISCOUNT -->
+              <% if(product.discount) { %>
+
+                <span class="discount-badge">
+                  <%= product.discount %>% OFF
+                </span>
+
+              <% } %>
+
+              <!-- ACTIONS -->
+              <div class="card-actions">
+
+                <a class="card-action-btn" href="#">
+                  <i class="bi bi-heart"></i>
+                </a>
+
+                <a
+                  class="card-action-btn"
+                  href="/product/<%= product._id %>"
+                >
+                  <i class="bi bi-eye"></i>
+                </a>
+
+              </div>
+
+            </div>
+
+            <!-- BODY -->
+            <div class="card-body d-flex flex-column">
+
+              <div class="product-name">
+
+                <%= product.name %>
+
+              </div>
+
+              <!-- PRICE -->
+              <div class="price-row mb-2">
+
+                <%
+                const defaultSize = product.sizes?.[0];
+
+                const defaultVariant =
+                  defaultSize?.variants?.withDrawer ||
+                  defaultSize?.variants?.withoutDrawer;
+                %>
+
+                <span class="price-current">
+
+                  ₹<%= defaultVariant?.price || "N/A" %>
+
+                </span>
+
+              </div>
+
+              <!-- BUTTON -->
+              <% if(defaultVariant?.quantity > 0) { %>
+
+                <button class="btn-add-cart mt-auto">
+
+                  <i class="bi bi-cart-plus me-1"></i>
+
+                  Add To Cart
+
+                </button>
+
+              <% } else { %>
+
+                <button
+                  class="btn-add-cart mt-auto"
+                  disabled
+                  style="opacity:0.6; cursor:not-allowed;"
+                >
+
+                  Out Of Stock
+
+                </button>
+
+              <% } %>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      <% }) %>
+
+    </div>
+
+  </div>
+
+</section>
+    <!-- Footer -->
+    <footer class="footer-custom text-white py-5">
+        <div class="container">
+            <div class="row g-4">
+                <!-- Company Info -->
+                <div class="col-md-3">
+                    <h5 class="fw-bold mb-3">WOODEN COT</h5>
+                    <p class="small">Premium wooden furniture crafted with care and built with strength.</p>
+                    <div class="d-flex gap-3 mt-3">
+                        <a href="#" class="text-white"><i class="bi bi-facebook fs-5"></i></a>
+                        <a href="#" class="text-white"><i class="bi bi-instagram fs-5"></i></a>
+                        <a href="#" class="text-white"><i class="bi bi-twitter fs-5"></i></a>
+                        <a href="#" class="text-white"><i class="bi bi-youtube fs-5"></i></a>
+                    </div>
+                </div>
+
+                <!-- Useful Links -->
+                <div class="col-md-3">
+                    <h6 class="fw-bold mb-3">USEFUL LINKS</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#" class="text-white text-decoration-none small">About Us</a></li>
+                        <li class="mb-2"><a href="#" class="text-white text-decoration-none small">Contact Us</a></li>
+                        <li class="mb-2"><a href="#" class="text-white text-decoration-none small">Shop</a></li>
+                        <li class="mb-2"><a href="#" class="text-white text-decoration-none small">Blog</a></li>
+                    </ul>
+                </div>
+
+                <!-- Account -->
+                <div class="col-md-3">
+                    <h6 class="fw-bold mb-3">ACCOUNT</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#" class="text-white text-decoration-none small">Settings</a></li>
+                        <li class="mb-2"><a href="#" class="text-white text-decoration-none small">Orders</a></li>
+                        <li class="mb-2"><a href="#" class="text-white text-decoration-none small">Address</a></li>
+                        <li class="mb-2"><a href="#" class="text-white text-decoration-none small">Wallet</a></li>
+                    </ul>
+                </div>
+
+                <!-- More Info -->
+                <div class="col-md-3">
+                    <h6 class="fw-bold mb-3">MORE INFO</h6>
+                    <p class="small">Premium wooden beds with best quality. We ensure best service and delivery.</p>
+                    <div class="d-flex gap-2 mt-3">
+                        <img src="https://img.icons8.com/color/48/visa.png" alt="Visa" width="40">
+                        <img src="https://img.icons8.com/color/48/mastercard.png" alt="Mastercard" width="40">
+                        <img src="https://img.icons8.com/color/48/paypal.png" alt="PayPal" width="40">
+                        <img src="https://img.icons8.com/color/48/google-pay-india.png" alt="GPay" width="40">
+                    </div>
+                </div>
+            </div>
+
+            <hr class="my-4 opacity-25">
+
+            <div class="row">
+                <div class="col-md-6 text-center text-md-start">
+                    <p class="small mb-0">© 2024 WOODEN COT. All Rights Reserved.</p>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <p class="small mb-0">Privacy Policy | Terms of Service</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script>
+      const productId = "<%= product._id %>";
+    </script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/user/singleProduct.js"></script>
+    <script>
+        // Change Main Image on Thumbnail Click
+        function changeImage(thumbnail) {
+            document.getElementById('mainImage').src = thumbnail.src.replace('w=200', 'w=800');
+            
+            // Remove active class from all thumbnails
+            document.querySelectorAll('.thumbnail').forEach(thumb => {
+                thumb.classList.remove('active');
+            });
+            
+            // Add active class to clicked thumbnail
+            thumbnail.classList.add('active');
+        }
+        
+        
+        // Quantity Controls
+        function increaseQty() {
+            const qtyInput = document.getElementById('quantity');
+            qtyInput.value = parseInt(qtyInput.value) + 1;
+        }
+        
+        function decreaseQty() {
+            const qtyInput = document.getElementById('quantity');
+            if (parseInt(qtyInput.value) > 1) {
+                qtyInput.value = parseInt(qtyInput.value) - 1;
+            }
+        }
+        
+        // Add to Cart
+        function addToCart() {
+            const size = document.querySelector('.size-option.active').textContent.trim();
+            const storage = document.querySelector('.storage-option.active').textContent.trim();
+            const quantity = document.getElementById('quantity').value;
+            
+            alert(`Added to cart!\nSize: ${size}\nStorage: ${storage}\nQuantity: ${quantity}`);
+        }
+        
+        // Add to Wishlist
+        function addToWishlist() {
+            alert('Added to wishlist!');
+        }
+        
+        // Initialize active states on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set Queen size as active by default
+            const queenBtn = document.querySelectorAll('.size-option')[1];
+            queenBtn.classList.add('btn-custom');
+            queenBtn.classList.remove('btn-outline-secondary');
+            
+            // Set With Drawer as active by default
+            const drawerBtn = document.querySelector('.storage-option');
+            drawerBtn.classList.add('btn-custom');
+            drawerBtn.classList.remove('btn-outline-secondary');
+        });
+
+        const imageContainer =
+        document.getElementById("imageContainer");
+
+        const mainImage =
+        document.getElementById("mainImage");
+
+        imageContainer.addEventListener("mousemove", (e) => {
+
+            const rect =
+            imageContainer.getBoundingClientRect();
+
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            const moveX =
+            (x / rect.width - 0.5) * 40;
+
+            const moveY =
+            (y / rect.height - 0.5) * 35;
+
+            mainImage.style.transform =
+            `scale(1.18) translate(${moveX}px, ${moveY}px)`;
+
+        });
+
+        imageContainer.addEventListener("mouseleave", () => {
+
+            mainImage.style.transform =
+            "scale(1) translate(0,0)";
+
+        });
+    
+
+    </script>
+     
+</body>
+</html>

@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop - Wooden Cot</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --brand:     #AE946D;
+            --brand-dk:  #9a8260;
+            --brand-lt:  #f5ede0;
+            --text:      #2c2c2c;
+            --muted:     #888;
+            --border:    #e8e0d5;
+            --white:     #ffffff;
+            --card-bg:   #fdfcfa;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f9f6f2;
+            color: var(--text);
+        }
+
+        /* ── Navbar ── */
+        .navbar-custom { background-color: var(--brand); }
+        .logo-text { font-weight: 700; font-size: 22px; color: white; letter-spacing: 1px; text-decoration: none; }
+
+        /* ── Filter Sidebar (desktop) ── */
+        .filter-sidebar {
+            background: var(--white);
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            padding: 20px;
+            position: sticky;
+            top: 80px;
+        }
+
+        .filter-sidebar h5 {
+            font-weight: 700;
+            font-size: 15px;
+            color: var(--brand);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 18px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--brand-lt);
+        }
+
+        .filter-group { margin-bottom: 18px; padding-bottom: 18px; border-bottom: 1px solid var(--border); }
+        .filter-group:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
+        .filter-toggle {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--text);
+            cursor: pointer;
+            padding: 4px 0 10px;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+
+        .filter-toggle .bi { font-size: 12px; color: var(--brand); transition: transform 0.25s; }
+        .filter-toggle.collapsed .bi { transform: rotate(-90deg); }
+
+        .filter-body .form-check { margin-bottom: 8px; }
+        .filter-body .form-check-input { accent-color: var(--brand); cursor: pointer; }
+        .filter-body .form-check-label { font-size: 13px; color: #555; cursor: pointer; }
+        .filter-body .form-check-input:checked + .form-check-label { color: var(--brand); font-weight: 600; }
+
+        /* ── Mobile Filter FAB / Button ── */
+        .filter-fab {
+            display: none;
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1050;
+            background: var(--brand);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 12px 28px;
+            font-size: 14px;
+            font-weight: 600;
+            box-shadow: 0 6px 20px rgba(174,148,109,0.45);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        @media (max-width: 991px) {
+            .filter-fab { display: flex !important; }
+            .desktop-sidebar { display: none !important; }
+        }
+
+        /* ── Offcanvas Filter Panel ── */
+        .offcanvas-filter .offcanvas-header {
+            background: var(--brand);
+            color: white;
+            padding: 16px 20px;
+        }
+        .offcanvas-filter .offcanvas-title { font-weight: 700; font-size: 16px; }
+        .offcanvas-filter .btn-close { filter: invert(1); }
+        .offcanvas-filter .offcanvas-body { padding: 0; background: #fdfcfa; }
+
+        .offcanvas-filter .filter-group {
+            padding: 14px 20px 14px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 0;
+        }
+        .offcanvas-filter .filter-group:last-child { border-bottom: none; }
+
+        .clear-filters {
+            font-size: 12px;
+            color: var(--brand);
+            text-decoration: underline;
+            cursor: pointer;
+            border: none;
+            background: none;
+            padding: 0;
+        }
+
+        /* ── Mobile filter top bar ── */
+        .mobile-filter-bar {
+            display: none;
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            padding: 10px 16px;
+        }
+        @media (max-width: 991px) { .mobile-filter-bar { display: flex; } }
+
+        .mobile-filter-bar .filter-btn-inline {
+            background: var(--brand-lt);
+            border: 1px solid var(--brand);
+            color: var(--brand);
+            border-radius: 20px;
+            padding: 6px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .mobile-filter-bar .sort-select {
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 6px 12px;
+            font-size: 12px;
+            font-family: 'Poppins', sans-serif;
+            color: var(--text);
+            background: white;
+            outline: none;
+            margin-left: auto;
+        }
+
+        /* ── Active filter chips ── */
+        .active-filters { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px 0 4px; }
+        .filter-chip {
+            background: var(--brand-lt);
+            border: 1px solid var(--brand);
+            color: var(--brand);
+            border-radius: 20px;
+            padding: 3px 10px;
+            font-size: 11px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+        }
+        .filter-chip .bi { font-size: 10px; }
+
+        /* ── Product Grid ── */
+        .products-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .products-header .result-count { font-size: 13px; color: var(--muted); }
+        .products-header .sort-select {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 6px 12px;
+            font-size: 12px;
+            font-family: 'Poppins', sans-serif;
+            color: var(--text);
+            background: white;
+            outline: none;
+        }
+
+        /* ── Product Card ── */
+        .product-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            overflow: hidden;
+            transition: transform 0.25s, box-shadow 0.25s;
+            height: 100%;
+        }
+        .product-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(174,148,109,0.18);
+        }
+
+        .product-card .card-img-wrap {
+            position: relative;
+            overflow: hidden;
+            background: #f0ebe3;
+            height: 200px;
+        }
+        .product-card .card-img-wrap img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s;
+        }
+        .product-card:hover .card-img-wrap img { transform: scale(1.05); }
+
+        .product-card .card-actions {
+            position: absolute;
+            top: 10px; right: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            opacity: 0;
+            transform: translateX(10px);
+            transition: all 0.25s;
+        }
+        .product-card:hover .card-actions { opacity: 1; transform: translateX(0); }
+
+        .card-action-btn {
+            width: 34px; height: 34px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px;
+            color: #555;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+        .card-action-btn:hover { background: var(--brand); color: white; border-color: var(--brand); }
+
+        .discount-badge {
+            position: absolute;
+            top: 10px; left: 10px;
+            background: #e63946;
+            color: white;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 6px;
+            letter-spacing: 0.3px;
+        }
+
+        .product-card .card-body { padding: 14px 16px 16px; }
+
+        .product-card .product-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 8px;
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .product-card .price-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .price-current { font-size: 16px; font-weight: 700; color: #2e7d32; }
+        .price-old { font-size: 12px; color: var(--muted); text-decoration: line-through; }
+
+        .btn-add-cart {
+            margin-top: 10px;
+            width: 100%;
+            background: var(--brand);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-add-cart:hover { background: var(--brand-dk); }
+
+        /* ── Pagination ── */
+        .pagination .page-link { color: var(--brand); border-color: var(--border); font-size: 13px; }
+        .pagination .page-item.active .page-link {
+            background: var(--brand); border-color: var(--brand); color: white;
+        }
+        .pagination .page-link:hover { background: var(--brand-lt); }
+
+        /* ── Footer ── */
+        .footer-custom { background-color: #CDAF82; }
+
+        /* ── Desktop header sort (hide on mobile, shown in mobile-filter-bar) ── */
+        @media (max-width: 991px) {
+            .desktop-sort { display: none; }
+            .products-header { margin-bottom: 8px; }
+        }
+
+        /* ── Offcanvas apply button ── */
+        .offcanvas-apply {
+            padding: 16px 20px;
+            background: white;
+            border-top: 1px solid var(--border);
+            position: sticky;
+            bottom: 0;
+        }
+        .btn-apply-filters {
+            width: 100%;
+            background: var(--brand);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            cursor: pointer;
+        }
+
+        /* scrollable offcanvas body */
+        .offcanvas-filter .offcanvas-body { overflow-y: auto; }
+    </style>
+</head>
+<body>
+
+<!-- ── Navbar ── -->
+ <%- include('./partials/header') %>
+ <%- include('./partials/toast') %>
+
+<!-- ── Mobile Filter Bar (only on mobile) ── -->
+<div class="mobile-filter-bar align-items-center gap-3">
+    <button class="filter-btn-inline" data-bs-toggle="offcanvas" data-bs-target="#filterDrawer">
+        <i class="bi bi-sliders"></i> Filters
+    </button>
+    <select class="sort-select">
+        <option>Sort: Default</option>
+        <option>Price: Low to High</option>
+        <option>Price: High to Low</option>
+        <option>Newest First</option>
+    </select>
+</div>
+
+<!-- ── Offcanvas Filter Drawer (mobile) ── -->
+<div class="offcanvas offcanvas-start offcanvas-filter" tabindex="-1" id="filterDrawer" style="max-width:320px;width:88%;">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title"><i class="bi bi-sliders me-2"></i>Filters</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body">
+
+        <!-- Price -->
+        <div class="filter-group">
+            <button class="filter-toggle" data-bs-toggle="collapse" data-bs-target="#oc-priceFilter">
+                Price <i class="bi bi-chevron-down"></i>
+            </button>
+            <div class="collapse show" id="oc-priceFilter" >
+                <div class="filter-body pt-2">
+                    <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="p1"><label class="form-check-label" for="p1">Under ₹25,000</label></div>
+                    <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="p2"><label class="form-check-label" for="p2">₹25,000 – ₹50,000</label></div>
+                    <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="p3"><label class="form-check-label" for="oc-p3">₹50,000 – ₹75,000</label></div>
+                    <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="p4"><label class="form-check-label" for="oc-p4">Over ₹75,000</label></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Material -->
+        <div class="filter-group">
+            <button class="filter-toggle" data-bs-toggle="collapse" data-bs-target="#oc-materialFilter">
+                Material <i class="bi bi-chevron-down"></i>
+            </button>
+            <div class="collapse show" id="oc-materialFilter">
+                <div class="filter-body pt-2">
+                    <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="oc-m1"><label class="form-check-label" for="oc-m1">Teak</label></div>
+                    <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="oc-m2"><label class="form-check-label" for="oc-m2">Oak</label></div>
+                    <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="oc-m3"><label class="form-check-label" for="oc-m3">Sheesham</label></div>
+                    <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="oc-m4"><label class="form-check-label" for="oc-m4">Pine</label></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Storage -->
+        <div class="filter-group">
+            <button class="filter-toggle" data-bs-toggle="collapse" data-bs-target="#oc-storageFilter">
+                Storage <i class="bi bi-chevron-down"></i>
+            </button>
+            <div class="collapse show" id="oc-storageFilter">
+                <div class="filter-body pt-2">
+                    <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="oc-s1"><label class="form-check-label" for="oc-s1">With Drawer</label></div>
+                    <div class="form-check"><input class="form-check-input" type="checkbox" id="oc-s2"><label class="form-check-label" for="oc-s2">Without Drawer</label></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Size -->
+        <div class="filter-group">
+            <button class="filter-toggle" data-bs-toggle="collapse" data-bs-target="#oc-sizeFilter">
+                Size <i class="bi bi-chevron-down"></i>
+            </button>
+            <div class="collapse show" id="oc-sizeFilter">
+                <div class="filter-body pt-2">
+                    <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="oc-sz1"><label class="form-check-label" for="oc-sz1">Single</label></div>
+                    <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="oc-sz2"><label class="form-check-label" for="oc-sz2">Queen</label></div>
+                    <div class="form-check"><input class="form-check-input" type="checkbox" id="oc-sz3"><label class="form-check-label" for="oc-sz3">King</label></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rating -->
+        <div class="filter-group">
+            <button class="filter-toggle" data-bs-toggle="collapse" data-bs-target="#oc-ratingFilter">
+                Rating <i class="bi bi-chevron-down"></i>
+            </button>
+            <div class="collapse show" id="oc-ratingFilter">
+                <div class="filter-body pt-2">
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="oc-r5">
+                        <label class="form-check-label" for="oc-r5">
+                            <i class="bi bi-star-fill text-warning"></i><i class="bi bi-star-fill text-warning"></i><i class="bi bi-star-fill text-warning"></i><i class="bi bi-star-fill text-warning"></i><i class="bi bi-star-fill text-warning"></i>
+                        </label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="oc-r4">
+                        <label class="form-check-label" for="oc-r4">
+                            <i class="bi bi-star-fill text-warning"></i><i class="bi bi-star-fill text-warning"></i><i class="bi bi-star-fill text-warning"></i><i class="bi bi-star-fill text-warning"></i><i class="bi bi-star text-warning"></i>
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="oc-r3">
+                        <label class="form-check-label" for="oc-r3">
+                            <i class="bi bi-star-fill text-warning"></i><i class="bi bi-star-fill text-warning"></i><i class="bi bi-star-fill text-warning"></i><i class="bi bi-star text-warning"></i><i class="bi bi-star text-warning"></i>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="offcanvas-apply">
+        <button class="btn-apply-filters" data-bs-dismiss="offcanvas">Apply Filters</button>
+    </div>
+</div>
+
+<!-- ── Main Content ── -->
+<section class="py-4">
+    <div class="container-fluid px-3 px-lg-4">
+        <div class="row g-3">
+
+            <!-- Desktop Sidebar -->
+            <div class="col-lg-2 desktop-sidebar">
+                <div class="filter-sidebar">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="mb-0">Filters</h5>
+                        <button id="clearFilters" class="btn btn-sm btn-outline-secondary">Clear</button>
+                    </div>
+                       <!-- Price Filter -->
+                        <div class="filter-section">
+                            <div class="filter-group">
+                                <button class="filter-toggle" data-bs-toggle="collapse" data-bs-target="#priceFilter">
+                                    Price <i class="bi bi-chevron-down"></i>
+                                </button>
+                                <div class="collapse show" id="priceFilter" >
+                                    <div class="filter-body">
+                                        <div class="form-check mb-2"><input class="form-check-input price-filter" type="radio" name="price" value="1"><label class="form-check-label" for="p1">Under ₹25,000</label></div>
+                                        <div class="form-check mb-2"><input class="form-check-input price-filter" type="radio" name="price" value="2"><label class="form-check-label" for="p2">₹25,000 – ₹50,000</label></div>
+                                        <div class="form-check mb-2"><input class="form-check-input price-filter" type="radio" name="price" value="3"><label class="form-check-label" for="oc-p3">₹50,000 – ₹75,000</label></div>
+                                        <div class="form-check mb-2"><input class="form-check-input price-filter" type="radio" name="price" value="4"><label class="form-check-label" for="oc-p4">Over ₹75,000</label></div>
+                                    </div>
+                                </div>
+                            </div>
+                        
+
+                    <!-- Material -->
+                    <div class="filter-group">
+                        <button class="filter-toggle" data-bs-toggle="collapse" data-bs-target="#materialFilter">
+                            Material <i class="bi bi-chevron-down"></i>
+                        </button>
+                        <div class="collapse show" id="materialFilter">
+                            <div class="filter-body">
+                                <% materials.forEach(mat => { %>
+                                    <div class="form-check mb-2"><input class="form-check-input material-filter" type="radio" name="material" value="<%= mat._id %>"><label class="form-check-label" for="m1"><%=mat.name%></label></div>
+                                <%})%>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Storage -->
+                    <div class="filter-group">
+                        <button class="filter-toggle" data-bs-toggle="collapse" data-bs-target="#storageFilter">
+                            Storage <i class="bi bi-chevron-down"></i>
+                        </button>
+                        <div class="collapse show" id="storageFilter">
+                            <div class="filter-body">
+                                <div class="form-check mb-2"><input class="form-check-input storage-filter" type="radio" name="storage" value="withDrawer"><label class="form-check-label" for="s1">With Drawer</label></div>
+                                <div class="form-check"><input class="form-check-input storage-filter" type="radio" name="storage" value="withoutDrawer"><label class="form-check-label" for="s2">Without Drawer</label></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Size -->
+                    <div class="filter-group">
+                        <button class="filter-toggle" data-bs-toggle="collapse" data-bs-target="#sizeFilter">
+                            Size <i class="bi bi-chevron-down"></i>
+                        </button>
+                        <div class="collapse show" id="sizeFilter">
+                            <div class="filter-body">
+                                <div class="form-check mb-2"><input class="form-check-input size-filter" type="radio" name="size" value="single"><label class="form-check-label" for="sz1">Single</label></div>
+                                <div class="form-check mb-2"><input class="form-check-input size-filter" type="radio" name="size" value="queen"><label class="form-check-label" for="sz2">Queen</label></div>
+                                <div class="form-check mb-2"><input class="form-check-input size-filter" type="radio" name="size" value="king"><label class="form-check-label" for="sz3">King</label></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Rating -->
+                    <div class="filter-group">
+                        <button class="filter-toggle" data-bs-toggle="collapse" data-bs-target="#ratingFilter">
+                            Rating <i class="bi bi-chevron-down"></i>
+                        </button>
+                        <div class="collapse show" id="ratingFilter">
+                            <div class="filter-body">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="r5">
+                                    <label class="form-check-label" for="r5"><i class="bi bi-star-fill text-warning"></i><i class="bi bi-star-fill text-warning"></i><i class="bi bi-star-fill text-warning"></i><i class="bi bi-star-fill text-warning"></i><i class="bi bi-star-fill text-warning"></i></label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="r4">
+                                    <label class="form-check-label" for="r4"><i class="bi bi-star-fill text-warning"></i><i class="bi bi-star-fill text-warning"></i><i class="bi bi-star-fill text-warning"></i><i class="bi bi-star-fill text-warning"></i><i class="bi bi-star text-warning"></i></label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="r3">
+                                    <label class="form-check-label" for="r3"><i class="bi bi-star-fill text-warning"></i><i class="bi bi-star-fill text-warning"></i><i class="bi bi-star-fill text-warning"></i><i class="bi bi-star text-warning"></i><i class="bi bi-star text-warning"></i></label>
+                                </div>
+                                 <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="r2">
+                                    <label class="form-check-label" for="r2"><i class="bi bi-star-fill text-warning"></i><i class="bi bi-star-fill text-warning"></i><i class="bi bi-star text-warning"></i><i class="bi bi-star text-warning"></i><i class="bi bi-star text-warning"></i></label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="r1">
+                                    <label class="form-check-label" for="r1"><i class="bi bi-star-fill text-warning"></i><i class="bi bi-star text-warning"></i><i class="bi bi-star text-warning"></i><i class="bi bi-star text-warning"></i><i class="bi bi-star text-warning"></i></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Products Grid -->
+            <div class="col-lg-10">
+
+                <!-- Header -->
+                <div class="products-header">
+                    <div class="d-flex gap-2 align-items-center">
+
+                    <div class="position-relative">
+
+                    <input
+                        type="text"
+                        id="searchInput"
+                        class="form-control pe-5"
+                        placeholder="Search products..."
+                    >
+
+                    <button
+                        id="clearSearch"
+                        type="button"
+                        class="btn position-absolute top-50 end-0 translate-middle-y border-0"
+                    >
+                        <i class="bi bi-x-circle"></i>
+                    </button>
+
+                    </div>
+
+                    <select id="sortSelect" class="sort-select desktop-sort">
+                        <option value="">Sort By</option>
+                        <option value="lowToHigh">Price: Low to High</option>
+                        <option value="highToLow">Price: High to Low</option>
+                        <option value="newest">Newest</option>
+                    </select>
+
+                </div>
+                </div>
+
+                <!-- Cards -->
+                <div class="row g-3 mb-4" id="productsContainer">
+                    <% products.forEach(product => { %>
+
+                        <div class="col-lg-4 col-md-6 col-6">
+                        <div class="product-card">
+                            
+                            <div class="card-img-wrap">
+                            <img src="<%= product.images[0] %>" alt="Product">
+
+                            <% if(product.discount) { %>
+                                <span class="discount-badge"><%= product.discount %>% OFF</span>
+                            <% } %>
+
+                            <div class="card-actions">
+                                <a class="card-action-btn" href="#"><i class="bi bi-heart"></i></a>
+                                <a class="card-action-btn" href="/product/<%= product._id %>">
+                                <i class="bi bi-eye"></i>
+                                </a>
+                            </div>
+                            </div>
+
+                            <div class="card-body">
+                            <div class="product-name"><%= product.name %></div>
+
+                            <div class="price-row">                          
+                                 <%
+                        const defaultSize = product.sizes[0];
+                        const defaultVariant = defaultSize?.variants?.withDrawer || defaultSize?.variants?.withoutDrawer;
+                        %>
+
+                        <span id="price" class="text-success fw-bold fs-3">
+                        ₹<%= defaultVariant?.price || "N/A" %>
+                        </span>
+                            </div>
+
+                            <button class="btn-add-cart">
+                                <i class="bi bi-cart-plus me-1"></i>Add to Cart
+                            </button>
+                            </div>
+
+                        </div>
+                        </div>
+
+                    <% }) %>
+                    </div>
+
+                <!-- Pagination -->
+                <div class="d-flex justify-content-center pb-3">
+                    <nav>
+                        <ul class="pagination" id="pagination">
+                            <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                        </ul>
+                    </nav>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ── Footer ── -->
+<footer class="footer-custom text-white py-5">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-md-3">
+                <h5 class="fw-bold mb-3">WOODEN COT</h5>
+                <p class="small">Premium wooden furniture crafted with care and built with strength.</p>
+                <div class="d-flex gap-3 mt-3">
+                    <a href="#" class="text-white"><i class="bi bi-facebook fs-5"></i></a>
+                    <a href="#" class="text-white"><i class="bi bi-instagram fs-5"></i></a>
+                    <a href="#" class="text-white"><i class="bi bi-twitter fs-5"></i></a>
+                    <a href="#" class="text-white"><i class="bi bi-youtube fs-5"></i></a>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <h6 class="fw-bold mb-3">USEFUL LINKS</h6>
+                <ul class="list-unstyled">
+                    <li class="mb-2"><a href="#" class="text-white text-decoration-none small">About Us</a></li>
+                    <li class="mb-2"><a href="#" class="text-white text-decoration-none small">Contact Us</a></li>
+                    <li class="mb-2"><a href="#" class="text-white text-decoration-none small">Shop</a></li>
+                    <li class="mb-2"><a href="#" class="text-white text-decoration-none small">Blog</a></li>
+                </ul>
+            </div>
+            <div class="col-md-3">
+                <h6 class="fw-bold mb-3">ACCOUNT</h6>
+                <ul class="list-unstyled">
+                    <li class="mb-2"><a href="#" class="text-white text-decoration-none small">Settings</a></li>
+                    <li class="mb-2"><a href="#" class="text-white text-decoration-none small">Orders</a></li>
+                    <li class="mb-2"><a href="#" class="text-white text-decoration-none small">Address</a></li>
+                    <li class="mb-2"><a href="#" class="text-white text-decoration-none small">Wallet</a></li>
+                </ul>
+            </div>
+            <div class="col-md-3">
+                <h6 class="fw-bold mb-3">MORE INFO</h6>
+                <p class="small">Premium wooden beds with best quality. We ensure best service and delivery.</p>
+                <div class="d-flex gap-2 mt-3">
+                    <img src="https://img.icons8.com/color/48/visa.png" alt="Visa" width="36">
+                    <img src="https://img.icons8.com/color/48/mastercard.png" alt="Mastercard" width="36">
+                    <img src="https://img.icons8.com/color/48/paypal.png" alt="PayPal" width="36">
+                    <img src="https://img.icons8.com/color/48/google-pay-india.png" alt="GPay" width="36">
+                </div>
+            </div>
+        </div>
+        <hr class="my-4 opacity-25">
+        <div class="row">
+            <div class="col-md-6 text-center text-md-start">
+                <p class="small mb-0">© 2024 WOODEN COT. All Rights Reserved.</p>
+            </div>
+            <div class="col-md-6 text-center text-md-end">
+                <p class="small mb-0">Privacy Policy | Terms of Service</p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js/user/shopPage.js"></script>
+<script>
+    // Sync filter-toggle chevron rotation with collapse state
+    document.querySelectorAll('[data-bs-toggle="collapse"]').forEach(btn => {
+        const target = document.querySelector(btn.getAttribute('data-bs-target'));
+        if (!target) return;
+        target.addEventListener('hide.bs.collapse', () => btn.classList.add('collapsed'));
+        target.addEventListener('show.bs.collapse', () => btn.classList.remove('collapsed'));
+    });
+</script>
+</body>
+</html>

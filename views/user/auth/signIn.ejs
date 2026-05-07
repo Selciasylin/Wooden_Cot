@@ -6,6 +6,7 @@
     <title>Sign In - Wooden Cot</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     
@@ -62,13 +63,7 @@
                 <img src="/images/wooden-cot-logo.png" alt="Wooden Cot Logo" class="img-fluid mb-2 rounded-3" style="max-width:80px;">
                 <h1 class="h4 fw-semibold mb-4">SIGN IN HERE!!</h1>
             </div>
-            <% if (message) { %>
-                <div 
-                    class="alert <%= message.type === 'success' ? 'alert-success' : 'alert-danger' %> text-center">
-                    <%= message.text %>
-                </div>
-            <% } %>
-
+             <%- include('../partials/toast') %>
             <!-- Google Sign In Button -->
             <button type="button" class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center gap-2 mb-3" onclick="googleSignIn()">
                 <svg width="18" height="18" viewBox="0 0 24 24">
@@ -96,9 +91,11 @@
                 </div>
 
                 <!-- Password -->
-                <div class="mb-3">
+                <div class="mb-3 position-relative">
                     <label for="password" class="form-label small text-secondary">Password</label>
                     <input type="password" name="password" class="form-control" id="password" placeholder="Enter your password" required>
+                     <!-- Eye Icon -->
+                    <i class="bi bi-eye-slash position-absolute" id="togglePassword" style="top:38px; right:15px; cursor:pointer; font-size:18px;"></i>
                     <small class="text-danger error-message"></small>
                 </div>
 
@@ -153,6 +150,18 @@
     
     <!-- Form Validation and Google Sign In Scripts -->
     <script>
+        const togglePassword = document.getElementById("togglePassword");
+        const passwordInput = document.getElementById("password");
+
+        togglePassword.addEventListener("click", () => {
+            const isPassword = passwordInput.type === "password";
+
+            passwordInput.type = isPassword ? "text" : "password";
+
+            // Toggle icon
+            togglePassword.classList.toggle("bi-eye");
+            togglePassword.classList.toggle("bi-eye-slash");
+        });
         document.getElementById("signinForm").addEventListener("submit", async function (e) {
             e.preventDefault(); // stop normal submit
             const form = this;
@@ -198,18 +207,23 @@
                 verifyModal.show();
             }
             if (data.status === "ERROR") {
-                showTopError(data.message);
+                showToast(data.message);
             }
             function showError(input, message) {
                 input.nextElementSibling.textContent = message;
             }
-            function showTopError(message) {
-                const alertDiv = document.createElement("div");
-                alertDiv.className = "alert alert-danger text-center";
-                alertDiv.innerText = message;
-                const card = document.querySelector(".bg-white");
-                card.prepend(alertDiv);
-                setTimeout(() => alertDiv.remove(), 2000);
+            function showToast(message) {
+                const container = document.querySelector(".toast-container");
+                const toast = document.createElement("div");
+                toast.className = "toast custom-toast show";
+                toast.innerHTML = `
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="toast-body">${message}</div>
+                        <button class="btn-close" onclick="this.parentElement.parentElement.remove()"></button>
+                    </div>
+                `;
+                container.appendChild(toast);
+                setTimeout(() => toast.remove(), 2500);
             }
         });
         const verifyBtn = document.getElementById("verifyBtn");
@@ -218,7 +232,7 @@
                     // Prevent double click
                     verifyBtn.disabled = true;
                     try {
-                        const response = await fetch("/resendSignupOtp", {
+                        const response = await fetch("/resendOtp", {
                             method: "POST"
                         });
                         const data = await response.json();

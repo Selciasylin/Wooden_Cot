@@ -121,6 +121,16 @@ async function generateSignupOtp(userId) {
     await createOtpAndSend(user._id,"signup",user.email,"verify Your Account")
 }
 
+async function signOutUser(req) {
+  return new Promise((resolve, reject) => {
+    req.session.destroy((err) => {
+      if (err) {
+        return reject(new appError("Logout failed"));
+      }
+      resolve();
+    });
+  });
+}
 module.exports = {
   createUser,
   loginUser,
@@ -128,5 +138,6 @@ module.exports = {
   verifyOtp,
   resetPassword,
   handleGoogleUser,
-  generateSignupOtp
+  generateSignupOtp,
+  signOutUser
 };

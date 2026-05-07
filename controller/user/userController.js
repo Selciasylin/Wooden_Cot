@@ -4,7 +4,16 @@ async function renderSignUp(req, res) {
   res.render("user/auth/signUp");
 }
 async function renderSignIn(req, res) {
-  res.render("user/auth/signIn");
+   let message = null;
+  if (req.query.message) {
+    message = {
+      text: req.query.message,
+      type: req.query.type || "success"
+    };
+  } else if (res.locals.message) {
+    message = res.locals.message;
+  }
+  res.render("user/auth/signIn", { message });
 }
 async function renderOtpPage(req, res) {
   res.render("user/auth/OTPpage");
@@ -209,6 +218,16 @@ async function resendSignupOtp(req, res) {
         return res.json({ status: "ERROR" });
     }
 }
+async function signOut(req, res) {
+  try {
+    await userService.signOutUser(req);
+    res.clearCookie("connect.sid");
+    return res.redirect("/signin?message=Logged out successfully&type=success");
+  } catch (error) {
+    console.error("Logout Error:", error);
+    return res.redirect("/?message=Logout failed&type=error");
+  }
+}
 
 module.exports = {
   renderSignUp,
@@ -222,5 +241,6 @@ module.exports = {
   verifyOtp,
   resetPassword,
   googleCallback,
-  resendSignupOtp
+  resendSignupOtp,
+  signOut
 };

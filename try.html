@@ -1,951 +1,187 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Products | Wooden Cot</title>
 
-    <!-- CSS Libraries -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  .board { background: #1C2B2B; min-height: 100vh; padding: 28px 24px; font-family: 'Inter', sans-serif; border-radius: 16px; }
+  .board-title { text-align: center; font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 400; color: #E8DCC8; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; }
+  .board-sub { text-align: center; font-size: 11px; letter-spacing: 3px; color: #7A9E9A; text-transform: uppercase; margin-bottom: 24px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .card { background: #243332; border-radius: 16px; border: 0.5px solid #3A5250; padding: 18px 16px; display: flex; flex-direction: column; gap: 10px; position: relative; overflow: hidden; }
+  .card.full-width { grid-column: 1 / -1; }
+  .card-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: #7A9E9A; font-weight: 500; }
+  .card-title { font-family: 'Playfair Display', serif; font-size: 16px; color: #E8DCC8; font-weight: 500; line-height: 1.3; }
+  .card-title em { font-style: italic; color: #A8C5C0; }
+  .card-text { font-size: 11px; color: #8AA8A4; line-height: 1.7; font-weight: 300; }
+  .numbers-row { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; padding: 6px 0 4px; }
+  .num-badge { width: 38px; height: 38px; border-radius: 50%; background: #1C2B2B; border: 1px solid #4A6E6A; display: flex; align-items: center; justify-content: center; font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 500; color: #A8C5C0; flex-shrink: 0; letter-spacing: 0.5px; }
+  .scene-wrap { display: flex; align-items: center; gap: 14px; }
+  .scene-svg { flex-shrink: 0; }
+  .scene-text { flex: 1; }
+  .tag { display: inline-block; background: #1C3432; border-radius: 20px; padding: 3px 10px; font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: #7ABFB8; border: 0.5px solid #3A5250; }
+  .divider { width: 30px; height: 1px; background: #3A5250; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: #6AABA4; display: inline-block; margin-right: 6px; flex-shrink: 0; }
+  .dot-row { display: flex; align-items: center; font-size: 11px; color: #8AA8A4; }
+  .quote-pill { display: inline-block; background: #1C3432; border-radius: 20px; padding: 6px 14px; font-size: 11px; color: #A8C5C0; font-style: italic; font-family: 'Playfair Display', serif; border: 0.5px solid #3A5250; }
+</style>
 
-    <style>
-        /* ── Base ─────────────────────────────────────────────── */
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #f5f5f5;
-        }
+<div class="board">
+  <div class="board-title">My Vision Board</div>
+  <div class="board-sub">May — Aug 2026 · stay focused, stay moving</div>
 
-        /* ── Sidebar ──────────────────────────────────────────── */
-        .sidebar {
-            width: 250px;
-            min-height: 100vh;
-            background: white;
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 1000;
-        }
+  <div class="grid">
 
-        .sidebar-brand,
-        .offcanvas-brand {
-            background-color: #AE946D;
-            color: white;
-            padding: 20px;
-            text-align: center;
-            font-weight: 700;
-            font-size: 18px;
-        }
-
-        /* ── Nav Links ────────────────────────────────────────── */
-        .nav-link {
-            color: #666;
-            padding: 12px 25px;
-            border-left: 3px solid transparent;
-            transition: all 0.3s;
-        }
-
-        .nav-link:hover,
-        .nav-link.active {
-            background: #f8f8f8;
-            color: #AE946D;
-            border-left-color: #AE946D;
-            font-weight: 600;
-        }
-
-        .nav-link i {
-            margin-right: 10px;
-            font-size: 18px;
-        }
-
-        .logout-link {
-            color: #dc3545 !important;
-        }
-
-        /* ── Layout ───────────────────────────────────────────── */
-        .page-wrapper {
-            margin-left: 250px;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        @media (max-width: 768px) {
-            .page-wrapper {
-                margin-left: 0;
-            }
-        }
-
-        .main-content {
-            flex: 1;
-            padding: 40px 0;
-            display: flex;
-            justify-content: center;
-        }
-
-        /* ── Content Card ─────────────────────────────────────── */
-        .content-card {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            width: 90%;
-            max-width: 1100px;
-        }
-
-        .page-title {
-            color: #AE946D;
-            font-weight: 600;
-            margin-bottom: 0;
-        }
-
-        /* ── Search ───────────────────────────────────────────── */
-        .search-box {
-            max-width: 300px;
-        }
-
-        /* ── Table ────────────────────────────────────────────── */
-        .table thead {
-            background-color: #f8f9fa;
-        }
-
-        .table tbody tr {
-            vertical-align: middle;
-        }
-
-        .product-img {
-            width: 60px;
-            height: 50px;
-            object-fit: cover;
-            border-radius: 6px;
-        }
-
-        /* ── Badges ───────────────────────────────────────────── */
-        .badge-instock {
-            background-color: #d4edda;
-            color: #155724;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .badge-outofstock {
-            background-color: #f8d7da;
-            color: #721c24;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        /* ── Pagination ───────────────────────────────────────── */
-        .pagination .page-link {
-            color: #666;
-        }
-
-        .pagination .page-item.active .page-link {
-            background-color: #AE946D;
-            border-color: #AE946D;
-        }
-
-        /* ── Buttons ──────────────────────────────────────────── */
-        .btn-custom {
-            background-color: #AE946D;
-            color: white;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 5px;
-            font-weight: 600;
-        }
-
-        .btn-custom:hover {
-            background-color: #9a8260;
-            color: white;
-        }
-
-        .btn-listed {
-            background-color: #AE946D;
-            color: white;
-            border: none;
-            padding: 4px 12px;
-            border-radius: 5px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .btn-unlisted {
-            background-color: #6c757d;
-            color: white;
-            border: none;
-            padding: 4px 12px;
-            border-radius: 5px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .btn-listed:hover,
-        .btn-unlisted:hover {
-            opacity: 0.8;
-            color: white;
-        }
-
-        /* ── Mobile Topbar ────────────────────────────────────── */
-        .mobile-topbar {
-            background: white;
-            padding: 12px 20px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-            position: sticky;
-            top: 0;
-            z-index: 999;
-        }
-
-        .mobile-topbar .brand-name {
-            color: #AE946D;
-            font-weight: 700;
-        }
-
-        .toggle-btn {
-            background: none;
-            border: none;
-            font-size: 26px;
-            color: #AE946D;
-            cursor: pointer;
-        }
-
-        /* ── Footer ───────────────────────────────────────────── */
-        .footer-custom {
-            background-color: #CDAF82;
-            color: white;
-            text-align: center;
-            padding: 15px;
-        }
-
-        /* ── Image Slots ──────────────────────────────────────── */
-        .image-slot {
-            width: 100%;
-            aspect-ratio: 1;
-            border: 2px dashed #dee2e6;
-            border-radius: 8px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-            background: #f8f9fa;
-            transition: border-color 0.2s;
-        }
-
-        .image-slot:hover {
-            border-color: #AE946D;
-        }
-
-        .image-slot img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            position: absolute;
-            top: 0;
-            left: 0;
-        }
-
-        .image-slot .slot-remove {
-            position: absolute;
-            top: 4px;
-            right: 4px;
-            background: rgba(220, 53, 69, 0.9);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 22px;
-            height: 22px;
-            font-size: 11px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10;
-            cursor: pointer;
-        }
-
-        .image-slot .slot-placeholder {
-            color: #aaa;
-            font-size: 12px;
-            text-align: center;
-        }
-
-        .image-slot .slot-placeholder i {
-            font-size: 22px;
-            display: block;
-            margin-bottom: 4px;
-        }
-
-        /* ── Size Variant ─────────────────────────────────────── */
-        .size-card {
-            border: 1px solid #dee2e6;
-            border-radius: 8px;
-            padding: 12px;
-            margin-bottom: 10px;
-        }
-
-        .size-card .size-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-            user-select: none;
-        }
-
-        .size-card .size-header input[type="checkbox"] {
-            accent-color: #AE946D;
-            width: 16px;
-            height: 16px;
-        }
-
-        .size-fields {
-            display: none;
-            margin-top: 12px;
-            padding-top: 12px;
-            border-top: 1px solid #f0f0f0;
-        }
-
-        .size-fields.show {
-            display: block;
-        }
-
-        /* ── View Modal Product Detail ────────────────────────── */
-        .view-img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            border-radius: 8px;
-        }
-
-        .detail-label {
-            font-size: 12px;
-            color: #999;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .detail-value {
-            font-size: 14px;
-            color: #333;
-            font-weight: 500;
-        }
-
-        .size-tag {
-            display: inline-block;
-            background: #f8f9fa;
-            border: 1px solid #dee2e6;
-            border-radius: 5px;
-            padding: 4px 10px;
-            font-size: 13px;
-            margin: 2px;
-        }
-    </style>
-</head>
-<body>
-
-    <!-- ── Sidebar (Desktop Only) ───────────────────────────── -->
-    <div class="sidebar d-none d-md-block">
-        <div class="sidebar-brand">
-            <i class="bi bi-tree-fill me-2"></i>Wooden Cot
-        </div>
-        <nav class="py-3">
-            <div class="nav flex-column">
-                <a class="nav-link" href="/admin/dashboard"><i class="bi bi-speedometer2"></i> Dashboard</a>
-                <a class="nav-link active" href="/admin/products"><i class="bi bi-box-seam"></i> Products</a>
-                <a class="nav-link" href="/admin/categories"><i class="bi bi-grid"></i> Categories</a>
-                <a class="nav-link" href="/admin/orders"><i class="bi bi-receipt"></i> Orders</a>
-                <a class="nav-link" href="/admin/customers"><i class="bi bi-people"></i> Customers</a>
-                <a class="nav-link" href="/admin/offers"><i class="bi bi-tag"></i> Offers</a>
-                <a class="nav-link" href="/admin/coupons"><i class="bi bi-ticket-perforated"></i> Coupons</a>
-                <a class="nav-link" href="/admin/salesReport"><i class="bi bi-graph-up"></i> Sales Report</a>
-                <a class="nav-link logout-link" href="/admin/logout"><i class="bi bi-box-arrow-right"></i> Logout</a>
-            </div>
-        </nav>
+    <!-- Card 1: Weeks 14–25 -->
+    <div class="card full-width">
+      <div class="card-label">Weekly tracker</div>
+      <div class="card-title">Week <em>14</em> to <em>25</em></div>
+      <div class="numbers-row">
+        <div class="num-badge">W14</div>
+        <div class="num-badge">W15</div>
+        <div class="num-badge">W16</div>
+        <div class="num-badge">W17</div>
+        <div class="num-badge">W18</div>
+        <div class="num-badge">W19</div>
+        <div class="num-badge">W20</div>
+        <div class="num-badge">W21</div>
+        <div class="num-badge">W22</div>
+        <div class="num-badge">W23</div>
+        <div class="num-badge">W24</div>
+        <div class="num-badge">W25</div>
+      </div>
+      <div class="card-text" style="text-align:center;">mark each week as you pass it · every week counts</div>
     </div>
 
-    <!-- ── Offcanvas Sidebar (Mobile Only) ──────────────────── -->
-    <div class="offcanvas offcanvas-start" tabindex="-1" id="mobileSidebar">
-        <div class="offcanvas-brand">
-            <i class="bi bi-tree-fill me-2"></i>Wooden Cot
+    <!-- Card 2: Project Hosting Successful -->
+    <div class="card">
+      <div class="card-label">Project milestone</div>
+      <div class="scene-wrap">
+        <svg class="scene-svg" width="72" height="80" viewBox="0 0 72 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="4" y="60" width="64" height="6" rx="2" fill="#3D6B65"/>
+          <rect x="18" y="34" width="36" height="24" rx="3" fill="#1C3432" stroke="#3A5250" stroke-width="0.8"/>
+          <rect x="21" y="37" width="30" height="16" rx="1.5" fill="#243332"/>
+          <line x1="23" y1="41" x2="49" y2="41" stroke="#3A5250" stroke-width="0.8"/>
+          <line x1="23" y1="44" x2="44" y2="44" stroke="#3A5250" stroke-width="0.8"/>
+          <line x1="23" y1="47" x2="46" y2="47" stroke="#3A5250" stroke-width="0.8"/>
+          <text x="42" y="45" font-size="9" fill="#6AABA4">✦</text>
+          <rect x="33" y="58" width="6" height="4" rx="1" fill="#3D6B65"/>
+          <ellipse cx="36" cy="52" rx="10" ry="5" fill="#4A7A74"/>
+          <path d="M26 50 Q22 54 24 60" stroke="#4A7A74" stroke-width="4" stroke-linecap="round" fill="none"/>
+          <path d="M46 50 Q50 54 48 60" stroke="#4A7A74" stroke-width="4" stroke-linecap="round" fill="none"/>
+          <ellipse cx="36" cy="28" rx="9" ry="10" fill="#C8A882"/>
+          <path d="M27 26 Q27 16 36 16 Q45 16 45 26" fill="#5C4030"/>
+          <path d="M27 26 Q26 30 28 32" fill="#5C4030"/>
+          <path d="M32 31 Q36 34 40 31" stroke="#8B6040" stroke-width="0.8" fill="none" stroke-linecap="round"/>
+          <circle cx="33" cy="28" r="1.2" fill="#3C2818"/>
+          <circle cx="39" cy="28" r="1.2" fill="#3C2818"/>
+          <text x="43" y="20" font-size="8" fill="#6AABA4">★</text>
+        </svg>
+        <div class="scene-text">
+          <div class="tag">Shipped ✦</div>
+          <div style="height:8px;"></div>
+          <div class="card-title">First project hosting<br/><em>successful!</em></div>
+          <div style="height:6px;"></div>
+          <div class="card-text">Live. Deployed. Done.<br/>First one always hits different.</div>
         </div>
-        <div class="offcanvas-body p-0">
-            <nav class="py-3">
-                <div class="nav flex-column">
-                    <a class="nav-link" href="/admin/dashboard"><i class="bi bi-speedometer2"></i> Dashboard</a>
-                    <a class="nav-link active" href="/admin/products"><i class="bi bi-box-seam"></i> Products</a>
-                    <a class="nav-link" href="/admin/categories"><i class="bi bi-grid"></i> Categories</a>
-                    <a class="nav-link" href="/admin/orders"><i class="bi bi-receipt"></i> Orders</a>
-                    <a class="nav-link" href="/admin/customers"><i class="bi bi-people"></i> Customers</a>
-                    <a class="nav-link" href="/admin/offers"><i class="bi bi-tag"></i> Offers</a>
-                    <a class="nav-link" href="/admin/coupons"><i class="bi bi-ticket-perforated"></i> Coupons</a>
-                    <a class="nav-link" href="/admin/salesReport"><i class="bi bi-graph-up"></i> Sales Report</a>
-                    <a class="nav-link logout-link" href="/admin/logout"><i class="bi bi-box-arrow-right"></i> Logout</a>
-                </div>
-            </nav>
-        </div>
+      </div>
     </div>
 
-    <!-- ── Page Wrapper ──────────────────────────────────────── -->
-    <div class="page-wrapper">
-
-        <!-- Mobile Topbar -->
-        <div class="mobile-topbar d-flex d-md-none align-items-center justify-content-between">
-            <button class="toggle-btn" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar">
-                <i class="bi bi-list"></i>
-            </button>
-            <span class="brand-name">
-                <i class="bi bi-tree-fill me-1"></i>Wooden Cot
-            </span>
-        </div>
-
-        <!-- Main Content -->
-        <div class="main-content">
-            <div class="content-card">
-
-                <!-- Header -->
-                <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
-                    <h2 class="page-title">Products</h2>
-                    <button class="btn btn-custom" data-bs-toggle="modal" data-bs-target="#addProductModal">
-                        <i class="bi bi-plus-circle me-2"></i>Add Product
-                    </button>
-                </div>
-
-                <!-- Search -->
-                <div class="mb-4">
-                    <input type="text" class="form-control search-box" id="searchProducts" placeholder="Search Products">
-                </div>
-
-                <!-- Table -->
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle">
-                        <thead>
-                            <tr>
-                                <th>Image</th>
-                                <th>Product Name</th>
-                                <th>Category</th>
-                                <th>Availability</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="productTableBody">
-                            <!-- Demo rows -->
-                            <tr>
-                                <td><img src="https://placehold.co/60x50/e8ddd0/AE946D?text=Cot" class="product-img" alt="Product"></td>
-                                <td class="fw-semibold">Heritage Teak Bed</td>
-                                <td>Teak</td>
-                                <td><span class="badge-instock">In Stock</span></td>
-                                <td><button class="btn btn-listed">Listed</button></td>
-                                <td>
-                                    <button class="btn btn-sm btn-outline-secondary me-1" onclick="openViewModal()" title="View"><i class="bi bi-eye"></i></button>
-                                    <button class="btn btn-sm btn-outline-primary me-1" onclick="openEditModal()" title="Edit"><i class="bi bi-pencil"></i></button>
-                                    <button class="btn btn-sm btn-outline-danger" title="Delete"><i class="bi bi-trash"></i></button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><img src="https://placehold.co/60x50/e8ddd0/AE946D?text=Cot" class="product-img" alt="Product"></td>
-                                <td class="fw-semibold">Natural Sheesham Comfort</td>
-                                <td>Sheesham</td>
-                                <td><span class="badge-instock">In Stock</span></td>
-                                <td><button class="btn btn-listed">Listed</button></td>
-                                <td>
-                                    <button class="btn btn-sm btn-outline-secondary me-1" onclick="openViewModal()" title="View"><i class="bi bi-eye"></i></button>
-                                    <button class="btn btn-sm btn-outline-primary me-1" onclick="openEditModal()" title="Edit"><i class="bi bi-pencil"></i></button>
-                                    <button class="btn btn-sm btn-outline-danger" title="Delete"><i class="bi bi-trash"></i></button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><img src="https://placehold.co/60x50/e8ddd0/AE946D?text=Cot" class="product-img" alt="Product"></td>
-                                <td class="fw-semibold">Modern Oak Haven</td>
-                                <td>Oak</td>
-                                <td><span class="badge-outofstock">Out of Stock</span></td>
-                                <td><button class="btn btn-unlisted">Unlisted</button></td>
-                                <td>
-                                    <button class="btn btn-sm btn-outline-secondary me-1" onclick="openViewModal()" title="View"><i class="bi bi-eye"></i></button>
-                                    <button class="btn btn-sm btn-outline-primary me-1" onclick="openEditModal()" title="Edit"><i class="bi bi-pencil"></i></button>
-                                    <button class="btn btn-sm btn-outline-danger" title="Delete"><i class="bi bi-trash"></i></button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><img src="https://placehold.co/60x50/e8ddd0/AE946D?text=Cot" class="product-img" alt="Product"></td>
-                                <td class="fw-semibold">LiteWood Pine Cot</td>
-                                <td>Pine</td>
-                                <td><span class="badge-instock">In Stock</span></td>
-                                <td><button class="btn btn-listed">Listed</button></td>
-                                <td>
-                                    <button class="btn btn-sm btn-outline-secondary me-1" onclick="openViewModal()" title="View"><i class="bi bi-eye"></i></button>
-                                    <button class="btn btn-sm btn-outline-primary me-1" onclick="openEditModal()" title="Edit"><i class="bi bi-pencil"></i></button>
-                                    <button class="btn btn-sm btn-outline-danger" title="Delete"><i class="bi bi-trash"></i></button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Pagination -->
-                <div class="d-flex flex-wrap justify-content-between align-items-center mt-4 gap-2">
-                    <div class="text-muted small">Showing 1 to 4 of 12 entries</div>
-                    <nav>
-                        <ul class="pagination mb-0" id="pagination">
-                            <li class="page-item disabled"><a class="page-link">Previous</a></li>
-                            <li class="page-item active"><a class="page-link">1</a></li>
-                            <li class="page-item"><a class="page-link">2</a></li>
-                            <li class="page-item"><a class="page-link">3</a></li>
-                            <li class="page-item"><a class="page-link">Next</a></li>
-                        </ul>
-                    </nav>
-                </div>
-
-            </div>
-        </div>
-
-        <!-- Footer -->
-        <footer class="footer-custom">
-            <p class="mb-0 small">Copyright &copy; Wooden Cot 2026</p>
-        </footer>
-
+    <!-- Card 3: Deep Work Focus -->
+    <div class="card">
+      <div class="card-label">Deep work</div>
+      <div style="text-align:center;">
+        <svg width="68" height="68" viewBox="0 0 68 68" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M18 26 Q18 12 34 12 Q50 12 50 26" stroke="#5C4030" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <rect x="14" y="24" width="7" height="10" rx="3" fill="#3D6B65"/>
+          <rect x="47" y="24" width="7" height="10" rx="3" fill="#3D6B65"/>
+          <ellipse cx="34" cy="30" rx="9" ry="10" fill="#C8A882"/>
+          <path d="M25 28 Q25 18 34 18 Q43 18 43 28" fill="#5C4030"/>
+          <path d="M30 30 Q31 28 32 30" stroke="#3C2818" stroke-width="1" fill="none"/>
+          <path d="M36 30 Q37 28 38 30" stroke="#3C2818" stroke-width="1" fill="none"/>
+          <line x1="32" y1="34" x2="36" y2="34" stroke="#8B6040" stroke-width="0.8" stroke-linecap="round"/>
+          <rect x="16" y="48" width="36" height="16" rx="2" fill="#1C3432" stroke="#3A5250" stroke-width="0.8"/>
+          <rect x="19" y="50" width="30" height="10" rx="1" fill="#243332"/>
+          <line x1="21" y1="53" x2="31" y2="53" stroke="#6AABA4" stroke-width="0.8"/>
+          <line x1="33" y1="53" x2="38" y2="53" stroke="#3A5250" stroke-width="0.8"/>
+          <line x1="21" y1="56" x2="36" y2="56" stroke="#3A5250" stroke-width="0.8"/>
+          <line x1="38" y1="56" x2="46" y2="56" stroke="#6AABA4" stroke-width="0.8"/>
+          <rect x="27" y="40" width="14" height="10" rx="4" fill="#4A7A74"/>
+        </svg>
+      </div>
+      <div class="card-title" style="font-size:15px; text-align:center;">No distractions.<br/><em>Only focus.</em></div>
+      <div class="divider" style="margin:0 auto;"></div>
+      <div class="dot-row"><span class="dot"></span>Phone away</div>
+      <div class="dot-row"><span class="dot"></span>Deep work blocks daily</div>
+      <div class="dot-row"><span class="dot"></span>One task at a time</div>
     </div>
 
-    <!-- ══════════════════════════════════════════════════════════
-         ADD PRODUCT MODAL
-    ══════════════════════════════════════════════════════════ -->
-    <div class="modal fade" id="addProductModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
-            <div class="modal-content">
-
-                <div class="modal-header border-0 pb-0">
-                    <h5 class="modal-title fw-bold">Add New Product</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-
-                <div class="modal-body">
-                    <form id="addProductForm">
-
-                        <!-- Product Name -->
-                        <div class="mb-3">
-                            <label class="form-label small fw-semibold">Product Name</label>
-                            <input type="text" class="form-control" placeholder="Enter product name" required>
-                        </div>
-
-                        <!-- Category -->
-                        <div class="mb-3">
-                            <label class="form-label small fw-semibold">Category</label>
-                            <select class="form-select" required>
-                                <option value="" disabled selected>Select category</option>
-                                <option>Teak</option>
-                                <option>Sheesham</option>
-                                <option>Oak</option>
-                                <option>Pine</option>
-                            </select>
-                        </div>
-
-                        <!-- Description -->
-                        <div class="mb-3">
-                            <label class="form-label small fw-semibold">Description</label>
-                            <textarea class="form-control" rows="3" placeholder="Enter product description" required></textarea>
-                        </div>
-
-                        <hr class="my-3">
-
-                        <!-- Size Variants -->
-                        <label class="form-label small fw-semibold mb-2">Size & Pricing</label>
-
-                        <!-- Single -->
-                        <div class="size-card">
-                            <div class="size-header" onclick="toggleSize('single')">
-                                <input type="checkbox" id="chk-single" onchange="toggleSize('single')">
-                                <label for="chk-single" class="fw-semibold mb-0" style="cursor:pointer;">Single</label>
-                            </div>
-                            <div class="size-fields" id="fields-single">
-                                <div class="row g-3">
-                                    <div class="col-6">
-                                        <label class="form-label small">Quantity</label>
-                                        <input type="number" class="form-control" placeholder="Qty" min="0">
-                                    </div>
-                                    <div class="col-6">
-                                        <label class="form-label small">Price (₹)</label>
-                                        <input type="number" class="form-control" placeholder="Price" min="0">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Queen -->
-                        <div class="size-card">
-                            <div class="size-header" onclick="toggleSize('queen')">
-                                <input type="checkbox" id="chk-queen" onchange="toggleSize('queen')">
-                                <label for="chk-queen" class="fw-semibold mb-0" style="cursor:pointer;">Queen</label>
-                            </div>
-                            <div class="size-fields" id="fields-queen">
-                                <div class="row g-3">
-                                    <div class="col-6">
-                                        <label class="form-label small">Quantity</label>
-                                        <input type="number" class="form-control" placeholder="Qty" min="0">
-                                    </div>
-                                    <div class="col-6">
-                                        <label class="form-label small">Price (₹)</label>
-                                        <input type="number" class="form-control" placeholder="Price" min="0">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- King -->
-                        <div class="size-card">
-                            <div class="size-header" onclick="toggleSize('king')">
-                                <input type="checkbox" id="chk-king" onchange="toggleSize('king')">
-                                <label for="chk-king" class="fw-semibold mb-0" style="cursor:pointer;">King</label>
-                            </div>
-                            <div class="size-fields" id="fields-king">
-                                <div class="row g-3">
-                                    <div class="col-6">
-                                        <label class="form-label small">Quantity</label>
-                                        <input type="number" class="form-control" placeholder="Qty" min="0">
-                                    </div>
-                                    <div class="col-6">
-                                        <label class="form-label small">Price (₹)</label>
-                                        <input type="number" class="form-control" placeholder="Price" min="0">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <hr class="my-3">
-
-                        <!-- Image Upload — 4 Fixed Slots -->
-                        <label class="form-label small fw-semibold mb-2">Product Images (up to 4)</label>
-                        <div class="row g-2" id="imageSlots">
-                            <div class="col-3"><div class="image-slot" id="slot-0" onclick="triggerFileInput(0)"><span class="slot-placeholder"><i class="bi bi-image"></i>Add Photo</span></div></div>
-                            <div class="col-3"><div class="image-slot" id="slot-1" onclick="triggerFileInput(1)"><span class="slot-placeholder"><i class="bi bi-image"></i>Add Photo</span></div></div>
-                            <div class="col-3"><div class="image-slot" id="slot-2" onclick="triggerFileInput(2)"><span class="slot-placeholder"><i class="bi bi-image"></i>Add Photo</span></div></div>
-                            <div class="col-3"><div class="image-slot" id="slot-3" onclick="triggerFileInput(3)"><span class="slot-placeholder"><i class="bi bi-image"></i>Add Photo</span></div></div>
-                        </div>
-                        <!-- Hidden file inputs for each slot -->
-                        <input type="file" id="fileInput-0" accept="image/*" class="d-none" onchange="previewImage(0, this)">
-                        <input type="file" id="fileInput-1" accept="image/*" class="d-none" onchange="previewImage(1, this)">
-                        <input type="file" id="fileInput-2" accept="image/*" class="d-none" onchange="previewImage(2, this)">
-                        <input type="file" id="fileInput-3" accept="image/*" class="d-none" onchange="previewImage(3, this)">
-
-                    </form>
-                </div>
-
-                <div class="modal-footer border-0">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-custom">Add Product</button>
-                </div>
-
-            </div>
+    <!-- Card 4: Timeline -->
+    <div class="card full-width">
+      <div class="card-label">Progress timeline</div>
+      <div class="card-title">The road ahead</div>
+      <div style="display:flex; flex-direction:column; gap:14px; padding:4px 0;">
+        <div>
+          <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+            <span style="font-size:10px; font-weight:500; color:#7A9E9A; letter-spacing:1px; text-transform:uppercase;">12 weeks</span>
+            <span style="font-size:10px; color:#A8C5C0; font-weight:500;">→ 25 weeks</span>
+          </div>
+          <div style="background:#1C2B2B; border-radius:10px; height:6px; overflow:hidden;">
+            <div style="width:48%; height:100%; background:#3D6B65; border-radius:10px;"></div>
+          </div>
+          <div style="font-size:9px; color:#5A8A84; margin-top:4px; letter-spacing:0.5px;">halfway milestone — keep going</div>
         </div>
+        <div>
+          <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+            <span style="font-size:10px; font-weight:500; color:#7A9E9A; letter-spacing:1px; text-transform:uppercase;">16 weeks</span>
+            <span style="font-size:10px; color:#E8DCC8; font-weight:500; font-family:'Playfair Display', serif; font-style:italic;">= 1 Year complete ✦</span>
+          </div>
+          <div style="background:#1C2B2B; border-radius:10px; height:6px; overflow:hidden;">
+            <div style="width:100%; height:100%; background:#6AABA4; border-radius:10px;"></div>
+          </div>
+          <div style="font-size:9px; color:#6AABA4; margin-top:4px; letter-spacing:0.5px; font-weight:500;">complete 16 weeks → the full year is done 🎯</div>
+        </div>
+      </div>
+      <div class="quote-pill" style="align-self:flex-start;">" avoid setbacks · trust the process "</div>
     </div>
 
-    <!-- ══════════════════════════════════════════════════════════
-         EDIT PRODUCT MODAL
-    ══════════════════════════════════════════════════════════ -->
-    <div class="modal fade" id="editProductModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
-            <div class="modal-content">
-
-                <div class="modal-header border-0 pb-0">
-                    <h5 class="modal-title fw-bold">Edit Product</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-
-                <div class="modal-body">
-                    <form id="editProductForm">
-
-                        <div class="mb-3">
-                            <label class="form-label small fw-semibold">Product Name</label>
-                            <input type="text" class="form-control" id="editProductName" value="Heritage Teak Bed" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label small fw-semibold">Category</label>
-                            <select class="form-select" id="editProductCategory" required>
-                                <option>Teak</option>
-                                <option>Sheesham</option>
-                                <option>Oak</option>
-                                <option>Pine</option>
-                            </select>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label small fw-semibold">Description</label>
-                            <textarea class="form-control" id="editProductDesc" rows="3" required>A beautiful heritage teak bed crafted with premium quality wood.</textarea>
-                        </div>
-
-                        <hr class="my-3">
-
-                        <label class="form-label small fw-semibold mb-2">Size & Pricing</label>
-
-                        <div class="size-card">
-                            <div class="size-header" onclick="toggleSize('edit-single')">
-                                <input type="checkbox" id="chk-edit-single" checked onchange="toggleSize('edit-single')">
-                                <label for="chk-edit-single" class="fw-semibold mb-0" style="cursor:pointer;">Single</label>
-                            </div>
-                            <div class="size-fields show" id="fields-edit-single">
-                                <div class="row g-3">
-                                    <div class="col-6">
-                                        <label class="form-label small">Quantity</label>
-                                        <input type="number" class="form-control" value="10" min="0">
-                                    </div>
-                                    <div class="col-6">
-                                        <label class="form-label small">Price (₹)</label>
-                                        <input type="number" class="form-control" value="1800" min="0">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="size-card">
-                            <div class="size-header" onclick="toggleSize('edit-queen')">
-                                <input type="checkbox" id="chk-edit-queen" onchange="toggleSize('edit-queen')">
-                                <label for="chk-edit-queen" class="fw-semibold mb-0" style="cursor:pointer;">Queen</label>
-                            </div>
-                            <div class="size-fields" id="fields-edit-queen">
-                                <div class="row g-3">
-                                    <div class="col-6">
-                                        <label class="form-label small">Quantity</label>
-                                        <input type="number" class="form-control" placeholder="Qty" min="0">
-                                    </div>
-                                    <div class="col-6">
-                                        <label class="form-label small">Price (₹)</label>
-                                        <input type="number" class="form-control" placeholder="Price" min="0">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="size-card">
-                            <div class="size-header" onclick="toggleSize('edit-king')">
-                                <input type="checkbox" id="chk-edit-king" onchange="toggleSize('edit-king')">
-                                <label for="chk-edit-king" class="fw-semibold mb-0" style="cursor:pointer;">King</label>
-                            </div>
-                            <div class="size-fields" id="fields-edit-king">
-                                <div class="row g-3">
-                                    <div class="col-6">
-                                        <label class="form-label small">Quantity</label>
-                                        <input type="number" class="form-control" placeholder="Qty" min="0">
-                                    </div>
-                                    <div class="col-6">
-                                        <label class="form-label small">Price (₹)</label>
-                                        <input type="number" class="form-control" placeholder="Price" min="0">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <hr class="my-3">
-
-                        <label class="form-label small fw-semibold mb-2">Product Images (up to 4)</label>
-                        <div class="row g-2" id="editImageSlots">
-                            <div class="col-3">
-                                <div class="image-slot" id="edit-slot-0" onclick="triggerEditFileInput(0)">
-                                    <img src="https://placehold.co/120x120/e8ddd0/AE946D?text=Img1" alt="">
-                                    <button class="slot-remove" onclick="removeEditSlot(event, 0)"><i class="bi bi-x"></i></button>
-                                </div>
-                            </div>
-                            <div class="col-3">
-                                <div class="image-slot" id="edit-slot-1" onclick="triggerEditFileInput(1)">
-                                    <img src="https://placehold.co/120x120/e8ddd0/AE946D?text=Img2" alt="">
-                                    <button class="slot-remove" onclick="removeEditSlot(event, 1)"><i class="bi bi-x"></i></button>
-                                </div>
-                            </div>
-                            <div class="col-3"><div class="image-slot" id="edit-slot-2" onclick="triggerEditFileInput(2)"><span class="slot-placeholder"><i class="bi bi-image"></i>Add Photo</span></div></div>
-                            <div class="col-3"><div class="image-slot" id="edit-slot-3" onclick="triggerEditFileInput(3)"><span class="slot-placeholder"><i class="bi bi-image"></i>Add Photo</span></div></div>
-                        </div>
-                        <input type="file" id="editFileInput-0" accept="image/*" class="d-none" onchange="previewEditImage(0, this)">
-                        <input type="file" id="editFileInput-1" accept="image/*" class="d-none" onchange="previewEditImage(1, this)">
-                        <input type="file" id="editFileInput-2" accept="image/*" class="d-none" onchange="previewEditImage(2, this)">
-                        <input type="file" id="editFileInput-3" accept="image/*" class="d-none" onchange="previewEditImage(3, this)">
-
-                    </form>
-                </div>
-
-                <div class="modal-footer border-0">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-custom">Save Changes</button>
-                </div>
-
-            </div>
+    <!-- Card 5: Fitness -->
+    <div class="card full-width">
+      <div class="card-label">Wellness</div>
+      <div class="scene-wrap">
+        <svg class="scene-svg" width="72" height="90" viewBox="0 0 72 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="4" y="55" width="64" height="5" rx="2.5" fill="#3D6B65"/>
+          <rect x="2" y="48" width="10" height="18" rx="3" fill="#4A7A74"/>
+          <rect x="60" y="48" width="10" height="18" rx="3" fill="#4A7A74"/>
+          <path d="M24 50 Q20 44 22 36" stroke="#C8A882" stroke-width="6" stroke-linecap="round" fill="none"/>
+          <path d="M48 50 Q52 44 50 36" stroke="#C8A882" stroke-width="6" stroke-linecap="round" fill="none"/>
+          <rect x="26" y="36" width="20" height="18" rx="6" fill="#4A7A74"/>
+          <path d="M30 54 Q28 64 28 72" stroke="#C8A882" stroke-width="6" stroke-linecap="round" fill="none"/>
+          <path d="M42 54 Q44 64 44 72" stroke="#C8A882" stroke-width="6" stroke-linecap="round" fill="none"/>
+          <ellipse cx="28" cy="74" rx="6" ry="3" fill="#5C4030"/>
+          <ellipse cx="44" cy="74" rx="6" ry="3" fill="#5C4030"/>
+          <ellipse cx="36" cy="24" rx="9" ry="10" fill="#C8A882"/>
+          <circle cx="36" cy="15" r="8" fill="#5C4030"/>
+          <path d="M43 16 Q50 10 46 20" fill="#5C4030"/>
+          <path d="M32 27 Q36 30 40 27" stroke="#8B6040" stroke-width="0.8" fill="none" stroke-linecap="round"/>
+          <circle cx="33" cy="23" r="1.2" fill="#3C2818"/>
+          <circle cx="39" cy="23" r="1.2" fill="#3C2818"/>
+        </svg>
+        <div class="scene-text">
+          <div class="tag">Fitness</div>
+          <div style="height:6px;"></div>
+          <div class="card-title">Move your body.<br/><em>Every single day.</em></div>
+          <div style="height:8px;"></div>
+          <div class="dot-row"><span class="dot"></span>Consistent workout routine</div>
+          <div class="dot-row"><span class="dot"></span>Fuel your body right</div>
+          <div class="dot-row"><span class="dot"></span>Rest is part of progress</div>
+          <div style="height:8px;"></div>
+          <div class="quote-pill">" strong body, clear mind "</div>
         </div>
+      </div>
     </div>
 
-    <!-- ══════════════════════════════════════════════════════════
-         VIEW PRODUCT MODAL
-    ══════════════════════════════════════════════════════════ -->
-    <div class="modal fade" id="viewProductModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
-            <div class="modal-content">
+  </div>
 
-                <div class="modal-header border-0 pb-0">
-                    <h5 class="modal-title fw-bold">Product Details</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-
-                <div class="modal-body">
-
-                    <!-- Images -->
-                    <div class="row g-2 mb-4">
-                        <div class="col-6">
-                            <img src="https://placehold.co/400x250/e8ddd0/AE946D?text=Product" class="view-img" alt="Product">
-                        </div>
-                        <div class="col-6">
-                            <div class="row g-2">
-                                <div class="col-6"><img src="https://placehold.co/200x120/e8ddd0/AE946D?text=Img2" class="w-100 rounded" style="height:80px;object-fit:cover;" alt=""></div>
-                                <div class="col-6"><img src="https://placehold.co/200x120/e8ddd0/AE946D?text=Img3" class="w-100 rounded" style="height:80px;object-fit:cover;" alt=""></div>
-                                <div class="col-6"><img src="https://placehold.co/200x120/e8ddd0/AE946D?text=Img4" class="w-100 rounded" style="height:80px;object-fit:cover;" alt=""></div>
-                                <div class="col-6 d-flex align-items-center justify-content-center bg-light rounded text-muted small">No Image</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Details -->
-                    <div class="row g-3">
-                        <div class="col-6">
-                            <div class="detail-label">Product Name</div>
-                            <div class="detail-value">Heritage Teak Bed</div>
-                        </div>
-                        <div class="col-6">
-                            <div class="detail-label">Category</div>
-                            <div class="detail-value">Teak</div>
-                        </div>
-                        <div class="col-12">
-                            <div class="detail-label">Description</div>
-                            <div class="detail-value">A beautiful heritage teak bed crafted with premium quality wood and traditional joinery techniques.</div>
-                        </div>
-                        <div class="col-6">
-                            <div class="detail-label">Availability</div>
-                            <div class="detail-value"><span class="badge-instock">In Stock</span></div>
-                        </div>
-                        <div class="col-6">
-                            <div class="detail-label">Status</div>
-                            <div class="detail-value"><span class="badge bg-success">Listed</span></div>
-                        </div>
-                    </div>
-
-                    <hr class="my-3">
-
-                    <!-- Size & Pricing -->
-                    <div class="detail-label mb-2">Size & Pricing</div>
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-sm align-middle">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>Size</th>
-                                    <th>Quantity</th>
-                                    <th>Price</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Single</td>
-                                    <td>10</td>
-                                    <td>₹1,800</td>
-                                </tr>
-                                <tr>
-                                    <td>Queen</td>
-                                    <td>5</td>
-                                    <td>₹2,400</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                </div>
-
-                <div class="modal-footer border-0">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                </div>
-
-            </div>
-        </div>
-    </div>
-
-    <!-- ── Scripts ───────────────────────────────────────────── -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
-    <script>
-        /* ── Size Toggle ──────────────────────────────────────── */
-        function toggleSize(id) {
-            const checkbox = document.getElementById('chk-' + id);
-            const fields   = document.getElementById('fields-' + id);
-            if (checkbox.checked) {
-                fields.classList.add('show');
-            } else {
-                fields.classList.remove('show');
-            }
-        }
-
-        /* ── Image Slots (Add Modal) ──────────────────────────── */
-        function triggerFileInput(index) {
-            document.getElementById('fileInput-' + index).click();
-        }
-
-        function previewImage(index, input) {
-            if (!input.files || !input.files[0]) return;
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                const slot = document.getElementById('slot-' + index);
-                slot.innerHTML = `
-                    <img src="${e.target.result}" alt="Preview">
-                    <button class="slot-remove" onclick="removeSlot(event, ${index})">
-                        <i class="bi bi-x"></i>
-                    </button>`;
-            };
-            reader.readAsDataURL(input.files[0]);
-        }
-
-        function removeSlot(event, index) {
-            event.stopPropagation();
-            const slot = document.getElementById('slot-' + index);
-            slot.innerHTML = `<span class="slot-placeholder"><i class="bi bi-image"></i>Add Photo</span>`;
-            document.getElementById('fileInput-' + index).value = '';
-        }
-
-        /* ── Image Slots (Edit Modal) ─────────────────────────── */
-        function triggerEditFileInput(index) {
-            document.getElementById('editFileInput-' + index).click();
-        }
-
-        function previewEditImage(index, input) {
-            if (!input.files || !input.files[0]) return;
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                const slot = document.getElementById('edit-slot-' + index);
-                slot.innerHTML = `
-                    <img src="${e.target.result}" alt="Preview">
-                    <button class="slot-remove" onclick="removeEditSlot(event, ${index})">
-                        <i class="bi bi-x"></i>
-                    </button>`;
-            };
-            reader.readAsDataURL(input.files[0]);
-        }
-
-        function removeEditSlot(event, index) {
-            event.stopPropagation();
-            const slot = document.getElementById('edit-slot-' + index);
-            slot.innerHTML = `<span class="slot-placeholder"><i class="bi bi-image"></i>Add Photo</span>`;
-            document.getElementById('editFileInput-' + index).value = '';
-        }
-
-        /* ── Open Modals ──────────────────────────────────────── */
-        function openViewModal() {
-            new bootstrap.Modal(document.getElementById('viewProductModal')).show();
-        }
-
-        function openEditModal() {
-            new bootstrap.Modal(document.getElementById('editProductModal')).show();
-        }
-    </script>
-
-    <script src="/js/admin/product.js"></script>
-</body>
-</html>
+  <div style="text-align:center; margin-top:18px; font-size:9px; letter-spacing:3px; text-transform:uppercase; color:#4A7A74;">
+    believe · build · become
+  </div>
+</div>

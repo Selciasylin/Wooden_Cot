@@ -1,7 +1,7 @@
 const Category = require("../../model/categorySchema");
 const appError = require("../../utils/appError");
 async function getAllCategories() {
-  const categories = await Category.find().sort({ createdAt: -1 });
+  const categories = await Category.find({isListed:true}).sort({ createdAt: -1 });
   return categories;
 }
 async function createCategory(data) {
@@ -62,5 +62,4 @@ module.exports = {
   updateCategory,
   toggleCategoryStatus,
   getCategories,
-
 };

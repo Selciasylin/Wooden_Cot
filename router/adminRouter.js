@@ -23,6 +23,7 @@ router.get("/categoriesData", categoryController.getCategories);
 //productManagement
 router.get("/products",productController.renderProductPage)
 router.get("/products/data", productController.getProducts);
+router.patch("/products/toggle/:id", productController.toggleProductStatus);
 router.post("/products", upload.array("images", 4), productController.createProduct);
 router.put("/products/:id", upload.array("images", 4), productController.updateProduct);
 router.delete("/products/:id", productController.deleteProduct);

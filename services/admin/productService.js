@@ -3,9 +3,11 @@ const appError = require("../../utils/appError");
 
 //  GET ALL PRODUCTS
 async function getAllProducts() {
-  const products = await Product.find({ isDeleted: false }).sort({
+  const products = await Product.find({ isDeleted: false })
+  .populate("category").sort({
     createdAt: -1,
   });
+  console.log(products)
   return products;
 }
 
@@ -17,6 +19,7 @@ async function getProducts(search, page, limit) {
   };
   const skip = (page - 1) * limit;
   const products = await Product.find(query)
+    .populate("category")
     .sort({ createdAt: -1 })
     .skip(skip)
     .limit(limit);
@@ -35,6 +38,23 @@ async function createProduct(data) {
   if (existing) {
     throw new appError("Product already exists");
   }
+  if (
+    data.sizes.some((s) => {
+      const v = s.variants || {};
+
+      const withValid =
+        v.withDrawer && v.withDrawer.price > 0 && v.withDrawer.quantity >= 0;
+
+      const withoutValid =
+        v.withoutDrawer &&
+        v.withoutDrawer.price > 0 &&
+        v.withoutDrawer.quantity >= 0;
+
+      return !withValid && !withoutValid;
+    })
+  ) {
+    throw new appError("Each size must have at least one valid variant");
+  }
   const product = await Product.create(data);
   return product;
 }
@@ -45,6 +65,24 @@ async function updateProduct(id, data) {
   if (!product) {
     throw new appError("Product not found");
   }
+  if (
+    data.sizes.some((s) => {
+      const v = s.variants || {};
+
+      const withValid =
+        v.withDrawer && v.withDrawer.price > 0 && v.withDrawer.quantity >= 0;
+
+      const withoutValid =
+        v.withoutDrawer &&
+        v.withoutDrawer.price > 0 &&
+        v.withoutDrawer.quantity >= 0;
+
+      return !withValid && !withoutValid;
+    })
+  ) {
+    throw new appError("Each size must have at least one valid variant");
+  }
+
   product.name = data.name;
   product.category = data.category;
   product.description = data.description;
@@ -67,10 +105,22 @@ async function deleteProduct(id) {
   return product;
 }
 
+// ───────── TOGGLE PRODUCT STATUS ─────────
+async function toggleProductStatus(id) {
+  const product = await Product.findById(id);
+  if (!product) {
+    throw new appError("Product not found");
+  }
+  product.isListed = !product.isListed;
+  await product.save();
+  return product;
+}
+
 module.exports = {
   getAllProducts,
   getProducts,
   createProduct,
   updateProduct,
   deleteProduct,
+  toggleProductStatus,
 };
