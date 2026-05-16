@@ -1,31 +1,175 @@
+const variantsFromBackend = JSON.parse(
+  document.getElementById("variant-data").textContent
+);
+
+// ─────────────────────────────────────────────────────────────
+// ADD VARIANT ROW
+//
+// type = "add"  → ADD modal: skip unlisted variants entirely
+// type = "edit" → EDIT modal: show unlisted but disabled + warning
+// ─────────────────────────────────────────────────────────────
+function addVariantRow(type = "add") {
+  const container =
+    type === "add"
+      ? document.getElementById("variantCombinations")
+      : document.getElementById("editVariantCombinations");
+
+  const row = document.createElement("div");
+  row.className = "border rounded p-3 mb-3 variant-row";
+
+  // ── Get all option IDs already saved in this product ──
+  // (set from editProduct before calling addVariantRow)
+  const savedOptionIds = window.currentVariantOptions || [];
+
+  let selects = "";
+
+  variantsFromBackend.forEach((variant) => {
+    // ADD modal: skip unlisted variant types
+    if (type === "add" && !variant.isListed) return;
+
+    if (type === "edit" && !variant.isListed) {
+      // Check: does this product actually USE any option from this variant?
+      const productUsesThisVariant = variant.options.some((opt) =>
+        savedOptionIds.includes(opt._id)
+      );
+      // If product doesn't use this unlisted variant → skip entirely
+      if (!productUsesThisVariant) return;
+    }
+
+    const isVariantUnlisted = !variant.isListed;
+
+    const visibleOptions = variant.options.filter((opt) => !opt.isDeleted);
+
+    const optionHTML = visibleOptions
+      .map((opt) => {
+        if (type === "add" && !opt.isListed) return "";
+        const isOptUnlisted = !opt.isListed;
+        const disabledAttr = isVariantUnlisted || isOptUnlisted ? "disabled" : "";
+        const labelSuffix = isOptUnlisted ? " (unlisted)" : "";
+        return `<option value="${opt._id}" ${disabledAttr}>${opt.value}${labelSuffix}</option>`;
+      })
+      .join("");
+
+    const unlistedBadge = isVariantUnlisted
+      ? `<span class="badge bg-warning text-dark ms-1" style="font-size:10px;">Unlisted</span>`
+      : "";
+
+    const selectDisabled = type === "edit" && isVariantUnlisted ? "disabled" : "";
+    const disabledTitle = type === "edit" && isVariantUnlisted
+      ? `title="This variant type is unlisted and cannot be changed"`
+      : "";
+
+    selects += `
+      <div class="col-md-4 mb-2">
+        <label class="form-label">
+          ${variant.type} ${unlistedBadge}
+        </label>
+        <select
+          class="form-select variant-option ${isVariantUnlisted && type === "edit" ? "bg-light text-muted" : ""}"
+          data-variant="${variant._id}"
+          ${selectDisabled}
+          ${disabledTitle}
+        >
+          <option value="">Select ${variant.type}</option>
+          ${optionHTML}
+        </select>
+        ${
+          type === "edit" && isVariantUnlisted
+            ? `<small class="text-warning">
+                <i class="bi bi-exclamation-triangle-fill me-1"></i>
+                This variant is unlisted — cannot be changed
+               </small>`
+            : ""
+        }
+      </div>
+    `;
+  });
+
+  if (type === "add" && selects.trim() === "") {
+    selects = `<div class="col-12 text-muted small">No listed variant types available.</div>`;
+  }
+
+  row.innerHTML = `
+    <div class="row">
+      ${selects}
+      <div class="col-md-2">
+        <label>Qty</label>
+        <input type="number" class="form-control variant-qty" min="0">
+      </div>
+      <div class="col-md-2">
+        <label>Price</label>
+        <input type="number" class="form-control variant-price" min="0">
+      </div>
+      <div class="col-12 text-end mt-2">
+        <button
+          type="button"
+          class="btn btn-danger btn-sm"
+          onclick="this.closest('.variant-row').remove()"
+        >
+          Remove
+        </button>
+      </div>
+    </div>
+  `;
+
+  container.appendChild(row);
+}
+
+// ─────────────────────────────────────────────────────────────
+// REST OF product.js — unchanged below
+// ─────────────────────────────────────────────────────────────
+
 let allProducts = [];
 
 const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
-const MAX_IMAGE_SIZE = 2 * 1024 * 1024; // 2MB
+const MAX_IMAGE_SIZE = 2 * 1024 * 1024;
 
 function validateImageFile(file) {
   if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
     return "Only JPG, PNG and WEBP images are allowed";
   }
-
   if (file.size > MAX_IMAGE_SIZE) {
     return "Image size must be less than 2MB";
   }
-
   return null;
 }
 
 function showError(input, message) {
   const error = input.parentElement.querySelector(".error");
-  if (error) {
-    error.textContent = message;
-  }
+  if (error) error.textContent = message;
 }
 
 function clearErrors(form) {
   form.querySelectorAll(".error").forEach((el) => (el.textContent = ""));
 }
-//validateAddProduct
+
+function collectVariants(type = "add") {
+  const container =
+    type === "add"
+      ? document.getElementById("variantCombinations")
+      : document.getElementById("editVariantCombinations");
+  if (!container) return [];
+  const rows = container.querySelectorAll(".variant-row");
+  const variants = [];
+  rows.forEach((row) => {
+    const options = [];
+    row.querySelectorAll(".variant-option").forEach((select) => {
+      // Skip disabled selects (unlisted variants in edit modal)
+      if (!select.disabled && select.value) {
+        options.push(select.value);
+      }
+    });
+    if (options.length === 0) return;
+    variants.push({
+      options,
+      quantity: row.querySelector(".variant-qty").value,
+      price: row.querySelector(".variant-price").value,
+    });
+  });
+  return variants;
+}
+
+// VALIDATE ADD PRODUCT
 function validateAddProduct() {
   const form = document.getElementById("addProductForm");
   clearErrors(form);
@@ -45,166 +189,107 @@ function validateAddProduct() {
     showError(description, "Minimum 10 characters required");
     valid = false;
   }
-  let sizeSelected = false;
-
-  ["single", "queen", "king"].forEach((size) => {
-    const chk = document.getElementById("chk-" + size);
-
-    if (chk.checked) {
-      sizeSelected = true;
-      const withDrawerChecked = document.getElementById(
-        `add-chk-${size}-drawer`,
-      )?.checked;
-      const withoutDrawerChecked = document.getElementById(
-        `add-chk-${size}-nodrawer`,
-      )?.checked;
-
-      if (!withDrawerChecked && !withoutDrawerChecked) {
-        document.getElementById(`error-${size}`).textContent =
-          "Select at least one variant type";
-        valid = false;
-      }
-      const withQty = document.getElementById(`add-qty-${size}-drawer`);
-      const withPrice = document.getElementById(`add-price-${size}-drawer`);
-
-      const withoutQty = document.getElementById(`add-qty-${size}-nodrawer`);
-      const withoutPrice = document.getElementById(
-        `add-price-${size}-nodrawer`,
-      );
-
-      if (withDrawerChecked) {
-        if (!withQty.value) {
-          document.getElementById(`error-${size}`).textContent =
-            "Enter quantity (with drawer)";
-          valid = false;
-        } else if (!withPrice.value) {
-          document.getElementById(`error-${size}`).textContent =
-            "Enter price (with drawer)";
-          valid = false;
-        }
-      }
-
-      if (withoutDrawerChecked) {
-        if (!withoutQty.value) {
-          document.getElementById(`error-${size}`).textContent =
-            "Enter quantity (without drawer)";
-          valid = false;
-        } else if (!withoutPrice.value) {
-          document.getElementById(`error-${size}`).textContent =
-            "Enter price (without drawer)";
-          valid = false;
-        }
-      }
+  document.getElementById("error-variants").textContent = "";
+  const variants = collectVariants("add");
+  const seen = new Set();
+  for (const v of variants) {
+    const key = [...v.options].sort().join("-");
+    if (seen.has(key)) {
+      document.getElementById("error-variants").textContent = "Duplicate variant combination";
+      valid = false;
+      break;
     }
-  });
-  if (!sizeSelected) {
-    document.getElementById("error-size").textContent =
-      "Select at least one size"; // simple for now
+    seen.add(key);
+  }
+  if (variants.length === 0) {
+    document.getElementById("error-variants").textContent = "Add at least one variant";
     valid = false;
   }
-  // IMAGE VALIDATION
-  let imageCount = 0;
-
-  for (let i = 0; i < 4; i++) {
-    if (document.getElementById(`fileInput-${i}`).files[0]) {
-      imageCount++;
+  variants.forEach((v) => {
+    if (v.options.length === 0 || !v.quantity || !v.price) {
+      document.getElementById("error-variants").textContent = "Fill all variant fields";
+      valid = false;
     }
+  });
+  let imageCount = 0;
+  for (let i = 0; i < 4; i++) {
+    if (document.getElementById(`fileInput-${i}`).files[0]) imageCount++;
   }
-
   if (imageCount === 0) {
-    document.getElementById("error-image").textContent =
-      "Add at least one image";
+    document.getElementById("error-image").textContent = "Add at least one image";
     valid = false;
   }
   return valid;
 }
-//validateEditProduct
+
+// VALIDATE EDIT PRODUCT
 function validateEditProduct() {
   const form = document.getElementById("editProductForm");
   clearErrors(form);
-
   let valid = true;
-
   const name = document.getElementById("editProductName");
   const category = document.getElementById("editProductCategory");
   const description = document.getElementById("editProductDesc");
-
   if (!name.value.trim() || name.value.trim().length < 3) {
     showError(name, "Minimum 3 characters required");
     valid = false;
   }
-
   if (!category.value) {
     showError(category, "Select category");
     valid = false;
   }
-
   if (!description.value.trim() || description.value.trim().length < 10) {
     showError(description, "Minimum 10 characters required");
     valid = false;
   }
-
-  let sizeSelected = false;
-  ["single", "queen", "king"].forEach((size) => {
-    const chk = document.getElementById("chk-edit-" + size);
-
-    if (chk.checked) {
-      sizeSelected = true;
-
-      const withQty = document.getElementById(`edit-qty-${size}-drawer`);
-      const withPrice = document.getElementById(`edit-price-${size}-drawer`);
-
-      const withoutQty = document.getElementById(`edit-qty-${size}-nodrawer`);
-      const withoutPrice = document.getElementById(
-        `edit-price-${size}-nodrawer`,
-      );
-      if (
-        (!withQty.value || !withPrice.value) &&
-        (!withoutQty.value || !withoutPrice.value)
-      ) {
-        showError(withQty || withoutQty, "Enter at least one variant");
-        valid = false;
-      }
+  const variants = collectVariants("edit");
+  const seen = new Set();
+  for (const v of variants) {
+    const key = [...v.options].sort().join("-");
+    if (seen.has(key)) {
+      document.getElementById("edit-error-variants").textContent = "Duplicate variant combination";
+      valid = false;
+      break;
     }
-  });
-  if (!sizeSelected) {
-    document.getElementById("edit-error-size").textContent =
-      "Select at least one size";
+    seen.add(key);
+  }
+  if (variants.length === 0) {
+    document.getElementById("edit-error-variants").textContent = "Add at least one variant";
     valid = false;
   }
-  let imageCount = 0;
-
-  for (let i = 0; i < 4; i++) {
-    if (document.getElementById(`editFileInput-${i}`).files[0]) {
-      imageCount++;
+  variants.forEach((v) => {
+    if (v.options.length === 0 || !v.quantity || !v.price) {
+      document.getElementById("edit-error-variants").textContent = "Fill all variant fields";
+      valid = false;
     }
+  });
+  let imageCount = 0;
+  for (let i = 0; i < 4; i++) {
+    if (document.getElementById(`editFileInput-${i}`).files[0]) imageCount++;
   }
-
   const existingImages = window.currentImages || [];
-
   if (imageCount === 0 && existingImages.length === 0) {
-    document.getElementById("edit-error-image").textContent =
-      "Add at least one image";
+    document.getElementById("edit-error-image").textContent = "Add at least one image";
     valid = false;
   }
   return valid;
 }
 
-//pagination
-let currentPage = 1;
+// LOAD PRODUCTS
 async function loadProducts(page = 1, search = "") {
   const res = await fetch(`/admin/products/data?page=${page}&search=${search}`);
   const data = await res.json();
   allProducts = data.products;
-  if (data.status !== "SUCCESS") {
-    return;
-  }
+  if (data.status !== "SUCCESS") return;
   renderTable(data.products);
   renderPagination(data.totalPages, data.currentPage);
+  updateEntriesText(page,
+  data.products.length,
+  data.totalProducts
+);
 }
 
-//table render
-
+// RENDER TABLE
 function renderTable(products) {
   const tbody = document.getElementById("productTableBody");
   tbody.innerHTML = "";
@@ -212,210 +297,122 @@ function renderTable(products) {
     tbody.innerHTML = `<tr><td colspan="6">No products</td></tr>`;
     return;
   }
-  console.log(products)
   products.forEach((p) => {
     tbody.innerHTML += `
       <tr>
         <td><img src="${p.images[0]}" class="product-img"/></td>
         <td>${p.name}</td>
         <td>${p.category.name}</td>
-       <td>
-        ${
-          p.sizes.some((s) => {
-            const v = s.variants || {};
-            return (
-              (v.withDrawer && v.withDrawer.quantity > 0) ||
-              (v.withoutDrawer && v.withoutDrawer.quantity > 0)
-            );
-          })
-            ? `<span class="badge bg-success-subtle text-success px-3 py-2 rounded-pill">In Stock</span>`
-            : `<span class="badge bg-danger-subtle text-danger px-3 py-2 rounded-pill">Out of Stock</span>`
-        }
+        <td>
+          ${
+            p.variants.some((v) => v.quantity > 0)
+              ? `<span class="badge bg-success-subtle text-success px-3 py-2 rounded-pill">In Stock</span>`
+              : `<span class="badge bg-danger-subtle text-danger px-3 py-2 rounded-pill">Out of Stock</span>`
+          }
         </td>
         <td>
-       ${
-         p.isListed
-           ? `<button class="btn-listed" onclick="toggleStatus('${p._id}')">Listed</button>`
-           : `<button class="btn-unlisted" onclick="toggleStatus('${p._id}')">Unlisted</button>`
-       }
+          ${
+            p.isListed
+              ? `<button class="btn-listed" onclick="toggleStatus('${p._id}')">Listed</button>`
+              : `<button class="btn-unlisted" onclick="toggleStatus('${p._id}')">Unlisted</button>`
+          }
         </td>
-       <td class="text-center">
-        <div class="actions">
+        <td class="text-center">
+          <div class="actions">
             <button class="btn btn-light border btn-sm" onclick="viewProduct('${p._id}')">
-            <i class="bi bi-eye"></i>
+              <i class="bi bi-eye"></i>
             </button>
             <button class="btn btn-outline-primary btn-sm" onclick="editProduct('${p._id}')">
-            <i class="bi bi-pencil"></i>
+              <i class="bi bi-pencil"></i>
             </button>
             <button class="btn btn-outline-danger btn-sm" onclick="deleteProduct('${p._id}')">
-            <i class="bi bi-trash"></i>
+              <i class="bi bi-trash"></i>
             </button>
-        </div>
+          </div>
         </td>
       </tr>
     `;
   });
 }
 
+let currentPage = 1;
+
 function renderPagination(totalPages, current) {
+  currentPage = current;
   const pagination = document.getElementById("pagination");
   pagination.innerHTML = "";
-
   const search = document.getElementById("searchCategory").value;
+  pagination.innerHTML += `
+    <li class="page-item ${current === 1 ? "disabled" : ""}">
+      <a
+        class="page-link"
+        onclick="loadProducts(${current - 1}, '${search}')"
+      >
+        Previous
+      </a>
+    </li>
+  `;
 
   for (let i = 1; i <= totalPages; i++) {
+
     pagination.innerHTML += `
       <li class="page-item ${i === current ? "active" : ""}">
-        <a class="page-link" onclick="loadProducts(${i}, '${search}')">${i}</a>
+        <a
+          class="page-link"
+          onclick="loadProducts(${i}, '${search}')"
+        >
+          ${i}
+        </a>
       </li>
     `;
   }
+
+  pagination.innerHTML += `
+    <li class="page-item ${current === totalPages ? "disabled" : ""}">
+      <a
+        class="page-link"
+        onclick="loadProducts(${current + 1}, '${search}')"
+      >
+        Next
+      </a>
+    </li>
+  `;
+}
+//entires info
+function updateEntriesText(page, count, total) {
+  const limit = 5;
+  const start = (page - 1) * limit + 1;
+  const end = start + count - 1;
+  document.getElementById("entriesInfo").textContent =
+    `Showing ${start} to ${end} of ${total} entries`;
 }
 
+// ADD PRODUCT
 document.getElementById("addProductBtn").addEventListener("click", async () => {
   if (!validateAddProduct()) return;
   const btn = document.getElementById("addProductBtn");
   btn.innerText = "Adding...";
   btn.disabled = true;
-
   const formData = new FormData();
-
   formData.append("name", document.getElementById("name").value);
   formData.append("category", document.getElementById("category").value);
   formData.append("description", document.getElementById("description").value);
-
-  // sizes
-  const sizes = [];
-
-  if (document.getElementById("chk-single").checked) {
-    const singleWithQty = document.getElementById(
-      "add-qty-single-drawer",
-    )?.value;
-    const singleWithPrice = document.getElementById(
-      "add-price-single-drawer",
-    )?.value;
-
-    const singleWithoutQty = document.getElementById(
-      "add-qty-single-nodrawer",
-    )?.value;
-    const singleWithoutPrice = document.getElementById(
-      "add-price-single-nodrawer",
-    )?.value;
-
-    sizes.push({
-      size: "single",
-      variants: {
-        ...(singleWithQty &&
-          singleWithPrice && {
-            withDrawer: {
-              quantity: singleWithQty,
-              price: singleWithPrice,
-            },
-          }),
-        ...(singleWithoutQty &&
-          singleWithoutPrice && {
-            withoutDrawer: {
-              quantity: singleWithoutQty,
-              price: singleWithoutPrice,
-            },
-          }),
-      },
-    });
-  }
-  if (document.getElementById("chk-queen").checked) {
-    const queenWithQty = document.getElementById("add-qty-queen-drawer")?.value;
-    const queenWithPrice = document.getElementById(
-      "add-price-queen-drawer",
-    )?.value;
-
-    const queenWithoutQty = document.getElementById(
-      "add-qty-queen-nodrawer",
-    )?.value;
-    const queenWithoutPrice = document.getElementById(
-      "add-price-queen-nodrawer",
-    )?.value;
-
-    sizes.push({
-      size: "queen",
-      variants: {
-        ...(queenWithQty &&
-          queenWithPrice && {
-            withDrawer: {
-              quantity: queenWithQty,
-              price: queenWithPrice,
-            },
-          }),
-        ...(queenWithoutQty &&
-          queenWithoutPrice && {
-            withoutDrawer: {
-              quantity: queenWithoutQty,
-              price: queenWithoutPrice,
-            },
-          }),
-      },
-    });
-  }
-  if (document.getElementById("chk-king").checked) {
-    const kingWithQty = document.getElementById("add-qty-king-drawer")?.value;
-    const kingWithPrice = document.getElementById(
-      "add-price-king-drawer",
-    )?.value;
-
-    const kingWithoutQty = document.getElementById(
-      "add-qty-king-nodrawer",
-    )?.value;
-    const kingWithoutPrice = document.getElementById(
-      "add-price-king-nodrawer",
-    )?.value;
-
-    sizes.push({
-      size: "king",
-      variants: {
-        ...(kingWithQty &&
-          kingWithPrice && {
-            withDrawer: {
-              quantity: kingWithQty,
-              price: kingWithPrice,
-            },
-          }),
-        ...(kingWithoutQty &&
-          kingWithoutPrice && {
-            withoutDrawer: {
-              quantity: kingWithoutQty,
-              price: kingWithoutPrice,
-            },
-          }),
-      },
-    });
-  }
-  formData.append("sizes", JSON.stringify(sizes));
-
-  // images
+  formData.append("variants", JSON.stringify(collectVariants("add")));
   for (let i = 0; i < 4; i++) {
     const file = document.getElementById(`fileInput-${i}`).files[0];
-    if (file) {
-      formData.append("images", file);
-    }
+    if (file) formData.append("images", file);
   }
   try {
-    const res = await fetch("/admin/products", {
-      method: "POST",
-      body: formData,
-    });
-
+    const res = await fetch("/admin/products", { method: "POST", body: formData });
     const data = await res.json();
-
     if (data.status === "ERROR") {
-      document.getElementById("error-image").textContent = data.message; // 👈 show inside modal
+      document.getElementById("error-image").textContent = data.message;
       return;
     }
-    // success
     showToast(data.message);
     if (data.status === "SUCCESS") {
-      bootstrap.Modal.getInstance(
-        document.getElementById("addProductModal"),
-      ).hide();
-      resetAddProductModal(); 
+      bootstrap.Modal.getInstance(document.getElementById("addProductModal")).hide();
+      resetAddProductModal();
       loadProducts();
     }
   } catch (err) {
@@ -425,452 +422,238 @@ document.getElementById("addProductBtn").addEventListener("click", async () => {
     btn.disabled = false;
   }
 });
-//delete
+
+// DELETE PRODUCT
 let deleteId = null;
 function deleteProduct(id) {
   deleteId = id;
   new bootstrap.Modal(document.getElementById("confirmDeleteModal")).show();
 }
-document
-  .getElementById("confirmDeleteBtn")
-  .addEventListener("click", async () => {
-    const res = await fetch(`/admin/products/${deleteId}`, {
-      method: "DELETE",
-    });
-    const data = await res.json();
-    showToast(data.message);
-    loadProducts();
-    bootstrap.Modal.getInstance(
-      document.getElementById("confirmDeleteModal"),
-    ).hide();
-  });
+document.getElementById("confirmDeleteBtn").addEventListener("click", async () => {
+  const res = await fetch(`/admin/products/${deleteId}`, { method: "DELETE" });
+  const data = await res.json();
+  showToast(data.message);
+  loadProducts();
+  bootstrap.Modal.getInstance(document.getElementById("confirmDeleteModal")).hide();
+});
 
+// SEARCH
 document.getElementById("searchCategory").addEventListener("input", (e) => {
   loadProducts(1, e.target.value);
 });
-//editProduct
+
+// EDIT PRODUCT — populate modal
 async function editProduct(id) {
   const product = allProducts.find((p) => p._id === id);
-
   if (!product) return;
-
-  // fill basic fields
   document.getElementById("editProductName").value = product.name;
   document.getElementById("editProductCategory").value = product.category._id;
   document.getElementById("editProductDesc").value = product.description;
-
-  // reset sizes
-  ["single", "queen", "king"].forEach((size) => {
-    document.getElementById(`chk-edit-${size}`).checked = false;
-    document.getElementById(`edit-${size}-subtypes`).classList.remove("show");
+  const container = document.getElementById("editVariantCombinations");
+  container.innerHTML = "";
+  product.variants.forEach((v) => {
+    window.currentVariantOptions = v.options;
+    addVariantRow("edit");
+    const rows = container.querySelectorAll(".variant-row");
+    const lastRow = rows[rows.length - 1];
+    const selects = lastRow.querySelectorAll(".variant-option");
+    selects.forEach((select) => {
+      // Match saved option even if select is disabled (unlisted variant)
+      const matchingOption = Array.from(select.options).find((opt) =>
+        v.options.includes(opt.value)
+      );
+      if (matchingOption) select.value = matchingOption.value;
+    });
+    lastRow.querySelector(".variant-qty").value = v.quantity;
+    lastRow.querySelector(".variant-price").value = v.price;
   });
-
-  // fill sizes
-  product.sizes.forEach((s) => {
-    document.getElementById(`chk-edit-${s.size}`).checked = true;
-    document.getElementById(`edit-${s.size}-subtypes`).classList.add("show");
-    const v = s.variants || {};
-
-    const withQtyEl = document.getElementById(`edit-qty-${s.size}-drawer`);
-    const withPriceEl = document.getElementById(`edit-price-${s.size}-drawer`);
-
-    const withoutQtyEl = document.getElementById(`edit-qty-${s.size}-nodrawer`);
-    const withoutPriceEl = document.getElementById(
-      `edit-price-${s.size}-nodrawer`,
-    );
-    // WITH DRAWER
-    if (withQtyEl) withQtyEl.value = v.withDrawer?.quantity ?? "";
-    if (withPriceEl) withPriceEl.value = v.withDrawer?.price ?? "";
-
-    // WITHOUT DRAWER
-    if (withoutQtyEl) withoutQtyEl.value = v.withoutDrawer?.quantity ?? "";
-    if (withoutPriceEl) withoutPriceEl.value = v.withoutDrawer?.price ?? "";
-  });
-  // store ID globally
   window.editingProductId = id;
-
-  // store current images
   window.currentImages = product.images;
-  // ✅ ADD THIS CLEAN VERSION
-for (let i = 0; i < 4; i++) {
-  const slot = document.getElementById(`edit-slot-${i}`);
-  if (slot) slot.innerHTML = "Add Image";
-}
-
-product.images.forEach((img, index) => {
-  const slot = document.getElementById(`edit-slot-${index}`);
-  if (slot) {
-    slot.innerHTML = `<img src="${img}" class="w-100 h-100">
-      <button
-        type="button"
-        class="slot-remove"
-        onclick="removeEditSlot(event, ${index})"
-      >
-        <i class="bi bi-x"></i>
-      </button>`;
+  for (let i = 0; i < 4; i++) {
+    const slot = document.getElementById(`edit-slot-${i}`);
+    if (slot) slot.innerHTML = "Add Image";
   }
-});
-
-  // open modal
+  product.images.forEach((img, index) => {
+    const slot = document.getElementById(`edit-slot-${index}`);
+    if (slot) {
+      slot.innerHTML = `<img src="${img}" class="w-100 h-100">
+        <button type="button" class="slot-remove" onclick="removeEditSlot(event, ${index})">
+          <i class="bi bi-x"></i>
+        </button>`;
+    }
+  });
   new bootstrap.Modal(document.getElementById("editProductModal")).show();
 }
 
-document
-  .getElementById("editProductBtn")
-  .addEventListener("click", async () => {
-    if (!validateEditProduct()) return;
-    const btn = document.getElementById("editProductBtn");
-    btn.innerText = "Saving...";
-    btn.disabled = true;
-    const formData = new FormData();
-
-    formData.append("name", document.getElementById("editProductName").value);
-    formData.append(
-      "category",
-      document.getElementById("editProductCategory").value,
-    );
-    formData.append(
-      "description",
-      document.getElementById("editProductDesc").value,
-    );
-
-    // sizes
-    const sizes = [];
-
-    // SINGLE
-    if (document.getElementById("chk-edit-single").checked) {
-      const withQty = document.getElementById("edit-qty-single-drawer")?.value;
-      const withPrice = document.getElementById(
-        "edit-price-single-drawer",
-      )?.value;
-
-      const withoutQty = document.getElementById(
-        "edit-qty-single-nodrawer",
-      )?.value;
-      const withoutPrice = document.getElementById(
-        "edit-price-single-nodrawer",
-      )?.value;
-
-      sizes.push({
-        size: "single",
-        variants: {
-          ...(withQty &&
-            withPrice && {
-              withDrawer: {
-                quantity: withQty,
-                price: withPrice,
-              },
-            }),
-          ...(withoutQty &&
-            withoutPrice && {
-              withoutDrawer: {
-                quantity: withoutQty,
-                price: withoutPrice,
-              },
-            }),
-        },
-      });
+// UPDATE PRODUCT
+document.getElementById("editProductBtn").addEventListener("click", async () => {
+  if (!validateEditProduct()) return;
+  const btn = document.getElementById("editProductBtn");
+  btn.innerText = "Saving...";
+  btn.disabled = true;
+  const formData = new FormData();
+  formData.append("name", document.getElementById("editProductName").value);
+  formData.append("category", document.getElementById("editProductCategory").value);
+  formData.append("description", document.getElementById("editProductDesc").value);
+  formData.append("variants", JSON.stringify(collectVariants("edit")));
+  formData.append(
+    "currentImages",
+    window.currentImages ? JSON.stringify(window.currentImages) : "[]"
+  );
+  for (let i = 0; i < 4; i++) {
+    const file = document.getElementById(`editFileInput-${i}`).files[0];
+    if (file) formData.append("images", file);
+  }
+  try {
+    const res = await fetch(`/admin/products/${window.editingProductId}`, {
+      method: "PUT",
+      body: formData,
+    });
+    const data = await res.json();
+    if (data.status === "ERROR") {
+      document.getElementById("edit-error-image").textContent = data.message;
+      return;
     }
-
-    // QUEEN
-    if (document.getElementById("chk-edit-queen").checked) {
-      const withQty = document.getElementById("edit-qty-queen-drawer")?.value;
-      const withPrice = document.getElementById(
-        "edit-price-queen-drawer",
-      )?.value;
-
-      const withoutQty = document.getElementById(
-        "edit-qty-queen-nodrawer",
-      )?.value;
-      const withoutPrice = document.getElementById(
-        "edit-price-queen-nodrawer",
-      )?.value;
-
-      sizes.push({
-        size: "queen",
-        variants: {
-          ...(withQty &&
-            withPrice && {
-              withDrawer: {
-                quantity: withQty,
-                price: withPrice,
-              },
-            }),
-          ...(withoutQty &&
-            withoutPrice && {
-              withoutDrawer: {
-                quantity: withoutQty,
-                price: withoutPrice,
-              },
-            }),
-        },
-      });
+    showToast(data.message);
+    if (data.status === "SUCCESS") {
+      bootstrap.Modal.getInstance(document.getElementById("editProductModal")).hide();
+      loadProducts();
     }
+  } catch (err) {
+    console.error(err);
+  } finally {
+    btn.innerText = "Save Changes";
+    btn.disabled = false;
+  }
+});
 
-    // KING
-    if (document.getElementById("chk-edit-king").checked) {
-      const withQty = document.getElementById("edit-qty-king-drawer")?.value;
-      const withPrice = document.getElementById(
-        "edit-price-king-drawer",
-      )?.value;
+// VIEW PRODUCT
+function getOptionName(optionId) {
+  for (const variant of variantsFromBackend) {
+    const found = variant.options.find((opt) => opt._id === optionId);
+    if (found) return found.value;
+  }
+  return optionId;
+}
 
-      const withoutQty = document.getElementById(
-        "edit-qty-king-nodrawer",
-      )?.value;
-      const withoutPrice = document.getElementById(
-        "edit-price-king-nodrawer",
-      )?.value;
-
-      sizes.push({
-        size: "king",
-        variants: {
-          ...(withQty &&
-            withPrice && {
-              withDrawer: {
-                quantity: withQty,
-                price: withPrice,
-              },
-            }),
-          ...(withoutQty &&
-            withoutPrice && {
-              withoutDrawer: {
-                quantity: withoutQty,
-                price: withoutPrice,
-              },
-            }),
-        },
-      });
-    }
-    formData.append("sizes", JSON.stringify(sizes));
-
-    // send current images if no new upload
-    formData.append(
-      "currentImages",
-      window.currentImages ? JSON.stringify(window.currentImages) : "[]",
-    );
-
-    // new images
-    for (let i = 0; i < 4; i++) {
-      const file = document.getElementById(`editFileInput-${i}`).files[0];
-      if (file) {
-        formData.append("images", file);
-      }
-    }
-    try {
-      const res = await fetch(`/admin/products/${window.editingProductId}`, {
-        method: "PUT",
-        body: formData,
-      });
-      const data = await res.json();
-
-      if (data.status === "ERROR") {
-        document.getElementById("edit-error-image").textContent = data.message;
-        return;
-      }
-
-      showToast(data.message);
-
-      if (data.status === "SUCCESS") {
-        bootstrap.Modal.getInstance(
-          document.getElementById("editProductModal"),
-        ).hide();
-        loadProducts();
-      }
-    } catch (err) {
-      console.error(err);
-    } finally {
-      btn.innerText = "Save Changes";
-      btn.disabled = false;
-    }
-  });
-//viewProduct
 async function viewProduct(id) {
-
   const product = allProducts.find((p) => p._id === id);
   if (!product) return;
-
-  // 🔹 BASIC DETAILS
   document.getElementById("viewName").innerText = product.name;
-  document.getElementById("viewCategory").innerText = product.category;
+  document.getElementById("viewCategory").innerText = product.category.name;
   document.getElementById("viewDescription").innerText = product.description;
-
-  // 🔹 STOCK STATUS
-  const inStock = product.sizes.some((s) => {
-    const v = s.variants || {};
-    return (
-      (v.withDrawer && v.withDrawer.quantity > 0) ||
-      (v.withoutDrawer && v.withoutDrawer.quantity > 0)
-    );
-  });
-
+  const inStock = product.variants.some((v) => v.quantity > 0);
   document.getElementById("viewAvailability").innerHTML = inStock
     ? `<span class="badge-instock">In Stock</span>`
     : `<span class="badge-outofstock">Out of Stock</span>`;
-
   document.getElementById("viewStatus").innerHTML = product.isListed
     ? `<span class="badge bg-success">Listed</span>`
     : `<span class="badge bg-secondary">Unlisted</span>`;
-
-  // 🔹 IMAGES
   const mainImg = document.getElementById("viewMainImage");
-  if (mainImg) {
-    mainImg.src = product.images[0] || "";
-  }
-
-  const container = document.getElementById("viewImagesContainer");
-  container.innerHTML = "";
-
+  if (mainImg) mainImg.src = product.images[0] || "";
+  const imgContainer = document.getElementById("viewImagesContainer");
+  imgContainer.innerHTML = "";
   product.images.slice(1).forEach((img) => {
-    container.innerHTML += `
+    imgContainer.innerHTML += `
       <div class="col-6">
         <img src="${img}" class="w-100 rounded" style="height:80px;object-fit:cover;">
       </div>
     `;
   });
-
-  // 🔥 🔥 TABLE RENDERING (NEW PART)
   const tbody = document.getElementById("viewSizeTableBody");
-  tbody.innerHTML = ""; // clear old data
-
-  product.sizes.forEach((s) => {
-    const v = s.variants || {};
-
-    // Without Drawer
+  tbody.innerHTML = "";
+  product.variants.forEach((v) => {
+    const optionNames = v.options.map(getOptionName).join(" / ");
     tbody.innerHTML += `
       <tr>
-        <td>${s.size}</td>
-        <td>No Drawer</td>
-        <td>${v.withoutDrawer?.quantity ?? 0}</td>
-        <td>${v.withoutDrawer?.price ?? 0}</td>
-      </tr>
-    `;
-
-    // With Drawer
-    tbody.innerHTML += `
-      <tr>
-        <td>${s.size}</td>
-        <td>With Drawer</td>
-        <td>${v.withDrawer?.quantity ?? 0}</td>
-        <td>${v.withDrawer?.price ?? 0}</td>
+        <td>${optionNames}</td>
+        <td>${v.quantity}</td>
+        <td>${v.price}</td>
       </tr>
     `;
   });
-
-  // 🔹 OPEN MODAL
   new bootstrap.Modal(document.getElementById("viewProductModal")).show();
 }
 
-// 🔥 HELPER FUNCTION (ADD ONCE)
-function capitalize(str) {
-  return str.charAt(0).toUpperCase() + str.slice(1);
-}
 window.viewProduct = viewProduct;
 window.editProduct = editProduct;
 window.deleteProduct = deleteProduct;
-//show error message in div
+
+// TOAST
 function showToast(msg) {
   const toast = document.createElement("div");
   toast.className = "toast position-fixed bottom-0 end-0 m-3 show";
-  toast.innerHTML = `
-    <div class="toast-body bg-dark text-white">${msg}</div>
-  `;
+  toast.innerHTML = `<div class="toast-body bg-dark text-white">${msg}</div>`;
   document.body.appendChild(toast);
-
   setTimeout(() => toast.remove(), 3000);
 }
-let toggleProductId = null;
 
+// TOGGLE PRODUCT STATUS
+let toggleProductId = null;
 function toggleStatus(id) {
   toggleProductId = id;
-
   const product = allProducts.find((p) => p._id === id);
-
-  document.getElementById("toggleStatusText").textContent =
-    product.isListed
-      ? "Are you sure you want to unlist this product?"
-      : "Are you sure you want to list this product?";
-
-  new bootstrap.Modal(
-    document.getElementById("toggleStatusModal"),
-  ).show();
+  document.getElementById("toggleStatusText").textContent = product.isListed
+    ? "Are you sure you want to unlist this product?"
+    : "Are you sure you want to list this product?";
+  new bootstrap.Modal(document.getElementById("toggleStatusModal")).show();
 }
-
 document.getElementById("confirmToggleBtn").addEventListener("click", async () => {
-    const res = await fetch(`/admin/products/toggle/${toggleProductId}`, {
-      method: "PATCH",
-    });
-
-    const data = await res.json();
-
-    showToast(data.message);
-
-    loadProducts();
-
-    bootstrap.Modal.getInstance(
-      document.getElementById("toggleStatusModal"),
-    ).hide();
-  });
-window.onload = () => {
+  const res = await fetch(`/admin/products/toggle/${toggleProductId}`, { method: "PATCH" });
+  const data = await res.json();
+  showToast(data.message);
   loadProducts();
-};
-document.getElementById("clearSearch").addEventListener("click", () => {
-  const input = document.getElementById("searchCategory");
-
-  input.value = ""; // clear input
-  loadProducts(1, ""); // reload all products
+  bootstrap.Modal.getInstance(document.getElementById("toggleStatusModal")).hide();
 });
+
+// CLEAR SEARCH
+document.getElementById("clearSearch").addEventListener("click", () => {
+  document.getElementById("searchCategory").value = "";
+  loadProducts(1, "");
+});
+
+// RESET ADD MODAL
 function resetAddProductModal() {
   const form = document.getElementById("addProductForm");
+  document.getElementById("variantCombinations").innerHTML = "";
   form.reset();
-
+  addVariantRow();
   for (let i = 0; i < 4; i++) {
     const input = document.getElementById(`fileInput-${i}`);
     if (input) input.value = "";
-
     const slot = document.getElementById(`slot-${i}`);
     if (slot) slot.innerHTML = "Add Image";
   }
-
-  document.querySelectorAll(".error").forEach(el => el.textContent = "");
+  document.querySelectorAll(".error").forEach((el) => (el.textContent = ""));
 }
-window.addEventListener("DOMContentLoaded", () => {
 
-  // CONNECT SLOT CLICK
+// DOM LOAD — image slots connect
+window.addEventListener("DOMContentLoaded", () => {
   for (let i = 0; i < 4; i++) {
     const slot = document.getElementById(`slot-${i}`);
     const input = document.getElementById(`fileInput-${i}`);
-
-    if (slot && input) {
-      slot.addEventListener("click", () => input.click());
-    }
-
+    if (slot && input) slot.addEventListener("click", () => input.click());
     const editSlot = document.getElementById(`edit-slot-${i}`);
     const editInput = document.getElementById(`editFileInput-${i}`);
-
-    if (editSlot && editInput) {
-      editSlot.addEventListener("click", () => editInput.click());
+    if (editSlot && editInput) editSlot.addEventListener("click", () => editInput.click());
+  }
+  for (let i = 0; i < 4; i++) {
+    const input = document.getElementById(`fileInput-${i}`);
+    if (input) {
+      input.addEventListener("change", function () {
+        if (this.files && this.files[0]) openCrop(i, this, "add");
+      });
+    }
+    const editInput = document.getElementById(`editFileInput-${i}`);
+    if (editInput) {
+      editInput.addEventListener("change", function () {
+        if (this.files && this.files[0]) openCrop(i, this, "edit");
+      });
     }
   }
-
-  // PREVIEW
-  for (let i = 0; i < 4; i++) {
-
-  const input = document.getElementById(`fileInput-${i}`);
-  if (input) {
-    input.addEventListener("change", function () {
-      if (this.files && this.files[0]) {
-        openCrop(i, this, "add"); // ✅ THIS FIXES YOUR ISSUE
-      }
-    });
-  }
-
-  const editInput = document.getElementById(`editFileInput-${i}`);
-  if (editInput) {
-    editInput.addEventListener("change", function () {
-      if (this.files && this.files[0]) {
-        openCrop(i, this, "edit"); // ✅ FOR EDIT ALSO
-      }
-    });
-  }
-}
 });
+
+window.onload = () => {
+  loadProducts();
+  addVariantRow();
+};

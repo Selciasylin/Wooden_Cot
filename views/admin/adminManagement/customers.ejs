@@ -182,6 +182,17 @@
             text-align: center;
             padding: 15px;
         }
+
+        .btn-custom {
+        background-color: #AE946D;
+        color: white;
+        border: none;
+        }
+
+        .btn-custom:hover {
+        background-color: #967c58;
+        color: white;
+        }
     </style>
 </head>
 <body>
@@ -196,6 +207,7 @@
                 <a class="nav-link" href="/admin/dashboard"><i class="bi bi-speedometer2"></i> Dashboard</a>
                 <a class="nav-link" href="/admin/products"><i class="bi bi-box-seam"></i> Products</a>
                 <a class="nav-link" href="/admin/categories"><i class="bi bi-grid"></i> Categories</a>
+                <a class="nav-link" href="/admin/variants"><i class="bi bi-layers"></i> Variants</a>
                 <a class="nav-link" href="/admin/orders"><i class="bi bi-receipt"></i> Orders</a>
                 <a class="nav-link active" href="/admin/customers"><i class="bi bi-people"></i> Customers</a>
                 <a class="nav-link" href="/admin/offers"><i class="bi bi-tag"></i> Offers</a>
@@ -217,6 +229,7 @@
                     <a class="nav-link" href="/admin/dashboard"><i class="bi bi-speedometer2"></i> Dashboard</a>
                     <a class="nav-link" href="/admin/products"><i class="bi bi-box-seam"></i> Products</a>
                     <a class="nav-link" href="/admin/categories"><i class="bi bi-grid"></i> Categories</a>
+                    <a class="nav-link" href="/admin/variants"><i class="bi bi-layers"></i> Variants</a>
                     <a class="nav-link" href="/admin/orders"><i class="bi bi-receipt"></i> Orders</a>
                     <a class="nav-link active" href="/admin/customers"><i class="bi bi-people"></i> Customers</a>
                     <a class="nav-link" href="/admin/offers"><i class="bi bi-tag"></i> Offers</a>
@@ -272,8 +285,34 @@
                 </div>
 
                 <!-- Pagination -->
-                <ul class="pagination mt-3" id="pagination"></ul>
+                <div class="d-flex flex-wrap justify-content-between align-items-center mt-3 gap-2">
+                <div class="text-muted small" id="entriesInfo"></div>
 
+                <nav>
+                    <ul class="pagination mb-0" id="pagination"></ul>
+                </nav>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="toggleCustomerModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered modal-sm">
+                <div class="modal-content">
+                <div class="modal-body text-center py-4">
+                    <i class="bi bi-question-circle text-warning" style="font-size:48px;"></i>
+                    <h5 class="mt-3 mb-2">
+                    Change Status?
+                    </h5>
+                    <p id="toggleCustomerText"></p>
+                    <div class="d-flex gap-2 mt-4">
+                        <button type="button" class="btn btn-secondary flex-fill" data-bs-dismiss="modal">
+                            Cancel
+                        </button>
+                        <button type="button" class="btn btn-custom flex-fill" id="confirmToggleCustomerBtn">
+                            Yes
+                        </button>
+                    </div>
+                </div>
+                </div>
             </div>
         </div>
 

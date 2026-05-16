@@ -99,6 +99,7 @@ async function getCategories(req, res) {
       status: "SUCCESS",
       categories: result.categories,
       totalPages: result.totalPages,
+      totalCategories: result.totalCategories,
       currentPage: page
     });
   } catch (error) {

@@ -511,32 +511,39 @@
                         </div>
                     </div>
 
-                    <!-- Storage -->
+                    <% variants.forEach(variant => { %>
                     <div class="filter-group">
-                        <button class="filter-toggle" data-bs-toggle="collapse" data-bs-target="#storageFilter">
-                            Storage <i class="bi bi-chevron-down"></i>
+                        <button class="filter-toggle" data-bs-toggle="collapse" data-bs-target="#variant-<%= variant._id %>">
+                            <%= variant.type %>
+                            <i class="bi bi-chevron-down"></i>
                         </button>
-                        <div class="collapse show" id="storageFilter">
+                        <div class="collapse show" id="variant-<%= variant._id %>">
                             <div class="filter-body">
-                                <div class="form-check mb-2"><input class="form-check-input storage-filter" type="radio" name="storage" value="withDrawer"><label class="form-check-label" for="s1">With Drawer</label></div>
-                                <div class="form-check"><input class="form-check-input storage-filter" type="radio" name="storage" value="withoutDrawer"><label class="form-check-label" for="s2">Without Drawer</label></div>
+                                <% variant.options
+                                .filter(option =>
+                                !option.isDeleted &&
+                                option.isListed
+                                )
+                                .forEach(option => { %>
+                                <div class="form-check mb-2">
+                                    <input
+                                        class="form-check-input variant-filter"
+                                        type="checkbox"
+                                        value="<%= option._id %>"
+                                        id="option-<%= option._id %>"
+                                    >
+                                    <label
+                                        class="form-check-label"
+                                        for="option-<%= option._id %>"
+                                    >
+                                        <%= option.value %>
+                                    </label>
+                                </div>
+                                <% }) %>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Size -->
-                    <div class="filter-group">
-                        <button class="filter-toggle" data-bs-toggle="collapse" data-bs-target="#sizeFilter">
-                            Size <i class="bi bi-chevron-down"></i>
-                        </button>
-                        <div class="collapse show" id="sizeFilter">
-                            <div class="filter-body">
-                                <div class="form-check mb-2"><input class="form-check-input size-filter" type="radio" name="size" value="single"><label class="form-check-label" for="sz1">Single</label></div>
-                                <div class="form-check mb-2"><input class="form-check-input size-filter" type="radio" name="size" value="queen"><label class="form-check-label" for="sz2">Queen</label></div>
-                                <div class="form-check mb-2"><input class="form-check-input size-filter" type="radio" name="size" value="king"><label class="form-check-label" for="sz3">King</label></div>
-                            </div>
-                        </div>
-                    </div>
+                    <% }) %>
 
                     <!-- Rating -->
                     <div class="filter-group">
@@ -598,6 +605,7 @@
                     </button>
 
                     </div>
+                    
 
                     <select id="sortSelect" class="sort-select desktop-sort">
                         <option value="">Sort By</option>
@@ -635,14 +643,11 @@
                             <div class="product-name"><%= product.name %></div>
 
                             <div class="price-row">                          
-                                 <%
-                        const defaultSize = product.sizes[0];
-                        const defaultVariant = defaultSize?.variants?.withDrawer || defaultSize?.variants?.withoutDrawer;
-                        %>
+                                <% const lowestPrice = product.variants?.length? Math.min(...product.variants.map(v => v.price)): 0; %>
 
-                        <span id="price" class="text-success fw-bold fs-3">
-                        ₹<%= defaultVariant?.price || "N/A" %>
-                        </span>
+                                <span id="price" class="text-success fw-bold fs-3">
+                                ₹<%= lowestPrice || "N/A" %>
+                                </span>
                             </div>
 
                             <button class="btn-add-cart">
@@ -657,15 +662,10 @@
                     </div>
 
                 <!-- Pagination -->
-                <div class="d-flex justify-content-center pb-3">
+                <div class="d-flex justify-content-between align-items-center pb-3">
+                    <div id="paginationInfo" class="small text-muted"></div>
                     <nav>
-                        <ul class="pagination" id="pagination">
-                            <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
-                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                            <li class="page-item"><a class="page-link" href="#">2</a></li>
-                            <li class="page-item"><a class="page-link" href="#">3</a></li>
-                            <li class="page-item"><a class="page-link" href="#">Next</a></li>
-                        </ul>
+                        <ul class="pagination" id="pagination"></ul>
                     </nav>
                 </div>
 
@@ -675,60 +675,7 @@
 </section>
 
 <!-- ── Footer ── -->
-<footer class="footer-custom text-white py-5">
-    <div class="container">
-        <div class="row g-4">
-            <div class="col-md-3">
-                <h5 class="fw-bold mb-3">WOODEN COT</h5>
-                <p class="small">Premium wooden furniture crafted with care and built with strength.</p>
-                <div class="d-flex gap-3 mt-3">
-                    <a href="#" class="text-white"><i class="bi bi-facebook fs-5"></i></a>
-                    <a href="#" class="text-white"><i class="bi bi-instagram fs-5"></i></a>
-                    <a href="#" class="text-white"><i class="bi bi-twitter fs-5"></i></a>
-                    <a href="#" class="text-white"><i class="bi bi-youtube fs-5"></i></a>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <h6 class="fw-bold mb-3">USEFUL LINKS</h6>
-                <ul class="list-unstyled">
-                    <li class="mb-2"><a href="#" class="text-white text-decoration-none small">About Us</a></li>
-                    <li class="mb-2"><a href="#" class="text-white text-decoration-none small">Contact Us</a></li>
-                    <li class="mb-2"><a href="#" class="text-white text-decoration-none small">Shop</a></li>
-                    <li class="mb-2"><a href="#" class="text-white text-decoration-none small">Blog</a></li>
-                </ul>
-            </div>
-            <div class="col-md-3">
-                <h6 class="fw-bold mb-3">ACCOUNT</h6>
-                <ul class="list-unstyled">
-                    <li class="mb-2"><a href="#" class="text-white text-decoration-none small">Settings</a></li>
-                    <li class="mb-2"><a href="#" class="text-white text-decoration-none small">Orders</a></li>
-                    <li class="mb-2"><a href="#" class="text-white text-decoration-none small">Address</a></li>
-                    <li class="mb-2"><a href="#" class="text-white text-decoration-none small">Wallet</a></li>
-                </ul>
-            </div>
-            <div class="col-md-3">
-                <h6 class="fw-bold mb-3">MORE INFO</h6>
-                <p class="small">Premium wooden beds with best quality. We ensure best service and delivery.</p>
-                <div class="d-flex gap-2 mt-3">
-                    <img src="https://img.icons8.com/color/48/visa.png" alt="Visa" width="36">
-                    <img src="https://img.icons8.com/color/48/mastercard.png" alt="Mastercard" width="36">
-                    <img src="https://img.icons8.com/color/48/paypal.png" alt="PayPal" width="36">
-                    <img src="https://img.icons8.com/color/48/google-pay-india.png" alt="GPay" width="36">
-                </div>
-            </div>
-        </div>
-        <hr class="my-4 opacity-25">
-        <div class="row">
-            <div class="col-md-6 text-center text-md-start">
-                <p class="small mb-0">© 2024 WOODEN COT. All Rights Reserved.</p>
-            </div>
-            <div class="col-md-6 text-center text-md-end">
-                <p class="small mb-0">Privacy Policy | Terms of Service</p>
-            </div>
-        </div>
-    </div>
-</footer>
-
+ <%- include('./partials/footer') %>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="/js/user/shopPage.js"></script>
 <script>

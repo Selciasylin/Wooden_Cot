@@ -52,7 +52,8 @@ async function getCustomersData(req, res) {
     res.json({
       success: true,
       users,
-      totalPages: Math.ceil(total / limit)
+      totalPages: Math.ceil(total / limit),
+      totalUsers: total
     })
 
   } catch (error) {

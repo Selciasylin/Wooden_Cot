@@ -52,7 +52,8 @@ async function getCategories(search, page, limit) {
   const total = await Category.countDocuments(query);
   return {
     categories,
-    totalPages: Math.ceil(total / limit)
+    totalPages: Math.ceil(total / limit),
+    totalCategories: total
   };
 }
 

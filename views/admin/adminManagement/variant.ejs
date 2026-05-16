@@ -312,79 +312,7 @@
                                 <th>Actions</th>
                             </tr>
                         </thead>
-                        <tbody id="variantsTableBody">
-                            <!-- Sample Row 1 -->
-                            <tr>
-                                <td><span class="fw-semibold">Size</span></td>
-                                <td>
-                                    <span class="option-badge">Single</span>
-                                    <span class="option-badge">Queen</span>
-                                    <span class="option-badge">King</span>
-                                </td>
-                                <td>
-                                    <button class="btn-listed" onclick="toggleStatus(this)">Listed</button>
-                                </td>
-                                <td>
-                                    <button class="btn btn-sm btn-outline-secondary me-1" data-bs-toggle="modal" data-bs-target="#viewVariantModal" onclick="viewVariant('Size', ['Single', 'Queen', 'King'])">
-                                        <i class="bi bi-eye"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-primary me-1" data-bs-toggle="modal" data-bs-target="#editVariantModal" onclick="editVariant('Size', ['Single', 'Queen', 'King'])">
-                                        <i class="bi bi-pencil"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteVariantModal">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </td>
-                            </tr>
-
-                            <!-- Sample Row 2 -->
-                            <tr>
-                                <td><span class="fw-semibold">Storage</span></td>
-                                <td>
-                                    <span class="option-badge">With Drawer</span>
-                                    <span class="option-badge">Without Drawer</span>
-                                </td>
-                                <td>
-                                    <button class="btn-listed" onclick="toggleStatus(this)">Listed</button>
-                                </td>
-                                <td>
-                                    <button class="btn btn-sm btn-outline-secondary me-1" data-bs-toggle="modal" data-bs-target="#viewVariantModal" onclick="viewVariant('Storage', ['With Drawer', 'Without Drawer'])">
-                                        <i class="bi bi-eye"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-primary me-1" data-bs-toggle="modal" data-bs-target="#editVariantModal" onclick="editVariant('Storage', ['With Drawer', 'Without Drawer'])">
-                                        <i class="bi bi-pencil"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteVariantModal">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </td>
-                            </tr>
-
-                            <!-- Sample Row 3 -->
-                            <tr>
-                                <td><span class="fw-semibold">Material</span></td>
-                                <td>
-                                    <span class="option-badge">Teak</span>
-                                    <span class="option-badge">Oak</span>
-                                    <span class="option-badge">Sheesham</span>
-                                    <span class="option-badge">Pine</span>
-                                </td>
-                                <td>
-                                    <button class="btn-unlisted" onclick="toggleStatus(this)">Unlisted</button>
-                                </td>
-                                <td>
-                                    <button class="btn btn-sm btn-outline-secondary me-1" data-bs-toggle="modal" data-bs-target="#viewVariantModal" onclick="viewVariant('Material', ['Teak', 'Oak', 'Sheesham', 'Pine'])">
-                                        <i class="bi bi-eye"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-primary me-1" data-bs-toggle="modal" data-bs-target="#editVariantModal" onclick="editVariant('Material', ['Teak', 'Oak', 'Sheesham', 'Pine'])">
-                                        <i class="bi bi-pencil"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteVariantModal">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                        </tbody>
+                        <tbody id="variantsTableBody"></tbody>
                     </table>
                 </div>
 
@@ -392,23 +320,7 @@
                 <div class="d-flex flex-wrap justify-content-between align-items-center mt-4 gap-2">
                     <div class="text-muted small">Showing 1 to 3 of 3 entries</div>
                     <nav>
-                        <ul class="pagination mb-0" id="pagination">
-                            <li class="page-item disabled">
-                                <a class="page-link" href="#" tabindex="-1">Previous</a>
-                            </li>
-                            <li class="page-item active">
-                                <a class="page-link" href="#">1</a>
-                            </li>
-                            <li class="page-item">
-                                <a class="page-link" href="#">2</a>
-                            </li>
-                            <li class="page-item">
-                                <a class="page-link" href="#">3</a>
-                            </li>
-                            <li class="page-item">
-                                <a class="page-link" href="#">Next</a>
-                            </li>
-                        </ul>
+                        <ul class="pagination mb-0" id="pagination"></ul>
                     </nav>
                 </div>
 
@@ -464,7 +376,7 @@
                 </div>
                 <div class="modal-footer border-0">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-custom" onclick="submitAddVariant()">Save</button>
+                    <button type="button" class="btn btn-custom" id="addVariantBtn">Save</button>
                 </div>
             </div>
         </div>
@@ -504,7 +416,7 @@
                 </div>
                 <div class="modal-footer border-0">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-custom" onclick="submitEditVariant()">Save Changes</button>
+                    <button type="button" class="btn btn-custom" id="editVariantBtn">Save Changes</button>
                 </div>
             </div>
         </div>
@@ -541,39 +453,33 @@
         </div>
     </div>
 
-    <!-- ── Delete Confirmation Modal ──────────────────────────── -->
-    <div class="modal fade" id="deleteVariantModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-sm">
-            <div class="modal-content">
-                <div class="modal-body text-center py-4">
-                    <i class="bi bi-exclamation-triangle text-warning" style="font-size: 48px;"></i>
-                    <h5 class="mt-3 mb-2">Delete Variant?</h5>
-                    <p class="text-muted small mb-4">This action cannot be undone.</p>
-                    <div class="d-flex gap-2">
-                        <button type="button" class="btn btn-secondary flex-fill" data-bs-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-danger flex-fill" onclick="confirmDelete()">Delete</button>
-                    </div>
-                </div>
+<!-- ── toggle Confirmation Modal ──────────────────────────── -->
+
+    <div class="modal fade" id="toggleStatusModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+        <div class="modal-body text-center py-4">
+            <i class="bi bi-question-circle text-warning"
+            style="font-size:48px;"></i>
+            <h5 class="mt-3 mb-2">
+            Change Status?
+            </h5>
+            <p id="toggleStatusText"></p>
+            <div class="d-flex gap-2 mt-4">
+            <button type="button" class="btn btn-secondary flex-fill" data-bs-dismiss="modal" > Cancel </button>
+            <button type="button" class="btn btn-custom flex-fill" id="confirmToggleBtn" > Yes</button>
             </div>
         </div>
+        </div>
+    </div>
     </div>
 
     <!-- ── Scripts ───────────────────────────────────────────── -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/admin/variant.js"></script>
+
     
     <script>
-        // Toggle Status (Listed/Unlisted)
-        function toggleStatus(button) {
-            if (button.classList.contains('btn-listed')) {
-                button.classList.remove('btn-listed');
-                button.classList.add('btn-unlisted');
-                button.textContent = 'Unlisted';
-            } else {
-                button.classList.remove('btn-unlisted');
-                button.classList.add('btn-listed');
-                button.textContent = 'Listed';
-            }
-        }
 
         // Add Option Field
         function addOptionField(mode) {
@@ -618,144 +524,6 @@
                 removeButtons.forEach(btn => btn.disabled = false);
             }
         }
-
-        // View Variant
-        function viewVariant(type, options) {
-            document.getElementById('viewVariantType').textContent = type;
-            
-            const optionsContainer = document.getElementById('viewVariantOptions');
-            optionsContainer.innerHTML = '';
-            
-            options.forEach(option => {
-                const badge = document.createElement('span');
-                badge.className = 'option-badge me-1 mb-1';
-                badge.textContent = option;
-                optionsContainer.appendChild(badge);
-            });
-        }
-
-        // Edit Variant
-        function editVariant(type, options) {
-            document.getElementById('editVariantType').value = type;
-            
-            const container = document.getElementById('editOptionsContainer');
-            container.innerHTML = '';
-            
-            options.forEach(option => {
-                const optionGroup = document.createElement('div');
-                optionGroup.className = 'option-input-group';
-                optionGroup.innerHTML = `
-                    <div class="d-flex gap-2">
-                        <input type="text" class="form-control form-control-sm" value="${option}" required>
-                        <button type="button" class="btn btn-sm btn-danger btn-remove-option" onclick="removeOptionField(this)">
-                            <i class="bi bi-trash"></i>
-                        </button>
-                    </div>
-                `;
-                container.appendChild(optionGroup);
-            });
-            
-            updateRemoveButtons('edit');
-        }
-
-        // Submit Add Variant
-        function submitAddVariant() {
-            const type = document.getElementById('addVariantType').value.trim();
-            const optionInputs = document.querySelectorAll('#addOptionsContainer input');
-            const options = Array.from(optionInputs).map(input => input.value.trim()).filter(val => val !== '');
-            
-            // Clear previous errors
-            document.getElementById('addTypeError').textContent = '';
-            document.getElementById('addOptionsError').textContent = '';
-            
-            // Validation
-            if (!type) {
-                document.getElementById('addTypeError').textContent = 'Type is required';
-                return;
-            }
-            
-            if (options.length === 0) {
-                document.getElementById('addOptionsError').textContent = 'At least one option is required';
-                return;
-            }
-            
-            // Success
-            alert(`Variant Added!\nType: ${type}\nOptions: ${options.join(', ')}`);
-            
-            // Close modal and reset form
-            bootstrap.Modal.getInstance(document.getElementById('addVariantModal')).hide();
-            document.getElementById('addVariantForm').reset();
-            
-            // Reset options container
-            const container = document.getElementById('addOptionsContainer');
-            container.innerHTML = `
-                <div class="option-input-group">
-                    <div class="d-flex gap-2">
-                        <input type="text" class="form-control form-control-sm" placeholder="Enter option" required>
-                        <button type="button" class="btn btn-sm btn-danger btn-remove-option" onclick="removeOptionField(this)" disabled>
-                            <i class="bi bi-trash"></i>
-                        </button>
-                    </div>
-                </div>
-            `;
-        }
-
-        // Submit Edit Variant
-        function submitEditVariant() {
-            const type = document.getElementById('editVariantType').value.trim();
-            const optionInputs = document.querySelectorAll('#editOptionsContainer input');
-            const options = Array.from(optionInputs).map(input => input.value.trim()).filter(val => val !== '');
-            
-            // Clear previous errors
-            document.getElementById('editTypeError').textContent = '';
-            document.getElementById('editOptionsError').textContent = '';
-            
-            // Validation
-            if (!type) {
-                document.getElementById('editTypeError').textContent = 'Type is required';
-                return;
-            }
-            
-            if (options.length === 0) {
-                document.getElementById('editOptionsError').textContent = 'At least one option is required';
-                return;
-            }
-            
-            // Success
-            alert(`Variant Updated!\nType: ${type}\nOptions: ${options.join(', ')}`);
-            
-            // Close modal
-            bootstrap.Modal.getInstance(document.getElementById('editVariantModal')).hide();
-        }
-
-        // Confirm Delete
-        function confirmDelete() {
-            alert('Variant deleted successfully!');
-            bootstrap.Modal.getInstance(document.getElementById('deleteVariantModal')).hide();
-        }
-
-        // Search functionality
-        document.getElementById('searchVariant').addEventListener('input', function(e) {
-            const searchTerm = e.target.value.toLowerCase();
-            const rows = document.querySelectorAll('#variantsTableBody tr');
-            
-            rows.forEach(row => {
-                const type = row.cells[0].textContent.toLowerCase();
-                if (type.includes(searchTerm)) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-        });
-
-        // Clear search
-        document.getElementById('clearSearch').addEventListener('click', function() {
-            document.getElementById('searchVariant').value = '';
-            document.querySelectorAll('#variantsTableBody tr').forEach(row => {
-                row.style.display = '';
-            });
-        });
     </script>
 
 </body>
