@@ -2,44 +2,35 @@ const Product = require("../../model/productSchema");
 const User = require("../../model/userSchema");
 const appError = require("../../utils/appError");
 
-async function getUserById(userId) {
-  const user = await User.findById(userId).lean();
-  if (!user) throw new appError("User not found");
-  return user;
+function getLowestPrice(product) {
+  if (!product.variants?.length) {
+    return 0;
+  }
+  return Math.min(...product.variants.map((variant) => variant.price));
 }
 
 async function getAllProducts() {
   const products = await Product.find({
     isDeleted: false,
-    isListed: true
+    isListed: true,
   })
-  .populate({
-    path: "category",
-    match: { isListed: true } // 🔥 important
-  })
-  .lean();
+    .populate({
+      path: "category",
+      match: { isListed: true }, // 🔥 important
+    })
+    .lean();
 
   // remove products whose category is null
-   return products.filter(p => p.category !== null);
+  return products.filter((p) => p.category !== null);
 }
 
 async function getFilteredProducts(filters) {
-
-  const {
-    search,
-    page,
-    limit,
-    material,
-    size,
-    storage,
-    price,
-    sort
-  } = filters;
+  const { search, page, limit, material, options, price, sort } = filters;
 
   const query = {
     isDeleted: false,
     isListed: true,
-    name: { $regex: search, $options: "i" }
+    name: { $regex: search, $options: "i" },
   };
 
   // material filter
@@ -47,43 +38,29 @@ async function getFilteredProducts(filters) {
     query.category = material;
   }
 
-  // size filter
-  if (size) {
-    query["sizes.size"] = size;
+  if (options.length) {
+    query.variants = {
+      $elemMatch: {
+        options: {
+          $all: options,
+        },
+      },
+    };
   }
-
-  // storage filter
-  if (storage === "withDrawer") {
-    query["sizes.variants.withDrawer"] = { $exists: true };
-  }
-
-  if (storage === "withoutDrawer") {
-    query["sizes.variants.withoutDrawer"] = { $exists: true };
-  }
-
   const products = await Product.find(query)
     .populate({
       path: "category",
-      match: { isListed: true }
+      match: { isListed: true },
     })
     .lean();
 
   // remove null category
-  let filteredProducts = products.filter(p => p.category !== null);
+  let filteredProducts = products.filter((p) => p.category !== null);
 
   // PRICE FILTER
   if (price) {
-
-    filteredProducts = filteredProducts.filter(product => {
-
-      const firstSize = product.sizes[0];
-
-      const variant =
-        firstSize?.variants?.withDrawer ||
-        firstSize?.variants?.withoutDrawer;
-
-      const productPrice = variant?.price || 0;
-
+    filteredProducts = filteredProducts.filter((product) => {
+      const productPrice = getLowestPrice(product);
       if (price === "1") {
         return productPrice < 25000;
       }
@@ -99,66 +76,42 @@ async function getFilteredProducts(filters) {
       if (price === "4") {
         return productPrice > 75000;
       }
-
     });
-
   }
 
   // SORTING
   if (sort === "lowToHigh") {
-
     filteredProducts.sort((a, b) => {
-
-      const aPrice =
-        a.sizes[0]?.variants?.withDrawer?.price ||
-        a.sizes[0]?.variants?.withoutDrawer?.price;
-
-      const bPrice =
-        b.sizes[0]?.variants?.withDrawer?.price ||
-        b.sizes[0]?.variants?.withoutDrawer?.price;
-
-      return aPrice - bPrice;
+      return getLowestPrice(a) - getLowestPrice(b);
     });
-
   }
 
   if (sort === "highToLow") {
-
     filteredProducts.sort((a, b) => {
-
-      const aPrice =
-        a.sizes[0]?.variants?.withDrawer?.price ||
-        a.sizes[0]?.variants?.withoutDrawer?.price;
-
-      const bPrice =
-        b.sizes[0]?.variants?.withDrawer?.price ||
-        b.sizes[0]?.variants?.withoutDrawer?.price;
-
-      return bPrice - aPrice;
+      return getLowestPrice(b) - getLowestPrice(a);
     });
-
   }
 
   if (sort === "newest") {
-
     filteredProducts.sort(
-      (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+      (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
     );
-
   }
 
   // PAGINATION
   const total = filteredProducts.length;
-
   const start = (page - 1) * limit;
   const end = start + limit;
-
   const paginatedProducts = filteredProducts.slice(start, end);
-
+  const startIndex = start + 1;
+  const endIndex = Math.min(start + limit, total);
   return {
     products: paginatedProducts,
-    totalPages: Math.ceil(total / limit)
+    totalPages: Math.ceil(total / limit),
+    totalProducts: total,
+    startIndex,
+    endIndex
   };
 }
 
-module.exports = { getUserById, getAllProducts, getFilteredProducts }
+module.exports = { getAllProducts, getFilteredProducts };

@@ -1,78 +1,65 @@
 const mongoose = require("mongoose");
 
-// Variant Schema (Drawer Types)
-const variantSchema = new mongoose.Schema({
-  quantity: {
-    type: Number,
-    required: true,
-    min: 0
-  },
-  price: {
-    type: Number,
-    required: true,
-    min: 0
-  }
-}, { _id: false });
+const productVariantSchema = new mongoose.Schema(
+  {
+    options: [{
+        type: mongoose.Types.ObjectId,
+        required: true,
+      }],
 
-
-// Size Schema
-const sizeSchema = new mongoose.Schema({
-  size: {
-    type: String,
-    enum: ["single", "queen", "king"],
-    required: true
-  },
-
-  variants: {
-    withDrawer: {
-      type: variantSchema,
-      required: false
+    quantity: {
+      type: Number,
+      required: true,
+      min: 0,
     },
-    withoutDrawer: {
-      type: variantSchema,
-      required: false
-    }
-  }
 
-}, { _id: false });
-
-
-// Product Schema
-const productSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-    trim: true
+    price: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
   },
+  { _id: false },
+);
 
-  category: {
-    type: mongoose.Types.ObjectId,
-    ref:"Category",
-    required: true
+const productSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+
+    category: {
+      type: mongoose.Types.ObjectId,
+      ref: "Category",
+      required: true,
+    },
+
+    description: {
+      type: String,
+      required: true,
+    },
+
+    variants: [productVariantSchema],
+
+    images: {
+      type: [String],
+
+      validate: [(arr) => arr.length <= 4, "Maximum 4 images allowed"],
+    },
+
+    isListed: {
+      type: Boolean,
+      default: true,
+    },
+
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
   },
-
-  description: {
-    type: String,
-    required: true
-  },
-
-  sizes: [sizeSchema],
-
-  images: {
-    type: [String],
-    validate: [arr => arr.length <= 4, "Max 4 images allowed"]
-  },
-
-  isListed: {
-    type: Boolean,
-    default: true
-  },
-
-  isDeleted: {
-    type: Boolean,
-    default: false
-  }
-
-}, { timestamps: true });
+  { timestamps: true },
+);
 
 module.exports = mongoose.model("Product", productSchema);

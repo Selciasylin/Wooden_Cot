@@ -261,6 +261,26 @@
             transition: transform 0.05s linear;
             will-change: transform;
         }
+        .variant-option:disabled {
+        cursor: not-allowed;
+        }
+
+        .variant-option:disabled:hover {
+        border-color: #dc3545;
+        color: #dc3545;
+        }
+        .btn-custom.active,
+        .btn-custom:active {
+            background-color: #AE946D;
+            border-color: #AE946D;
+            color: white ;
+        }
+
+        .btn-outline-secondary:active {
+            background-color: #AE946D;
+            border-color: #AE946D ;
+            color: white ;
+        }
     </style>
 </head>
 <body>
@@ -313,13 +333,15 @@
                     
                     <!-- Price -->
                     <div class="mb-3">
-                        <%
-                        const defaultSize = product.sizes[0];
-                        const defaultVariant = defaultSize?.variants?.withDrawer || defaultSize?.variants?.withoutDrawer;
+                       <%
+                        const lowestPrice =
+                        product.variants?.length
+                        ? Math.min(...product.variants.map(v=>v.price))
+                        : 0;
                         %>
 
                         <span id="price" class="text-success fw-bold fs-3">
-                        ₹<%= defaultVariant?.price || "N/A" %>
+                        ₹<%= lowestPrice || "N/A" %>
                         </span>
                     </div>
                     
@@ -327,63 +349,35 @@
                     <p class="text-muted mb-4"><%= product.description %></p>
                     
                     <!-- Size Selection -->
+                    <% Object.entries(product.variantGroups)
+                    .forEach(([type, options]) => { %>
+
                     <div class="mb-4">
-                        <label class="form-label fw-semibold mb-2">Size</label>
-                        <div class="d-flex gap-2">
-                            <div class="d-flex gap-2">
 
-                            <% const allSizes = ["single","queen","king"]; %>
+                    <label class="form-label fw-semibold mb-2">
+                        <%= type %>
+                    </label>
 
-                            <% allSizes.forEach(sizeName => { 
-                                const sizeData = product.sizes.find(s => s.size === sizeName);
-                            %>
+                    <div class="d-flex gap-2 flex-wrap">
 
-                                <button 
-                                class="btn btn-outline-secondary size-option px-4 py-2"
-                                onclick="selectSize(this)"
-                                <%= !sizeData ? "disabled" : "" %>
-                                data-size="<%= sizeName %>">
+                        <% options.forEach(option => { %>
 
-                                <%= sizeName.toUpperCase() %>
-
-                                </button>
-
-                            <% }) %>
-
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Storage Selection -->
-                    <div class="mb-4">
-                        <label class="form-label fw-semibold mb-2">Storage</label>
-                        <div class="d-flex gap-2">
-                            <%
-                            const firstSize = product.sizes[0];
-                            const hasWithDrawer = firstSize?.variants?.withDrawer;
-                            const hasWithoutDrawer = firstSize?.variants?.withoutDrawer;
-                            %>
-
-                            <button 
-                            class="btn btn-outline-secondary storage-option px-4 py-2"
-                            onclick="selectStorage(this)"
-                            <%= !hasWithDrawer ? "disabled" : "" %>
-                            data-type="withDrawer">
-
-                            With Drawer
+                            <button
+                                class="btn btn-outline-secondary variant-option px-4 py-2"
+                                onclick="selectOption(this)"
+                                data-option="<%= option._id %>"
+                                data-type="<%= type %>"
+                                >
+                                <%= option.value %>
                             </button>
 
-                            <button 
-                            class="btn btn-outline-secondary storage-option px-4 py-2"
-                            onclick="selectStorage(this)"
-                            <%= !hasWithoutDrawer ? "disabled" : "" %>
-                            data-type="withoutDrawer">
+                        <% }) %>
 
-                            Without Drawer
-                            </button>
-                        </div>
                     </div>
-                    
+
+                    </div>
+
+                    <% }) %>
                     <!-- Quantity -->
                     <div class="mb-4">
                         <label class="form-label fw-semibold mb-2">Quantity</label>
@@ -615,23 +609,25 @@
               <div class="price-row mb-2">
 
                 <%
-                const defaultSize = product.sizes?.[0];
+                const lowestPrice =
+                product.variants?.length
+                ? Math.min(...product.variants.map(v=>v.price))
+                : 0;
 
-                const defaultVariant =
-                  defaultSize?.variants?.withDrawer ||
-                  defaultSize?.variants?.withoutDrawer;
+                const inStock =
+                product.variants?.some(v=>v.quantity>0);
                 %>
 
                 <span class="price-current">
 
-                  ₹<%= defaultVariant?.price || "N/A" %>
+                  ₹<%= lowestPrice || "N/A" %>
 
                 </span>
 
               </div>
 
               <!-- BUTTON -->
-              <% if(defaultVariant?.quantity > 0) { %>
+              <% if(inStock){ %>
 
                 <button class="btn-add-cart mt-auto">
 
@@ -779,18 +775,7 @@
             alert('Added to wishlist!');
         }
         
-        // Initialize active states on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            // Set Queen size as active by default
-            const queenBtn = document.querySelectorAll('.size-option')[1];
-            queenBtn.classList.add('btn-custom');
-            queenBtn.classList.remove('btn-outline-secondary');
-            
-            // Set With Drawer as active by default
-            const drawerBtn = document.querySelector('.storage-option');
-            drawerBtn.classList.add('btn-custom');
-            drawerBtn.classList.remove('btn-outline-secondary');
-        });
+       
 
         const imageContainer =
         document.getElementById("imageContainer");

@@ -1,14 +1,16 @@
 const productService = require("../../services/user/productService");
 const categoryService = require("../../services/admin/categoryService");
+const variantService = require("../../services/admin/variantService");
 
 async function renderShop(req, res) {
   try {
     const products = await productService.getAllProducts();
     const materials = await categoryService.getAllCategories();
-    console.log(materials)
+    const variants = await variantService.getAllVariants();
     res.render("user/productListing", {
       products,
-      materials
+      materials,
+      variants
     });
 
   } catch (error) {
@@ -29,8 +31,7 @@ async function getFilteredProducts(req, res) {
     const limit = 6;
 
     const material = req.query.material || "";
-    const size = req.query.size || "";
-    const storage = req.query.storage || "";
+    const options = req.query.options || [];
     const price = req.query.price || "";
     const sort = req.query.sort || "";
 
@@ -39,18 +40,20 @@ async function getFilteredProducts(req, res) {
       page,
       limit,
       material,
-      size,
-      storage,
+      options,
       price,
       sort
     });
 
     res.json({
-      status: "SUCCESS",
-      products: result.products,
-      totalPages: result.totalPages,
-      currentPage: page
-    });
+    status: "SUCCESS",
+    products: result.products,
+    totalPages: result.totalPages,
+    currentPage: page,
+    totalProducts: result.totalProducts,
+    startIndex: result.startIndex,
+    endIndex: result.endIndex
+  });
 
   } catch (error) {
     console.log(error);

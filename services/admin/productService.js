@@ -4,10 +4,10 @@ const appError = require("../../utils/appError");
 //  GET ALL PRODUCTS
 async function getAllProducts() {
   const products = await Product.find({ isDeleted: false })
-  .populate("category").sort({
-    createdAt: -1,
-  });
-  console.log(products)
+    .populate("category")
+    .sort({
+      createdAt: -1,
+    });
   return products;
 }
 
@@ -27,6 +27,7 @@ async function getProducts(search, page, limit) {
   return {
     products,
     totalPages: Math.ceil(total / limit),
+    totalProducts: total,
   };
 }
 
@@ -39,21 +40,19 @@ async function createProduct(data) {
     throw new appError("Product already exists");
   }
   if (
-    data.sizes.some((s) => {
-      const v = s.variants || {};
-
-      const withValid =
-        v.withDrawer && v.withDrawer.price > 0 && v.withDrawer.quantity >= 0;
-
-      const withoutValid =
-        v.withoutDrawer &&
-        v.withoutDrawer.price > 0 &&
-        v.withoutDrawer.quantity >= 0;
-
-      return !withValid && !withoutValid;
-    })
+    data.variants.some(
+      (v) => v.options.length === 0 || v.price <= 0 || v.quantity < 0,
+    )
   ) {
-    throw new appError("Each size must have at least one valid variant");
+    throw new appError("Invalid product variant");
+  }
+  const seen = new Set();
+  for (const v of data.variants) {
+    const key = [...v.options].sort().join("-");
+    if (seen.has(key)) {
+      throw new appError("Duplicate variant combination");
+    }
+    seen.add(key);
   }
   const product = await Product.create(data);
   return product;
@@ -65,28 +64,23 @@ async function updateProduct(id, data) {
   if (!product) {
     throw new appError("Product not found");
   }
-  if (
-    data.sizes.some((s) => {
-      const v = s.variants || {};
-
-      const withValid =
-        v.withDrawer && v.withDrawer.price > 0 && v.withDrawer.quantity >= 0;
-
-      const withoutValid =
-        v.withoutDrawer &&
-        v.withoutDrawer.price > 0 &&
-        v.withoutDrawer.quantity >= 0;
-
-      return !withValid && !withoutValid;
-    })
-  ) {
-    throw new appError("Each size must have at least one valid variant");
+  if (data.variants.some(
+      (v) => v.options.length === 0 || v.price <= 0 || v.quantity < 0,)) {
+    throw new appError("Invalid product variant");
+  }
+  const seen = new Set();
+  for (const v of data.variants) {
+    const key = [...v.options].sort().join("-");
+    if (seen.has(key)) {
+      throw new appError("Duplicate variant combination");
+    }
+    seen.add(key);
   }
 
   product.name = data.name;
   product.category = data.category;
   product.description = data.description;
-  product.sizes = data.sizes;
+  product.variants = data.variants;
   if (data.images && data.images.length > 0) {
     product.images = data.images;
   }

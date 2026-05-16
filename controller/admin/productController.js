@@ -1,5 +1,6 @@
 const productService = require("../../services/admin/productService");
 const categoryService = require("../../services/admin/categoryService");
+const variantService = require("../../services/admin/variantService");
 const { productZodSchema } = require("../../validations/productValidation");
 const { uploadToCloudinary } = require("../../utils/cloudinary");
 const { Types } = require("mongoose");
@@ -9,9 +10,12 @@ async function renderProductPage(req, res) {
   try {
     const products = await productService.getAllProducts();
      const categories = await categoryService.getAllCategories();
+     const variants = await variantService.getAllVariants();
+     console.log("variants:", variants); 
     res.render("admin/adminManagement/product", {
       products,
       categories,
+      variants,
       message: req.session.message || null,
     });
     req.session.message = null;
@@ -36,6 +40,7 @@ async function getProducts(req, res) {
       status: "SUCCESS",
       products: result.products,
       totalPages: result.totalPages,
+      totalProducts: result.totalProducts,
       currentPage: page,
     });
   } catch (error) {
@@ -59,13 +64,13 @@ async function createProduct(req, res) {
       return res.json({ status: "ERROR", message: "Images required" });
     }
 
-    const sizes = JSON.parse(req.body.sizes);
+    const variants = JSON.parse(req.body.variants);
    
     const validated = productZodSchema.parse({
       name: req.body.name,
       category: req.body.category,
       description: req.body.description,
-      sizes,
+      variants,
       images: imageUrls,
     });
      req.body.category= new Types.ObjectId(req.body.category)
@@ -102,12 +107,12 @@ async function updateProduct(req, res) {
       const newImages = results.map((r) => r.secure_url);
       imageUrls = [...imageUrls, ...newImages];
     }
-    const sizes = JSON.parse(req.body.sizes);
+    const variants = JSON.parse(req.body.variants);
     const validated = productZodSchema.parse({
       name: req.body.name,
       category: req.body.category,
       description: req.body.description,
-      sizes,
+      variants,
       images: imageUrls,
     });
     await productService.updateProduct(req.params.id, validated);

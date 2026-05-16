@@ -1,13 +1,16 @@
 const singleProductService = require("../../services/user/singleProductService");
+const variantService = require("../../services/admin/variantService");
 
 async function renderSingleProduct(req, res) {
   try {
     const productId = req.params.id;
     const product = await singleProductService.getProductById(productId);
+    const variants = await variantService.getAllVariants();
     const relatedProducts = await singleProductService.getRelatedProducts(product.category._id,productId);
 
     res.render("user/singleProduct", {
       product,
+      variants,
       relatedProducts
     });
 
@@ -36,7 +39,7 @@ async function getVariantData(req, res) {
     const product = await singleProductService.getProductById(productId);
     return res.json({
       success: true,
-      sizes: product.sizes
+      variants: product.variants
     });
   } catch (error) {
     return res.json({

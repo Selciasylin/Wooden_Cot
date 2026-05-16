@@ -1,139 +1,122 @@
 
 let variantData = [];
-let selectedSize = null;
-let selectedStorage = null;
-
+let selectedOptions = [];
 // 🔥 LOAD DATA
 document.addEventListener("DOMContentLoaded", async () => {
-  const res = await fetch(`/product/variant/${productId}`);
-  const data = await res.json();
-
-  console.log("API:", data);
-
-  if (data.success) {
-    variantData = data.sizes;
-
-    // ✅ auto select first size
-    if (variantData.length > 0) {
-      selectedSize = variantData[0].size;
-
-      highlightSize();
-      updateStorageOptions();
-      updatePrice();
-    }
-  }
+    const res = await fetch(`/product/variant/${productId}`);
+    const data = await res.json();
+    
+    console.log("API:", data);
+    
+    if (data.success) {
+        variantData = data.variants;
+        console.log(variantData);
+        // ✅ Show initial stock and price (first variant)
+        if (variantData && variantData.length > 0) {
+            document.getElementById("price").innerText = `₹${variantData[0].price}`;
+            const stockStatus = document.getElementById("stockStatus");
+            if (variantData[0].quantity > 0) {
+                stockStatus.innerHTML = `
+                    <i class="bi bi-check-circle me-1"></i>
+                    In Stock (${variantData[0].quantity} left)
+                `;
+                stockStatus.className = "badge bg-success px-3 py-2";
+            } else {
+                stockStatus.innerHTML = `
+                    <i class="bi bi-x-circle me-1"></i>
+                    Out Of Stock
+                `;
+                stockStatus.className = "badge bg-danger px-3 py-2";
+            }
+        }
+      }
 });
 
-
-// 🔥 SIZE CLICK
-function selectSize(button) {
-  selectedSize = button.dataset.size;
-
-  highlightSize();
-  updateStorageOptions();
-  updatePrice();
+function selectOption(button){
+   if(button.disabled) return;
+   const optionId = button.dataset.option;
+   const variantType = button.dataset.type;
+   selectedOptions = selectedOptions.filter(
+      item => item.type !== variantType
+   );
+   selectedOptions.push({
+      type: variantType,
+      optionId
+   });
+   highlightOptions();
+   updatePrice();
 }
 
-
-// 🔥 STORAGE CLICK
-function selectStorage(button) {
-  selectedStorage = button.dataset.type;
-
-  highlightStorage();
-  updatePrice();
+function highlightOptions() {
+    document.querySelectorAll(".variant-option").forEach(btn => {
+        // Remove all classes first
+        btn.classList.remove("btn-custom", "active", "btn-outline-secondary");
+        const exists = selectedOptions.find(
+            item => item.optionId === btn.dataset.option
+        );
+        if (exists) {
+            // Active state - use btn-custom
+            btn.classList.add("btn-custom", "active");
+        } else {
+            // Inactive state - use outline
+            btn.classList.add("btn-outline-secondary");
+        }
+    });
 }
 
-
-// 🔥 SIZE UI UPDATE
-function highlightSize() {
-  document.querySelectorAll('.size-option').forEach(btn => {
-    btn.classList.remove('active','btn-custom');
-    btn.classList.add('btn-outline-secondary');
-
-    if (btn.dataset.size === selectedSize) {
-      btn.classList.add('active','btn-custom');
-      btn.classList.remove('btn-outline-secondary');
-    }
-  });
-}
-
-
-// 🔥 STORAGE ENABLE/DISABLE
-function updateStorageOptions() {
-  const sizeData = variantData.find(s => s.size === selectedSize);
-
-  const withBtn = document.querySelector('[data-type="withDrawer"]');
-  const withoutBtn = document.querySelector('[data-type="withoutDrawer"]');
-
-  withBtn.disabled = !sizeData?.variants?.withDrawer;
-  withoutBtn.disabled = !sizeData?.variants?.withoutDrawer;
-
-  // ✅ DEFAULT RULE
-  if (sizeData?.variants?.withoutDrawer) {
-    selectedStorage = "withoutDrawer";
-  } else {
-    selectedStorage = "withDrawer";
-  }
-
-  highlightStorage();
-}
-
-
-// 🔥 STORAGE UI UPDATE
-function highlightStorage() {
-  document.querySelectorAll('.storage-option').forEach(btn => {
-    btn.classList.remove('active','btn-custom');
-    btn.classList.add('btn-outline-secondary');
-
-    if (btn.dataset.type === selectedStorage) {
-      btn.classList.add('active','btn-custom');
-      btn.classList.remove('btn-outline-secondary');
-    }
-  });
-}
-
-
-// 🔥 PRICE UPDATE
 function updatePrice() {
-
-  if (!selectedSize || !selectedStorage) return;
-
-  const sizeData =
-    variantData.find(s => s.size === selectedSize);
-
-  const variant =
-    sizeData?.variants?.[selectedStorage];
-
-  if (!variant) return;
-
-  // 🔥 PRICE
-  document.getElementById("price").innerText =
-    `₹${variant.price}`;
-
-  // 🔥 STOCK STATUS
-  const stockStatus =
+    let matchedVariant = null;
+    // selected option ids
+    const selectedIds =
+    selectedOptions.map(item =>
+        item.optionId.toString()
+    );
+    // DEFAULT FIRST VARIANT
+    if (selectedIds.length === 0) {
+      matchedVariant = variantData[0];
+    } else {
+        matchedVariant =
+        variantData.find(variant => {
+            // HANDLE BOTH OBJECTS & IDS
+            const variantOptionIds =
+            variant.options.map(option => {
+                // populated object
+                if (typeof option === "object") {
+                    return option._id.toString();
+                }
+                // direct ObjectId/string
+                return option.toString();
+            });
+            // EXACT MATCH
+            return (
+                variantOptionIds.length ===
+                selectedIds.length &&
+                selectedIds.every(id =>
+                    variantOptionIds.includes(id)
+                )
+            );
+        });
+    }
+    if (!matchedVariant) return;
+    // PRICE
+    document.getElementById("price").innerText =
+    `₹${matchedVariant.price}`;
+    // STOCK
+    const stockStatus =
     document.getElementById("stockStatus");
-
-  if (variant.quantity > 0) {
-
-    stockStatus.innerHTML = `
-      <i class="bi bi-check-circle me-1"></i>
-      In Stock (${variant.quantity} left)
-    `;
-
-    stockStatus.className =
-      "badge bg-success px-3 py-2";
-
-  } else {
-
-    stockStatus.innerHTML = `
-      <i class="bi bi-x-circle me-1"></i>
-      Out Of Stock
-    `;
-
-    stockStatus.className =
-      "badge bg-danger px-3 py-2";
-  }
+    if (matchedVariant.quantity > 0) {
+        stockStatus.innerHTML = `
+            <i class="bi bi-check-circle me-1"></i>
+            In Stock (${matchedVariant.quantity} left)
+        `;
+        stockStatus.className =
+        "badge bg-success px-3 py-2";
+    } else {
+        stockStatus.innerHTML = `
+            <i class="bi bi-x-circle me-1"></i>
+            Out Of Stock
+        `;
+        stockStatus.className =
+        "badge bg-danger px-3 py-2";
+    }
 }
-
- 
