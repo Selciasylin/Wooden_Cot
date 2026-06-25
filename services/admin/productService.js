@@ -41,7 +41,7 @@ async function createProduct(data) {
   }
   if (
     data.variants.some(
-      (v) => v.options.length === 0 || v.price <= 0 || v.quantity < 0,
+      (v) => v.options.length === 0 || v.price <= 0 || v.quantity < 0
     )
   ) {
     throw new appError("Invalid product variant");
