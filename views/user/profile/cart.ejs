@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cart — Wooden Cot</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.min.css" rel="stylesheet">
+
+<style>
+  /* ── Variables ── */
+  :root {
+    --brand:    #AE946D;
+    --brand-dk: #9a8260;
+    --brand-lt: #f5ede0;
+    --text:     #2c2c2c;
+    --muted:    #888;
+    --border:   #e8e0d5;
+    --white:    #ffffff;
+    --bg:       #f9f6f2;
+    --card-bg:  #fdfcfa;
+    --green:    #2e7d32;
+    --red:      #c0392b;
+    --red-lt:   #fff0f0;
+    --red-br:   #ffc9c9;
+  }
+
+  /* ── Base ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 16px;
+  }
+
+  /* ── Navbar ── */
+  .navbar-custom { background-color: #AE946D; }
+
+  /* ── Page Title ── */
+  .page-title {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--brand);
+    letter-spacing: .5px;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .page-title i { font-size: 20px; }
+
+  /* ── Toolbar ── */
+  .toolbar {
+    display: flex;
+    align-items: center;
+    margin-bottom: 14px;
+  }
+  .item-count {
+    font-size: 12px;
+    color: var(--muted);
+    margin-left: auto;
+  }
+
+  /* ── Table Card ── */
+  .wl-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+
+  /* ── Table ── */
+  .wl-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+  }
+  .wl-table thead tr {
+    background: var(--brand-lt);
+    border-bottom: 1.5px solid var(--border);
+  }
+  .wl-table thead th {
+    padding: 12px 16px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--brand-dk);
+    text-transform: uppercase;
+    letter-spacing: .7px;
+  }
+  .wl-table thead th:nth-child(1) { width: 40%; }
+  .wl-table thead th:nth-child(2) { width: 18%; text-align: center; }
+  .wl-table thead th:nth-child(3) { width: 14%; text-align: right; }
+  .wl-table thead th:nth-child(4) { width: 16%; text-align: right; }
+  .wl-table thead th:nth-child(5) { width: 12%; text-align: center; }
+
+  .wl-table tbody tr {
+    border-bottom: 1px solid #f0ebe3;
+    transition: background .15s;
+  }
+  .wl-table tbody tr:last-child { border-bottom: none; }
+  .wl-table tbody tr:hover { background: #fdf9f5; }
+  .wl-table tbody td {
+    padding: 14px 16px;
+    vertical-align: middle;
+  }
+  .wl-table tbody td:nth-child(2) { text-align: center; }
+  .wl-table tbody td:nth-child(3) { text-align: right; }
+  .wl-table tbody td:nth-child(4) { text-align: right; }
+  .wl-table tbody td:nth-child(5) { text-align: center; }
+
+  /* ── Product Cell ── */
+  .prod-cell { display: flex; align-items: center; gap: 14px; }
+  .prod-img {
+    width: 66px;
+    height: 66px;
+    border-radius: 10px;
+    object-fit: cover;
+    border: 1px solid var(--border);
+    background: #f0ebe3;
+    flex-shrink: 0;
+  }
+  .prod-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 6px;
+    line-height: 1.45;
+  }
+  .variant-badge {
+    background: var(--brand-lt);
+    border: 1px solid var(--border);
+    color: var(--brand-dk);
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 9px;
+  }
+
+  /* ── Quantity ── */
+  .qty-ctrl {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .qty-btn {
+    background: var(--brand-lt);
+    border: none;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--brand-dk);
+    font-weight: 700;
+    font-size: 15px;
+    transition: .15s;
+  }
+  .qty-btn:hover:not(:disabled) { background: var(--border); }
+  .qty-btn:disabled { opacity: .4; cursor: not-allowed; }
+  .qty-num {
+    width: 34px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 600;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-family: 'Poppins', sans-serif;
+    pointer-events: none;
+  }
+  .stock-warn { font-size: 10px; color: var(--red); margin-top: 4px; }
+
+  /* ── Price ── */
+  .price-val { font-size: 14px; font-weight: 700; color: var(--green); }
+  .total-val { font-size: 13px; font-weight: 700; color: var(--text); }
+
+  /* ── Remove Button ── */
+  .btn-rm {
+    background: none;
+    border: 1px solid var(--red-br);
+    border-radius: 8px;
+    width: 34px;
+    height: 34px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--red);
+    font-size: 15px;
+    transition: all .2s;
+  }
+  .btn-rm:hover { background: var(--red-lt); border-color: var(--red); }
+
+  /* ── Table Footer ── */
+  .wl-footer {
+    padding: 12px 16px;
+    border-top: 1px solid #f0ebe3;
+    background: var(--card-bg);
+    display: flex;
+    justify-content: flex-end;
+  }
+  .cont-link { font-size: 12px; color: var(--muted); text-decoration: none; }
+  .cont-link:hover { color: var(--brand); }
+
+  /* ── Empty State ── */
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+    gap: 12px;
+    text-align: center;
+  }
+  .empty-state i     { font-size: 42px; color: #d5c9b8; }
+  .empty-state p     { font-size: 14px; font-weight: 500; color: #555; margin: 0; }
+  .empty-state small { font-size: 12px; color: var(--muted); }
+  .btn-shop {
+    background: var(--brand);
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 11px;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+    text-decoration: none;
+    margin-top: 4px;
+    display: inline-block;
+  }
+  .btn-shop:hover { background: var(--brand-dk); color: var(--white); }
+
+  /* ── Summary Card ── */
+  .sum-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    position: sticky;
+    top: 10px;
+  }
+  .sum-head {
+    background: var(--brand-lt);
+    border-bottom: 1.5px solid var(--border);
+    padding: 12px 16px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--brand-dk);
+    text-transform: uppercase;
+    letter-spacing: .7px;
+  }
+  .sum-body { padding: 16px; }
+  .sum-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    padding: 8px 0;
+    border-bottom: 1px solid #f0ebe3;
+  }
+  .sum-row .lbl { color: var(--muted); }
+  .sum-row .val { font-weight: 600; }
+  .sum-total {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 12px;
+    margin-top: 4px;
+    border-top: 1.5px solid var(--border);
+  }
+  .sum-total .lbl { font-size: 14px; font-weight: 700; }
+  .sum-total .val  { font-size: 16px; font-weight: 700; color: var(--green); }
+
+  /* ── Coupon ── */
+  .coupon-wrap { display: flex; gap: 8px; margin-bottom: 14px; }
+  .coupon-wrap input {
+    flex: 1;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 7px 12px;
+    font-size: 12px;
+    font-family: 'Poppins', sans-serif;
+    outline: none;
+    background: var(--bg);
+  }
+  .coupon-wrap input:focus { border-color: var(--brand); background: var(--white); }
+  .btn-apply {
+    background: var(--brand-lt);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 7px 13px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--brand-dk);
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    white-space: nowrap;
+  }
+  .btn-apply:hover { background: var(--border); }
+
+  /* ── Checkout Button ── */
+  .btn-checkout {
+    width: 100%;
+    background: var(--brand);
+    color: var(--white);
+    border: none;
+    border-radius: 10px;
+    padding: 11px;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    transition: .2s;
+    margin-top: 14px;
+  }
+  .btn-checkout:hover { background: var(--brand-dk); }
+  .sum-cont-link {
+    display: block;
+    text-align: center;
+    margin-top: 10px;
+    font-size: 12px;
+    color: var(--muted);
+    text-decoration: none;
+  }
+  .sum-cont-link:hover { color: var(--brand); }
+/* ── Footer ── */
+.footer-custom { background-color: #CDAF82; }
+  /* ── Responsive ── */
+  @media (max-width: 768px) {
+    .wl-table { display: block; }
+    .wl-table thead { display: none; }
+    .wl-table tbody, .wl-table tr, .wl-table td { display: block; width: 100%; }
+    .wl-table tr { padding: 15px; border-bottom: 1px solid #eee; }
+    .wl-table td { text-align: left !important; padding: 8px 0; }
+    .wl-table td::before {
+      content: attr(data-label);
+      display: block;
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--brand-dk);
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      margin-bottom: 3px;
+    }
+    .btn-rm { width: 100%; height: 40px; }
+    .sum-card { position: static; margin-top: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<%- include('../partials/header') %>
+<%- include('../partials/toast') %>
+
+<section class="py-5">
+  <div class="container">
+
+    <!-- Page Title -->
+    <h1 class="page-title"><i class="bi bi-cart3"></i> Cart</h1>
+
+    <div class="row g-4 align-items-start">
+
+      <!-- ── Items Column ── -->
+      <div class="col-lg-8" id="itemsCol">
+
+        <!-- Toolbar -->
+        <div class="toolbar">
+          <span class="item-count" id="itemCount">0 items</span>
+        </div>
+
+        <!-- Empty State -->
+        <div class="wl-card" id="emptyState" style="display:none;">
+          <div class="empty-state">
+            <i class="bi bi-cart-x"></i>
+            <p>Your cart is empty</p>
+            <small>Browse our collection and add items you love</small>
+            <a href="/shop" class="btn-shop">Start Shopping</a>
+          </div>
+        </div>
+
+        <!-- Cart Table -->
+        <div class="wl-card" id="cartTable" style="display:none;">
+          <table class="wl-table">
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Total</th>
+                <th>Remove</th>
+              </tr>
+            </thead>
+            <tbody id="cartBody"></tbody>
+          </table>
+
+          <div class="wl-footer" id="cartFooter">
+            <a href="/shop" class="cont-link">
+              <i class="bi bi-arrow-left me-1"></i>Continue Shopping
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ── Summary Column ── -->
+      <div class="col-lg-4" id="summaryCard" style="display:none;">
+        <div class="sum-card">
+          <div class="sum-head"><i class="bi bi-receipt me-1"></i> Order Summary</div>
+          <div class="sum-body">
+
+            <!-- Coupon -->
+            <div class="coupon-wrap">
+              <input type="text" id="couponInput" placeholder="Enter coupon code">
+              <button class="btn-apply" onclick="applyCoupon()">Apply</button>
+            </div>
+
+            <!-- Price Rows -->
+            <div class="sum-row">
+              <span class="lbl">Actual Price</span>
+              <span class="val" id="summarySubtotal">₹0</span>
+            </div>
+            <div class="sum-row">
+              <span class="lbl">Discount</span>
+              <span class="val" style="color:var(--green);" id="summaryDiscount">-₹0</span>
+            </div>
+            <div class="sum-row">
+              <span class="lbl">Shipping</span>
+              <span class="val" id="summaryShipping">₹100</span>
+            </div>
+            <div class="sum-row" style="flex-direction:column; gap:6px; align-items:flex-start;">
+              <div style="display:flex; justify-content:space-between; width:100%;">
+                <span class="lbl">Coupon Discount</span>
+                <span class="val" style="color:var(--green);" id="summaryCoupon">-₹0</span>
+              </div>
+              <button onclick="loadAvailableCoupons()"
+                style="background:none; border:none; color:var(--brand); font-size:11px;
+                       font-weight:600; cursor:pointer; padding:0; text-decoration:underline;
+                       font-family:'Poppins',sans-serif;">
+                <i class="bi bi-tag me-1"></i>View Available Coupons
+              </button>
+            </div>
+
+            <!-- Grand Total -->
+            <div class="sum-total">
+              <span class="lbl">Grand Total</span>
+              <span class="val" id="summaryTotal">₹0</span>
+            </div>
+
+            <button class="btn-checkout" onclick="window.location.href='/checkout'">
+              <i class="bi bi-shield-check"></i> Proceed to Checkout
+            </button>
+            <a href="/shop" class="sum-cont-link">
+              <i class="bi bi-arrow-left me-1"></i>Continue Shopping
+            </a>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── Delete Confirmation Modal ── -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body text-center p-4">
+        <i class="bi bi-trash text-danger fs-1"></i>
+        <h5 class="mt-3">Remove Item?</h5>
+        <p style="font-size:14px; color:#555;">Are you sure you want to remove this item from your cart?</p>
+        <div class="d-flex gap-2">
+          <button class="btn btn-secondary w-50" data-bs-dismiss="modal">Cancel</button>
+          <button class="btn btn-danger w-50" id="confirmDelete">Yes, Remove</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/logout') %>
+<%- include('../partials/footer') %>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js/user/cart.js"></script>
+<script src="/js/common.js"></script>
+</body>
+</html>

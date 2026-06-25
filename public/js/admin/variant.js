@@ -234,4 +234,5 @@ function showToast(message) {
   setTimeout(() => toast.remove(), 3000);
 }
 
+
 window.onload = () => loadVariants();

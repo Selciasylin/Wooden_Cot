@@ -7,6 +7,9 @@ const profileController = require("../controller/user/profileController");
 const addressController = require("../controller/user/addressController");
 const productController = require("../controller/user/productController")
 const singleProductController = require("../controller/user/singleProductController");
+const wishlistController = require("../controller/user/wishlistController");
+const cartController = require("../controller/user/cartController")
+const checkoutController = require("../controller/user/checkoutController");
 const { isLoggedIn, preventAuthAccess } = require("../middleware/authMiddleware");
 const noCache = require("../middleware/noCacheMiddleware")
 
@@ -50,7 +53,29 @@ router.get("/shop",isLoggedIn,productController.renderShop)
 router.get("/shop/products", productController.getFilteredProducts);
 
 //singleProduct
-router.get("/product/:id",singleProductController.renderSingleProduct);
-router.get("/product/variant/:id", singleProductController.getVariantData);
+router.get("/product/:id",isLoggedIn,singleProductController.renderSingleProduct);
+router.get("/product/variant/:id",isLoggedIn, singleProductController.getVariantData);
+
+//wishlist
+router.get("/wishlist",isLoggedIn, wishlistController.renderWishlist);
+router.get("/wishlist/data",isLoggedIn, wishlistController.getWishlistData);
+router.post("/wishlist/add", isLoggedIn,wishlistController.addToWishlist);
+router.delete("/wishlist/delete/:id",isLoggedIn, wishlistController.removeWishlistProduct);
+router.post("/wishlist/moveToCart/:id",isLoggedIn, wishlistController.moveWishlistToCart);
+
+//router
+router.get("/cart", isLoggedIn, cartController.renderCart);
+router.get("/cart/data", isLoggedIn, cartController.getCartData);
+router.post("/cart/add", isLoggedIn, cartController.addToCart);
+router.patch("/cart/update", isLoggedIn, cartController.updateQuantity);
+router.delete("/cart/remove/:id",isLoggedIn, cartController.removeCartItem);
+
+//checkout
+router.get("/checkout", isLoggedIn, checkoutController.renderCheckout);
+router.get("/checkout/data", isLoggedIn, checkoutController.getCheckoutData);
+router.post("/checkout/address", isLoggedIn, checkoutController.addAddress);
+router.put("/address/edit/:id",isLoggedIn,checkoutController.updateAddress);
+router.delete("/address/delete/:id",isLoggedIn,checkoutController.deleteAddress);
+ 
 
 module.exports = router;

@@ -14,8 +14,7 @@ const productVariantSchema = z.object({
   price: z
     .coerce
     .number()
-    .positive("Price must be greater than 0")
-
+    .positive("Price must be greater than 0"),
 });
 
 const productZodSchema = z.object({

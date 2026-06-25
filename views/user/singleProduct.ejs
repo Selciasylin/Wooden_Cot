@@ -287,6 +287,8 @@
 
     <!-- Navbar -->
     <%- include('./partials/header') %>
+     <%- include('./partials/toast') %>
+    
 
     <!-- Breadcrumb -->
     <section class="py-3 bg-light">
@@ -402,7 +404,7 @@
                         <button class="btn btn-custom btn-lg flex-fill" onclick="addToCart()">
                             <i class="bi bi-cart-plus me-2"></i>Add to Cart
                         </button>
-                        <button class="btn btn-outline-danger btn-lg" onclick="addToWishlist()">
+                        <button id="wishlistBtn" class="btn btn-outline-danger btn-lg" onclick="addToWishlist()">
                             <i class="bi bi-heart"></i>
                         </button>
                     </div>
@@ -727,12 +729,14 @@
             </div>
         </div>
     </footer>
-    <script>
-      const productId = "<%= product._id %>";
-    </script>
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script >
+        const productId = "<%= product._id %>";
+        const wishlistVariantIds = <%- JSON.stringify(wishlistVariantIds) %>;
+    </script>
     <script src="/js/user/singleProduct.js"></script>
+    <script src="/js/common.js"></script>
     <script>
         // Change Main Image on Thumbnail Click
         function changeImage(thumbnail) {
@@ -760,21 +764,6 @@
                 qtyInput.value = parseInt(qtyInput.value) - 1;
             }
         }
-        
-        // Add to Cart
-        function addToCart() {
-            const size = document.querySelector('.size-option.active').textContent.trim();
-            const storage = document.querySelector('.storage-option.active').textContent.trim();
-            const quantity = document.getElementById('quantity').value;
-            
-            alert(`Added to cart!\nSize: ${size}\nStorage: ${storage}\nQuantity: ${quantity}`);
-        }
-        
-        // Add to Wishlist
-        function addToWishlist() {
-            alert('Added to wishlist!');
-        }
-        
        
 
         const imageContainer =

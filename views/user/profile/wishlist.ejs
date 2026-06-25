@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wishlist — Wooden Cot</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.min.css" rel="stylesheet">
+
+  <style>
+    /* ── Variables ── */
+    :root {
+      --brand:      #AE946D;
+      --brand-dk:   #9a8260;
+      --brand-lt:   #f5ede0;
+      --text:       #2c2c2c;
+      --muted:      #888;
+      --border:     #e8e0d5;
+      --white:      #ffffff;
+      --bg:         #f9f6f2;
+      --card-bg:    #fdfcfa;
+      --green:      #2e7d32;
+      --red:        #c0392b;
+      --red-lt:     #fff0f0;
+      --red-br:     #ffc9c9;
+    }
+
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 16px;
+    }
+
+    /* ── Navbar (match home page) ── */
+    .navbar-custom {
+      background-color: #AE946D;
+    }
+
+    .logo-text {
+      font-weight: 700;
+      font-size: 22px;
+      color: white;
+    }
+
+    /* ── Footer (match home page) ── */
+    .footer-custom {
+      background-color: #CDAF82;
+    }
+
+    /* ── Buttons (match home page) ── */
+    .btn-custom {
+      background-color: #AE946D;
+      border-color: #AE946D;
+      color: white;
+    }
+
+    .btn-custom:hover {
+      background-color: #9a8260;
+      border-color: #9a8260;
+      color: white;
+    }
+
+    /* ── Page Section ── */
+    .page-section {
+      padding: 2.5rem 1.5rem 4rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    /* ── Page Title ── */
+    .page-title {
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--brand);
+      letter-spacing: .5px;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .page-title i { font-size: 20px; }
+
+    /* ── Toolbar ── */
+    .toolbar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    .search-wrap {
+      position: relative;
+      flex: 1;
+      min-width: 200px;
+      max-width: 320px;
+    }
+    .search-wrap input {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 36px 8px 14px;
+      font-size: 13px;
+      font-family: 'Poppins', sans-serif;
+      background: var(--white);
+      color: var(--text);
+      outline: none;
+      transition: border-color .2s;
+    }
+    .search-wrap input:focus { border-color: var(--brand); }
+    .search-wrap .search-icon {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      font-size: 14px;
+      pointer-events: none;
+    }
+    .search-wrap .clear-btn {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      font-size: 14px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: none;
+      padding: 0;
+      line-height: 1;
+    }
+    .search-wrap.has-value .search-icon { display: none; }
+    .search-wrap.has-value .clear-btn  { display: block; }
+
+    .item-count {
+      font-size: 12px;
+      color: var(--muted);
+      margin-left: auto;
+      white-space: nowrap;
+    }
+
+    /* ── Card Container ── */
+    .wl-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    /* ── Table ── */
+    .wl-table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+
+    .wl-table thead tr {
+      background: var(--brand-lt);
+      border-bottom: 1.5px solid var(--border);
+    }
+    .wl-table thead th {
+      padding: 12px 16px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--brand-dk);
+      text-transform: uppercase;
+      letter-spacing: .7px;
+    }
+    .wl-table thead th:nth-child(1) { width: 46%; }
+    .wl-table thead th:nth-child(2) { width: 15%; text-align: right; }
+    .wl-table thead th:nth-child(3) { width: 23%; text-align: center; }
+    .wl-table thead th:nth-child(4) { width: 16%; text-align: center; }
+
+    .wl-table tbody tr {
+      border-bottom: 1px solid #f0ebe3;
+      transition: background .15s;
+    }
+    .wl-table tbody tr:last-child { border-bottom: none; }
+    .wl-table tbody tr:hover { background: #fdf9f5; }
+
+    .wl-table tbody td {
+      padding: 14px 16px;
+      vertical-align: middle;
+    }
+    .wl-table tbody td:nth-child(2) { text-align: right; }
+    .wl-table tbody td:nth-child(3) { text-align: center; }
+    .wl-table tbody td:nth-child(4) { text-align: center; }
+
+    /* ── Product Cell ── */
+    .prod-cell {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .prod-img {
+      width: 66px;
+      height: 66px;
+      border-radius: 10px;
+      object-fit: cover;
+      border: 1px solid var(--border);
+      background: #f0ebe3;
+      flex-shrink: 0;
+    }
+    .prod-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 6px;
+      line-height: 1.45;
+    }
+    .prod-variants {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+    .variant-badge {
+      background: var(--brand-lt);
+      border: 1px solid var(--border);
+      color: var(--brand-dk);
+      border-radius: 20px;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 9px;
+    }
+
+    /* ── Price ── */
+    .price-val {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--green);
+    }
+
+    /* ── Add to Cart Button ── */
+    .btn-cart {
+      background: var(--brand);
+      color: var(--white);
+      border: none;
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-size: 11px;
+      font-weight: 600;
+      font-family: 'Poppins', sans-serif;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      transition: background .2s, transform .1s;
+    }
+    .btn-cart:hover  { background: var(--brand-dk); }
+    .btn-cart:active { transform: scale(.97); }
+    .btn-cart i { font-size: 13px; }
+
+    /* ── Remove Button ── */
+    .btn-remove {
+      background: none;
+      border: 1px solid var(--red-br);
+      border-radius: 8px;
+      width: 34px;
+      height: 34px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--red);
+      font-size: 15px;
+      transition: all .2s;
+    }
+    .btn-remove:hover {
+      background: var(--red-lt);
+      border-color: var(--red);
+    }
+
+    /* ── Empty State ── */
+    .empty-state {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 4rem 2rem;
+      color: var(--muted);
+      gap: 12px;
+    }
+    .empty-state i { font-size: 42px; color: #d5c9b8; }
+    .empty-state p { font-size: 14px; font-weight: 500; }
+    .empty-state small { font-size: 12px; }
+
+    /* ── WL Footer (pagination) ── */
+    .wl-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 16px;
+      border-top: 1px solid #f0ebe3;
+      background: var(--card-bg);
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .pg-info { font-size: 12px; color: var(--muted); }
+
+    /* Bootstrap pagination overrides */
+    .pagination .page-link {
+      color: var(--brand);
+      border-color: var(--border);
+      font-size: 12px;
+      font-family: 'Poppins', sans-serif;
+      padding: 5px 10px;
+      border-radius: 7px !important;
+    }
+    .pagination .page-item.active .page-link {
+      background: var(--brand);
+      border-color: var(--brand);
+      color: var(--white);
+    }
+    .pagination .page-link:hover {
+      background: var(--brand-lt);
+      color: var(--brand-dk);
+    }
+    .pagination { gap: 3px; margin: 0; }
+
+    /* ── Toast ── */
+    .toast-wrap {
+      position: fixed;
+      bottom: 28px;
+      right: 24px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .toast-msg {
+      background: var(--text);
+      color: var(--white);
+      font-size: 12px;
+      font-weight: 500;
+      padding: 10px 16px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      animation: slideUp .25s ease;
+      font-family: 'Poppins', sans-serif;
+    }
+    .toast-msg.success { background: #1b5e20; }
+    .toast-msg.error   { background: #7f0000; }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Sidebar (copied from profile page) ── */
+    .sidebar-menu {
+      background-color: white;
+      border-radius: 10px;
+    }
+    .sidebar-menu .nav-link {
+      color: #666;
+      padding: 12px 20px;
+      border-radius: 5px;
+      margin-bottom: 5px;
+      transition: all 0.3s;
+    }
+    .sidebar-menu .nav-link:hover {
+      background-color: #f8f8f8;
+      color: #AE946D;
+    }
+    .sidebar-menu .nav-link.active {
+      background-color: #AE946D;
+      color: white;
+    }
+    .profile-img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid #AE946D;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width:768px){
+
+  .wl-table{
+      display:block;
+  }
+
+  .wl-table thead{
+      display:none;
+  }
+
+  .wl-table tbody,
+  .wl-table tr,
+  .wl-table td{
+      display:block;
+      width:100%;
+  }
+
+  .wl-table tr{
+      padding:15px;
+      border-bottom:1px solid #eee;
+  }
+
+  .wl-table td{
+      text-align:left !important;
+      padding:8px 0;
+  }
+
+  .btn-cart{
+      width:100%;
+      justify-content:center;
+  }
+
+  .btn-remove{
+      width:100%;
+      height:40px;
+  }
+
+}
+  </style>
+</head>
+<body>
+
+  <!-- ══════════════════════════════
+       NAVBAR
+  ══════════════════════════════ -->
+  <%- include('../partials/header') %>
+  <%- include('../partials/toast') %>
+
+
+  <!-- ══════════════════════════════
+       WISHLIST SECTION
+  ══════════════════════════════ -->
+  <section class="py-5">
+    <div class="container">
+      <div class="row g-4">
+
+        <!-- ── Sidebar (same as profile page) ── -->
+        <div class="col-lg-3">
+          <div class="sidebar-menu shadow-sm p-4">
+            <!-- Profile Image and Name -->
+            <div class="text-center mb-4">
+              <img src="<%= user.profilePicture ? user.profilePicture : 'https://ui-avatars.com/api/?name=' + (user.firstName || 'User') + '&background=AE946D&color=fff' %>" class="profile-img mb-3">
+              <h5 class="fw-semibold mb-1">
+                <%= user.firstName || '' %> <%= user.lastName || '' %>
+              </h5>
+              <p class="text-muted small mb-0"><%= user.email %></p>
+            </div>
+
+            <hr class="my-3">
+
+            <!-- Menu Items -->
+            <nav class="nav flex-column">
+              <a class="nav-link" href="/profile">
+                <i class="bi bi-person me-2"></i> Account Details
+              </a>
+              <a class="nav-link active" href="/wishlist">
+                <i class="bi bi-heart me-2"></i> Wishlist
+              </a>
+              <a class="nav-link" href="/orders">
+                <i class="bi bi-box-seam me-2"></i> Orders
+              </a>
+              <a class="nav-link" href="/address">
+                <i class="bi bi-geo-alt me-2"></i> Address
+              </a>
+              <a class="nav-link" href="/wallet">
+                <i class="bi bi-wallet2 me-2"></i> My Wallet
+              </a>
+              <a class="nav-link text-danger" href="signOut" data-bs-toggle="modal" data-bs-target="#logoutModal">
+                <i class="bi bi-box-arrow-right me-2"></i> Sign Out
+              </a>
+            </nav>
+          </div>
+        </div>
+        <!-- /Sidebar -->
+
+        <!-- ── Wishlist Content ── -->
+        <div class="col-lg-9">
+          <div class="page-section" style="padding: 0;">
+
+            <h1 class="page-title">
+              <i class="bi bi-heart-fill"></i> Wishlist
+            </h1>
+
+            <!-- Toolbar -->
+            <div class="toolbar">
+              <div class="search-wrap" id="searchWrap">
+                <input
+                  type="text"
+                  id="searchInput"
+                  placeholder="Search wishlist..."
+                  autocomplete="off"
+                >
+                <i class="bi bi-search search-icon"></i>
+                <button class="clear-btn" id="clearSearch" title="Clear">
+                  <i class="bi bi-x-circle-fill"></i>
+                </button>
+              </div>
+              <span class="item-count" id="itemCount">12 items</span>
+            </div>
+
+            <!-- Card -->
+            <div class="wl-card">
+
+              <!-- Table -->
+              <table class="wl-table" id="wishlistTable">
+                <thead>
+                  <tr>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Actions</th>
+                    <th>Remove</th>
+                  </tr>
+                </thead>
+                <tbody id="wishlistBody"></tbody>
+              </table>
+
+              <!-- Empty state -->
+              <div class="empty-state" id="emptyState">
+                <i class="bi bi-heart"></i>
+                <p>Your wishlist is empty</p>
+                <small>Browse our collection and save items you love</small>
+              </div>
+
+              <!-- WL Footer / Pagination -->
+              <div class="wl-footer" id="wlFooter">
+                <span class="pg-info" id="pgInfo">Showing 1 – 4 of 12 entries</span>
+                <nav>
+                  <ul class="pagination">
+                    <li class="page-item disabled">
+                      <a class="page-link" href="#">‹</a>
+                    </li>
+                    <li class="page-item"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item active">
+                      <a class="page-link" href="#">2</a>
+                    </li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item">
+                      <a class="page-link" href="#">›</a>
+                    </li>
+                  </ul>
+                </nav>
+              </div>
+
+            </div><!-- /wl-card -->
+          </div>
+        </div>
+        <!-- /Wishlist Content -->
+
+      </div>
+    </div>
+  </section>
+
+  <!-- DeleteModal -->
+  <div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body text-center p-4">
+                <i class="bi bi-trash text-danger fs-1"></i>
+                <h5 class="mt-3">Remove Item?</h5>
+                <p>Remove this item from wishlist?</p>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-secondary w-50" data-bs-dismiss="modal">Cancel</button>
+                    <button class="btn btn-danger w-50" id="confirmDelete">Remove</button>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+
+  <%- include('../partials/logout') %>
+  <%- include('../partials/footer') %>
+
+
+  <!-- ══════════════════════════════
+       SCRIPTS
+  ══════════════════════════════ -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/user/wishlist.js"></script>
+  <script src="/js/common.js"></script>
+
+</body>
+</html>

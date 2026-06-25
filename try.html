@@ -1,762 +1,233 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Variants | Wooden Cot</title>
-
-    <!-- CSS Libraries -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-    <style>
-        /* ── Base ── */
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #f5f5f5;
-        }
-
-        /* ── Sidebar ── */
-        .sidebar {
-            width: 250px;
-            min-height: 100vh;
-            background: white;
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 1000;
-        }
-
-        .sidebar-brand,
-        .offcanvas-brand {
-            background-color: #AE946D;
-            color: white;
-            padding: 20px;
-            text-align: center;
-            font-weight: 700;
-            font-size: 18px;
-        }
-
-        /* ── Nav Links ── */
-        .nav-link {
-            color: #666;
-            padding: 12px 25px;
-            border-left: 3px solid transparent;
-            transition: all 0.3s;
-        }
-
-        .nav-link:hover,
-        .nav-link.active {
-            background: #f8f8f8;
-            color: #AE946D;
-            border-left-color: #AE946D;
-            font-weight: 600;
-        }
-
-        .nav-link i {
-            margin-right: 10px;
-            font-size: 18px;
-        }
-
-        .logout-link {
-            color: #dc3545 !important;
-        }
-
-        /* ── Layout ── */
-        .page-wrapper {
-            margin-left: 250px;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        @media (max-width: 768px) {
-            .page-wrapper {
-                margin-left: 0;
-            }
-        }
-
-        .main-content {
-            flex: 1;
-            padding: 40px 0;
-            display: flex;
-            justify-content: center;
-        }
-
-        /* ── Content Card ── */
-        .content-card {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            width: 90%;
-            max-width: 1100px;
-        }
-
-        .page-title {
-            color: #AE946D;
-            font-weight: 600;
-            margin-bottom: 25px;
-        }
-
-        /* ── Search ── */
-        .search-box {
-            max-width: 400px;
-        }
-
-        /* ── Table ── */
-        .table thead {
-            background-color: #f8f9fa;
-        }
-
-        /* ── Badge ── */
-        .option-badge {
-            background-color: #e8ddd0;
-            color: #AE946D;
-            padding: 4px 10px;
-            border-radius: 15px;
-            font-size: 12px;
-            font-weight: 600;
-            margin: 2px;
-            display: inline-block;
-        }
-
-        /* ── Pagination ── */
-        .pagination .page-link {
-            color: #666;
-        }
-
-        .pagination .page-item.active .page-link {
-            background-color: #AE946D;
-            border-color: #AE946D;
-        }
-
-        /* ── Buttons ── */
-        .btn-custom {
-            background-color: #AE946D;
-            color: white;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 5px;
-            font-weight: 600;
-        }
-
-        .btn-custom:hover {
-            background-color: #9a8260;
-            color: white;
-        }
-
-        .btn-listed {
-            background-color: #AE946D;
-            color: white;
-            border: none;
-            padding: 5px 15px;
-            border-radius: 5px;
-            font-size: 13px;
-            font-weight: 600;
-        }
-
-        .btn-unlisted {
-            background-color: #6c757d;
-            color: white;
-            border: none;
-            padding: 5px 15px;
-            border-radius: 5px;
-            font-size: 13px;
-            font-weight: 600;
-        }
-
-        .btn-listed:hover,
-        .btn-unlisted:hover {
-            opacity: 0.8;
-            color: white;
-        }
-
-        /* ── Mobile Topbar ── */
-        .mobile-topbar {
-            background: white;
-            padding: 12px 20px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-            position: sticky;
-            top: 0;
-            z-index: 999;
-        }
-
-        .mobile-topbar .brand-name {
-            color: #AE946D;
-            font-weight: 700;
-        }
-
-        .toggle-btn {
-            background: none;
-            border: none;
-            font-size: 26px;
-            color: #AE946D;
-            cursor: pointer;
-        }
-
-        /* ── Footer ── */
-        .footer-custom {
-            background-color: #CDAF82;
-            color: white;
-            text-align: center;
-            padding: 15px;
-        }
-
-        /* ── Option Input Group ── */
-        .option-input-group {
-            margin-bottom: 10px;
-            padding: 10px;
-            background-color: #f8f9fa;
-            border-radius: 8px;
-            border: 1px solid #e0e0e0;
-        }
-
-        .btn-remove-option {
-            padding: 5px 10px;
-            font-size: 12px;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checkout — Wooden Cot</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.min.css" rel="stylesheet">
+<style>
+  :root{--brand:#AE946D;--brand-dk:#9a8260;--brand-lt:#f5ede0;--border:#e8e0d5;--green:#2e7d32;--red:#c0392b;--red-lt:#fff0f0;--red-br:#ffc9c9;}
+  body{font-family:'Poppins',sans-serif;background:#f9f6f2;}
+  .navbar{background:#AE946D;}
+  .navbar-brand{font-weight:700;font-size:20px;color:#fff!important;}
+  .page-title{font-size:22px;font-weight:600;color:var(--brand);display:flex;align-items:center;gap:8px;margin-bottom:1.5rem;}
+  .sec-title{font-size:11px;font-weight:700;color:var(--brand-dk);text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px;display:flex;align-items:center;gap:6px;}
+  .left-card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:16px;}
+  /* Address scroll */
+  .addr-scroll{display:flex;gap:12px;overflow-x:auto;padding-bottom:6px;-webkit-overflow-scrolling:touch;}
+  .addr-scroll::-webkit-scrollbar{height:4px;}
+  .addr-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+  .addr-card{min-width:210px;flex-shrink:0;border:2px solid var(--border);border-radius:12px;padding:14px 16px;cursor:pointer;transition:.2s;position:relative;background:#fdfcfa;}
+  .addr-card:hover,.addr-card.selected{border-color:var(--brand);background:var(--brand-lt);}
+  .addr-dot{display:none;position:absolute;top:11px;right:11px;width:18px;height:18px;background:var(--brand);border-radius:50%;align-items:center;justify-content:center;}
+  .addr-dot i{color:#fff;font-size:10px;}
+  .addr-card.selected .addr-dot{display:flex;}
+  .addr-type{font-size:11px;font-weight:700;color:var(--brand);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;}
+  .addr-name{font-size:13px;font-weight:600;color:#2c2c2c;margin-bottom:3px;}
+  .addr-line{font-size:11px;color:#888;line-height:1.7;}
+  .btn-add-addr{min-width:120px;flex-shrink:0;border:2px dashed var(--border);border-radius:12px;padding:14px 16px;background:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:#bbb;font-size:12px;font-family:'Poppins',sans-serif;cursor:pointer;transition:.2s;}
+  .btn-add-addr:hover{border-color:var(--brand);color:var(--brand);}
+  .btn-add-addr i{font-size:22px;}
+  /* Payment */
+  .pay-item{border:2px solid var(--border);border-radius:12px;padding:13px 18px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:.2s;background:#fdfcfa;margin-bottom:10px;}
+  .pay-item:last-child{margin-bottom:0;}
+  .pay-item:hover,.pay-item.selected{border-color:var(--brand);background:var(--brand-lt);}
+  .pay-label{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:500;}
+  .pay-label i{font-size:17px;color:var(--brand);}
+  .pay-radio{width:17px;height:17px;accent-color:var(--brand);}
+  .btn-place{width:100%;background:var(--brand);color:#fff;border:none;border-radius:10px;padding:13px;font-size:14px;font-weight:600;font-family:'Poppins',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:.2s;margin-top:16px;}
+  .btn-place:hover{background:var(--brand-dk);}
+  /* Summary */
+  .sum-card{background:#fff;border:1px solid var(--border);border-radius:14px;overflow:hidden;position:sticky;top:16px;}
+  .sum-head{background:var(--brand-lt);border-bottom:1.5px solid var(--border);padding:13px 18px;font-size:11px;font-weight:700;color:var(--brand-dk);text-transform:uppercase;letter-spacing:.7px;display:flex;align-items:center;gap:7px;}
+  .sum-body{padding:16px 18px;}
+  .order-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #f0ebe3;}
+  .order-item:last-of-type{margin-bottom:6px;}
+  .order-img{width:54px;height:54px;border-radius:9px;object-fit:cover;border:1px solid var(--border);flex-shrink:0;}
+  .order-name{font-size:12px;font-weight:600;color:#2c2c2c;line-height:1.4;margin-bottom:2px;}
+  .order-qty{font-size:11px;color:#888;}
+  .order-price{font-size:13px;font-weight:700;color:var(--green);white-space:nowrap;}
+  .btn-del{background:none;border:1px solid var(--red-br);border-radius:7px;width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;color:var(--red);font-size:13px;transition:.2s;flex-shrink:0;}
+  .btn-del:hover{background:var(--red-lt);border-color:var(--red);}
+  .price-row{display:flex;justify-content:space-between;font-size:13px;padding:8px 0;border-bottom:1px solid #f0ebe3;}
+  .price-row .lbl{color:#888;}
+  .price-row .val{font-weight:600;}
+  .price-row.total{border:none;border-top:1.5px solid var(--border);margin-top:4px;padding-top:12px;}
+  .price-row.total .lbl{font-size:14px;font-weight:700;color:#2c2c2c;}
+  .price-row.total .val{font-size:16px;font-weight:700;color:var(--green);}
+  /* Mobile */
+  @media(max-width:768px){
+    .sum-card{position:static;margin-top:4px;}
+    .addr-card{min-width:190px;}
+    .page-title{font-size:18px;}
+  }
+</style>
 </head>
 <body>
 
-    <!-- ── Sidebar (Desktop Only) ── -->
-    <div class="sidebar d-none d-md-block">
-        <div class="sidebar-brand">
-            <i class="bi bi-tree-fill me-2"></i>Wooden Cot
-        </div>
-        <nav class="py-3">
-            <div class="nav flex-column">
-                <a class="nav-link" href="/admin/dashboard"><i class="bi bi-speedometer2"></i> Dashboard</a>
-                <a class="nav-link" href="/admin/products"><i class="bi bi-box-seam"></i> Products</a>
-                <a class="nav-link" href="/admin/categories"><i class="bi bi-grid"></i> Categories</a>
-                <a class="nav-link active" href="/admin/variants"><i class="bi bi-layers"></i> Variants</a>
-                <a class="nav-link" href="/admin/orders"><i class="bi bi-receipt"></i> Orders</a>
-                <a class="nav-link" href="/admin/customers"><i class="bi bi-people"></i> Customers</a>
-                <a class="nav-link" href="/admin/offers"><i class="bi bi-tag"></i> Offers</a>
-                <a class="nav-link" href="/admin/coupons"><i class="bi bi-ticket-perforated"></i> Coupons</a>
-                <a class="nav-link" href="/admin/salesReport"><i class="bi bi-graph-up"></i> Sales Report</a>
-                <a class="nav-link logout-link" href="/admin/logout"><i class="bi bi-box-arrow-right"></i> Logout</a>
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg px-3 px-md-4">
+  <a class="navbar-brand d-flex align-items-center gap-2" href="#">
+    <i class="bi bi-grid-3x3-gap-fill"></i> WOODEN COT
+  </a>
+  <div class="ms-auto d-flex align-items-center gap-3">
+    <i class="bi bi-search text-white fs-5"></i>
+    <i class="bi bi-heart text-white fs-5"></i>
+    <i class="bi bi-cart3 text-white fs-5"></i>
+    <i class="bi bi-person text-white fs-5"></i>
+  </div>
+</nav>
+
+<!-- Main -->
+<section class="py-4">
+  <div class="container">
+    <h1 class="page-title"><i class="bi bi-bag-check"></i> Checkout</h1>
+    <div class="row g-4 align-items-start">
+
+      <!-- LEFT -->
+      <div class="col-lg-7">
+
+        <!-- Addresses -->
+        <div class="left-card">
+          <div class="sec-title"><i class="bi bi-geo-alt-fill"></i> Delivery Address</div>
+          <div class="addr-scroll">
+            <div class="addr-card selected" onclick="selectAddr(this)">
+              <div class="addr-dot"><i class="bi bi-check"></i></div>
+              <div class="addr-type"><i class="bi bi-house-door-fill me-1"></i>Home</div>
+              <div class="addr-name">John Doe</div>
+              <div class="addr-line">Shamoli, Dhaka 120<br>Coimbatore — 641001<br>+91 415-555-2671</div>
             </div>
-        </nav>
-    </div>
-
-    <!-- ── Offcanvas Sidebar (Mobile Only) ── -->
-    <div class="offcanvas offcanvas-start" tabindex="-1" id="mobileSidebar">
-        <div class="offcanvas-brand">
-            <i class="bi bi-tree-fill me-2"></i>Wooden Cot
-        </div>
-        <div class="offcanvas-body p-0">
-            <nav class="py-3">
-                <div class="nav flex-column">
-                    <a class="nav-link" href="/admin/dashboard"><i class="bi bi-speedometer2"></i> Dashboard</a>
-                    <a class="nav-link" href="/admin/products"><i class="bi bi-box-seam"></i> Products</a>
-                    <a class="nav-link" href="/admin/categories"><i class="bi bi-grid"></i> Categories</a>
-                    <a class="nav-link active" href="/admin/variants"><i class="bi bi-layers"></i> Variants</a>
-                    <a class="nav-link" href="/admin/orders"><i class="bi bi-receipt"></i> Orders</a>
-                    <a class="nav-link" href="/admin/customers"><i class="bi bi-people"></i> Customers</a>
-                    <a class="nav-link" href="/admin/offers"><i class="bi bi-tag"></i> Offers</a>
-                    <a class="nav-link" href="/admin/coupons"><i class="bi bi-ticket-perforated"></i> Coupons</a>
-                    <a class="nav-link" href="/admin/salesReport"><i class="bi bi-graph-up"></i> Sales Report</a>
-                    <a class="nav-link logout-link" href="/admin/logout"><i class="bi bi-box-arrow-right"></i> Logout</a>
-                </div>
-            </nav>
-        </div>
-    </div>
-
-    <!-- ── Page Wrapper ──────────────────────────────────────── -->
-    <div class="page-wrapper">
-
-        <!-- Mobile Topbar -->
-        <div class="mobile-topbar d-flex d-md-none align-items-center justify-content-between">
-            <button class="toggle-btn" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar">
-                <i class="bi bi-list"></i>
+            <div class="addr-card" onclick="selectAddr(this)">
+              <div class="addr-dot"><i class="bi bi-check"></i></div>
+              <div class="addr-type"><i class="bi bi-building me-1"></i>Office</div>
+              <div class="addr-name">John Doe</div>
+              <div class="addr-line">Varsha Complex, 2nd Floor<br>Coimbatore — 641002<br>+91 415-555-2671</div>
+            </div>
+            <div class="addr-card" onclick="selectAddr(this)">
+              <div class="addr-dot"><i class="bi bi-check"></i></div>
+              <div class="addr-type"><i class="bi bi-star-fill me-1"></i>Other</div>
+              <div class="addr-name">Jane Doe</div>
+              <div class="addr-line">12, MG Road, Nagar<br>Chennai — 600001<br>+91 987-654-3210</div>
+            </div>
+            <button class="btn-add-addr">
+              <i class="bi bi-plus-circle"></i>
+              <span>Add New</span>
             </button>
-            <span class="brand-name">
-                <i class="bi bi-tree-fill me-1"></i>Wooden Cot
-            </span>
+          </div>
         </div>
 
-        <!-- Main Content -->
-        <div class="main-content">
-            <div class="content-card">
-
-                <!-- Header -->
-                <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
-                    <h2 class="page-title mb-0">Variants</h2>
-                    <button class="btn btn-custom" data-bs-toggle="modal" data-bs-target="#addVariantModal">
-                        <i class="bi bi-plus-circle me-2"></i>Add Variant
-                    </button>
-                </div>
-
-                <!-- Search Box -->
-                <div class="mb-4">
-                    <div class="input-group search-box">
-                        <input type="text" class="form-control" id="searchVariant" placeholder="Search Variant">
-                        <button class="btn btn-outline-secondary" type="button" id="clearSearch">
-                            <i class="bi bi-x-lg"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Table -->
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle">
-                        <thead>
-                            <tr>
-                                <th>Type</th>
-                                <th>Options</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="variantsTableBody">
-                            <!-- Sample Row 1 -->
-                            <tr>
-                                <td><span class="fw-semibold">Size</span></td>
-                                <td>
-                                    <span class="option-badge">Single</span>
-                                    <span class="option-badge">Queen</span>
-                                    <span class="option-badge">King</span>
-                                </td>
-                                <td>
-                                    <button class="btn-listed" onclick="toggleStatus(this)">Listed</button>
-                                </td>
-                                <td>
-                                    <button class="btn btn-sm btn-outline-secondary me-1" data-bs-toggle="modal" data-bs-target="#viewVariantModal" onclick="viewVariant('Size', ['Single', 'Queen', 'King'])">
-                                        <i class="bi bi-eye"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-primary me-1" data-bs-toggle="modal" data-bs-target="#editVariantModal" onclick="editVariant('Size', ['Single', 'Queen', 'King'])">
-                                        <i class="bi bi-pencil"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteVariantModal">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </td>
-                            </tr>
-
-                            <!-- Sample Row 2 -->
-                            <tr>
-                                <td><span class="fw-semibold">Storage</span></td>
-                                <td>
-                                    <span class="option-badge">With Drawer</span>
-                                    <span class="option-badge">Without Drawer</span>
-                                </td>
-                                <td>
-                                    <button class="btn-listed" onclick="toggleStatus(this)">Listed</button>
-                                </td>
-                                <td>
-                                    <button class="btn btn-sm btn-outline-secondary me-1" data-bs-toggle="modal" data-bs-target="#viewVariantModal" onclick="viewVariant('Storage', ['With Drawer', 'Without Drawer'])">
-                                        <i class="bi bi-eye"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-primary me-1" data-bs-toggle="modal" data-bs-target="#editVariantModal" onclick="editVariant('Storage', ['With Drawer', 'Without Drawer'])">
-                                        <i class="bi bi-pencil"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteVariantModal">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </td>
-                            </tr>
-
-                            <!-- Sample Row 3 -->
-                            <tr>
-                                <td><span class="fw-semibold">Material</span></td>
-                                <td>
-                                    <span class="option-badge">Teak</span>
-                                    <span class="option-badge">Oak</span>
-                                    <span class="option-badge">Sheesham</span>
-                                    <span class="option-badge">Pine</span>
-                                </td>
-                                <td>
-                                    <button class="btn-unlisted" onclick="toggleStatus(this)">Unlisted</button>
-                                </td>
-                                <td>
-                                    <button class="btn btn-sm btn-outline-secondary me-1" data-bs-toggle="modal" data-bs-target="#viewVariantModal" onclick="viewVariant('Material', ['Teak', 'Oak', 'Sheesham', 'Pine'])">
-                                        <i class="bi bi-eye"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-primary me-1" data-bs-toggle="modal" data-bs-target="#editVariantModal" onclick="editVariant('Material', ['Teak', 'Oak', 'Sheesham', 'Pine'])">
-                                        <i class="bi bi-pencil"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteVariantModal">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Pagination -->
-                <div class="d-flex flex-wrap justify-content-between align-items-center mt-4 gap-2">
-                    <div class="text-muted small">Showing 1 to 3 of 3 entries</div>
-                    <nav>
-                        <ul class="pagination mb-0" id="pagination">
-                            <li class="page-item disabled">
-                                <a class="page-link" href="#" tabindex="-1">Previous</a>
-                            </li>
-                            <li class="page-item active">
-                                <a class="page-link" href="#">1</a>
-                            </li>
-                            <li class="page-item">
-                                <a class="page-link" href="#">2</a>
-                            </li>
-                            <li class="page-item">
-                                <a class="page-link" href="#">3</a>
-                            </li>
-                            <li class="page-item">
-                                <a class="page-link" href="#">Next</a>
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
-
+        <!-- Payment -->
+        <div class="left-card">
+          <div class="sec-title"><i class="bi bi-credit-card-fill"></i> Payment Method</div>
+          <div class="pay-item selected" onclick="selectPay(this)">
+            <div class="pay-label"><i class="bi bi-cash-coin"></i> Cash on Delivery</div>
+            <input type="radio" class="pay-radio" name="pay" checked>
+          </div>
+          <div class="pay-item" onclick="selectPay(this)">
+            <div class="pay-label"><i class="bi bi-globe2"></i> Pay Online</div>
+            <input type="radio" class="pay-radio" name="pay">
+          </div>
+          <div class="pay-item" onclick="selectPay(this)">
+            <div class="pay-label">
+              <i class="bi bi-wallet2"></i> Wallet
+              <span class="text-muted ms-2" style="font-size:11px;">Balance: ₹500</span>
             </div>
+            <input type="radio" class="pay-radio" name="pay">
+          </div>
+          <button class="btn-place">
+            <i class="bi bi-shield-check"></i> Place Order
+          </button>
         </div>
 
-        <!-- Footer -->
-        <footer class="footer-custom">
-            <p class="mb-0 small">Copyright &copy; Wooden Cot 2026</p>
-        </footer>
+      </div>
+
+      <!-- RIGHT -->
+      <div class="col-lg-5">
+        <div class="sum-card">
+          <div class="sum-head"><i class="bi bi-receipt"></i> Price Details (2 Items)</div>
+          <div class="sum-body">
+
+            <div class="order-item">
+              <img class="order-img" src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=120&h=120&fit=crop" alt="">
+              <div class="flex-grow-1">
+                <div class="order-name">Teak Wooden Cot</div>
+                <div class="order-qty">Qty: 1 · Single · With Drawer</div>
+              </div>
+              <div class="d-flex flex-column align-items-end gap-1">
+                <span class="order-price">₹23,000</span>
+                <button class="btn-del"><i class="bi bi-trash3"></i></button>
+              </div>
+            </div>
+
+            <div class="order-item">
+              <img class="order-img" src="https://images.unsplash.com/photo-1538688525198-9b88f6f53126?w=120&h=120&fit=crop" alt="">
+              <div class="flex-grow-1">
+                <div class="order-name">Oak Matte Cot</div>
+                <div class="order-qty">Qty: 1 · Queen · Natural</div>
+              </div>
+              <div class="d-flex flex-column align-items-end gap-1">
+                <span class="order-price">₹23,000</span>
+                <button class="btn-del"><i class="bi bi-trash3"></i></button>
+              </div>
+            </div>
+
+            <div class="price-row"><span class="lbl">Subtotal</span><span class="val">₹46,000</span></div>
+            <div class="price-row"><span class="lbl">Shipping</span><span class="val">+₹100</span></div>
+            <div class="price-row"><span class="lbl">Discount</span><span class="val" style="color:var(--green);">−₹0</span></div>
+            <div class="price-row total"><span class="lbl">Total</span><span class="val">₹46,100</span></div>
+
+          </div>
+        </div>
+      </div>
 
     </div>
+  </div>
+</section>
 
-    <!-- ── Add Variant Modal ────────────────────────────────── -->
-    <div class="modal fade" id="addVariantModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header border-0">
-                    <h5 class="modal-title fw-bold">Add New Variant</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="addVariantForm">
-                        <!-- Type Field -->
-                        <div class="mb-3">
-                            <label for="addVariantType" class="form-label small fw-semibold">Type</label>
-                            <input type="text" class="form-control" id="addVariantType" placeholder="e.g., Size, Color, Material" required>
-                            <small class="text-danger" id="addTypeError"></small>
-                        </div>
-
-                        <!-- Options Field -->
-                        <div class="mb-3">
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <label class="form-label small fw-semibold mb-0">Options</label>
-                                <button type="button" class="btn btn-sm btn-custom" onclick="addOptionField('add')">
-                                    <i class="bi bi-plus-circle me-1"></i>Add Option
-                                </button>
-                            </div>
-                            <div id="addOptionsContainer">
-                                <!-- Initial option field -->
-                                <div class="option-input-group">
-                                    <div class="d-flex gap-2">
-                                        <input type="text" class="form-control form-control-sm" placeholder="Enter option" required>
-                                        <button type="button" class="btn btn-sm btn-danger btn-remove-option" onclick="removeOptionField(this)" disabled>
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                            <small class="text-danger" id="addOptionsError"></small>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer border-0">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-custom" onclick="submitAddVariant()">Save</button>
-                </div>
-            </div>
+<!-- Footer -->
+<footer style="background:#CDAF82;padding:2.5rem 0;margin-top:2rem;">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-6 col-md-3">
+        <div class="fw-bold text-white mb-2">WOODEN COT</div>
+        <p style="font-size:12px;color:rgba(255,255,255,.75);">Premium wooden furniture crafted with excellence.</p>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="fw-semibold text-white mb-2" style="font-size:13px;">Useful Links</div>
+        <div style="font-size:12px;color:rgba(255,255,255,.85);line-height:2.2;">
+          <div>About Us</div><div>Contact Us</div><div>Shop</div>
         </div>
-    </div>
-
-    <!-- ── Edit Variant Modal ───────────────────────────────── -->
-    <div class="modal fade" id="editVariantModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header border-0">
-                    <h5 class="modal-title fw-bold">Edit Variant</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="editVariantForm">
-                        <!-- Type Field -->
-                        <div class="mb-3">
-                            <label for="editVariantType" class="form-label small fw-semibold">Type</label>
-                            <input type="text" class="form-control" id="editVariantType" required>
-                            <small class="text-danger" id="editTypeError"></small>
-                        </div>
-
-                        <!-- Options Field -->
-                        <div class="mb-3">
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <label class="form-label small fw-semibold mb-0">Options</label>
-                                <button type="button" class="btn btn-sm btn-custom" onclick="addOptionField('edit')">
-                                    <i class="bi bi-plus-circle me-1"></i>Add Option
-                                </button>
-                            </div>
-                            <div id="editOptionsContainer">
-                                <!-- Options will be populated dynamically -->
-                            </div>
-                            <small class="text-danger" id="editOptionsError"></small>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer border-0">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-custom" onclick="submitEditVariant()">Save Changes</button>
-                </div>
-            </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="fw-semibold text-white mb-2" style="font-size:13px;">Account</div>
+        <div style="font-size:12px;color:rgba(255,255,255,.85);line-height:2.2;">
+          <div>Orders</div><div>Address</div><div>Wallet</div>
         </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="fw-semibold text-white mb-2" style="font-size:13px;">More Info.</div>
+        <p style="font-size:12px;color:rgba(255,255,255,.75);">Aliquam faucibus, odio nec commodo aliquam.</p>
+      </div>
     </div>
+  </div>
+</footer>
 
-    <!-- ── View Variant Modal ────────────────────────────────── -->
-    <div class="modal fade" id="viewVariantModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header border-0">
-                    <h5 class="modal-title fw-bold">Variant Details</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label small fw-semibold text-muted">TYPE</label>
-                        <p class="fs-5 fw-semibold mb-0" id="viewVariantType">Size</p>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label small fw-semibold text-muted">OPTIONS</label>
-                        <div id="viewVariantOptions">
-                            <!-- Options will be displayed as badges -->
-                        </div>
-                    </div>
-                    <div class="mb-0">
-                        <label class="form-label small fw-semibold text-muted">STATUS</label>
-                        <p class="mb-0"><span class="badge bg-success px-3 py-2">Listed</span></p>
-                    </div>
-                </div>
-                <div class="modal-footer border-0">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ── Delete Confirmation Modal ──────────────────────────── -->
-    <div class="modal fade" id="deleteVariantModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-sm">
-            <div class="modal-content">
-                <div class="modal-body text-center py-4">
-                    <i class="bi bi-exclamation-triangle text-warning" style="font-size: 48px;"></i>
-                    <h5 class="mt-3 mb-2">Delete Variant?</h5>
-                    <p class="text-muted small mb-4">This action cannot be undone.</p>
-                    <div class="d-flex gap-2">
-                        <button type="button" class="btn btn-secondary flex-fill" data-bs-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-danger flex-fill" onclick="confirmDelete()">Delete</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ── Scripts ───────────────────────────────────────────── -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <script>
-        // Toggle Status (Listed/Unlisted)
-        function toggleStatus(button) {
-            if (button.classList.contains('btn-listed')) {
-                button.classList.remove('btn-listed');
-                button.classList.add('btn-unlisted');
-                button.textContent = 'Unlisted';
-            } else {
-                button.classList.remove('btn-unlisted');
-                button.classList.add('btn-listed');
-                button.textContent = 'Listed';
-            }
-        }
-
-        // Add Option Field
-        function addOptionField(mode) {
-            const container = document.getElementById(mode + 'OptionsContainer');
-            const optionCount = container.children.length;
-            
-            const optionGroup = document.createElement('div');
-            optionGroup.className = 'option-input-group';
-            optionGroup.innerHTML = `
-                <div class="d-flex gap-2">
-                    <input type="text" class="form-control form-control-sm" placeholder="Enter option" required>
-                    <button type="button" class="btn btn-sm btn-danger btn-remove-option" onclick="removeOptionField(this)">
-                        <i class="bi bi-trash"></i>
-                    </button>
-                </div>
-            `;
-            
-            container.appendChild(optionGroup);
-            
-            // Enable remove buttons if more than 1 option
-            updateRemoveButtons(mode);
-        }
-
-        // Remove Option Field
-        function removeOptionField(button) {
-            const container = button.closest('.option-input-group').parentElement;
-            button.closest('.option-input-group').remove();
-            
-            // Update remove buttons state
-            const mode = container.id.includes('add') ? 'add' : 'edit';
-            updateRemoveButtons(mode);
-        }
-
-        // Update Remove Buttons State
-        function updateRemoveButtons(mode) {
-            const container = document.getElementById(mode + 'OptionsContainer');
-            const removeButtons = container.querySelectorAll('.btn-remove-option');
-            
-            if (removeButtons.length === 1) {
-                removeButtons[0].disabled = true;
-            } else {
-                removeButtons.forEach(btn => btn.disabled = false);
-            }
-        }
-
-        // View Variant
-        function viewVariant(type, options) {
-            document.getElementById('viewVariantType').textContent = type;
-            
-            const optionsContainer = document.getElementById('viewVariantOptions');
-            optionsContainer.innerHTML = '';
-            
-            options.forEach(option => {
-                const badge = document.createElement('span');
-                badge.className = 'option-badge me-1 mb-1';
-                badge.textContent = option;
-                optionsContainer.appendChild(badge);
-            });
-        }
-
-        // Edit Variant
-        function editVariant(type, options) {
-            document.getElementById('editVariantType').value = type;
-            
-            const container = document.getElementById('editOptionsContainer');
-            container.innerHTML = '';
-            
-            options.forEach(option => {
-                const optionGroup = document.createElement('div');
-                optionGroup.className = 'option-input-group';
-                optionGroup.innerHTML = `
-                    <div class="d-flex gap-2">
-                        <input type="text" class="form-control form-control-sm" value="${option}" required>
-                        <button type="button" class="btn btn-sm btn-danger btn-remove-option" onclick="removeOptionField(this)">
-                            <i class="bi bi-trash"></i>
-                        </button>
-                    </div>
-                `;
-                container.appendChild(optionGroup);
-            });
-            
-            updateRemoveButtons('edit');
-        }
-
-        // Submit Add Variant
-        function submitAddVariant() {
-            const type = document.getElementById('addVariantType').value.trim();
-            const optionInputs = document.querySelectorAll('#addOptionsContainer input');
-            const options = Array.from(optionInputs).map(input => input.value.trim()).filter(val => val !== '');
-            
-            // Clear previous errors
-            document.getElementById('addTypeError').textContent = '';
-            document.getElementById('addOptionsError').textContent = '';
-            
-            // Validation
-            if (!type) {
-                document.getElementById('addTypeError').textContent = 'Type is required';
-                return;
-            }
-            
-            if (options.length === 0) {
-                document.getElementById('addOptionsError').textContent = 'At least one option is required';
-                return;
-            }
-            
-            // Success
-            alert(`Variant Added!\nType: ${type}\nOptions: ${options.join(', ')}`);
-            
-            // Close modal and reset form
-            bootstrap.Modal.getInstance(document.getElementById('addVariantModal')).hide();
-            document.getElementById('addVariantForm').reset();
-            
-            // Reset options container
-            const container = document.getElementById('addOptionsContainer');
-            container.innerHTML = `
-                <div class="option-input-group">
-                    <div class="d-flex gap-2">
-                        <input type="text" class="form-control form-control-sm" placeholder="Enter option" required>
-                        <button type="button" class="btn btn-sm btn-danger btn-remove-option" onclick="removeOptionField(this)" disabled>
-                            <i class="bi bi-trash"></i>
-                        </button>
-                    </div>
-                </div>
-            `;
-        }
-
-        // Submit Edit Variant
-        function submitEditVariant() {
-            const type = document.getElementById('editVariantType').value.trim();
-            const optionInputs = document.querySelectorAll('#editOptionsContainer input');
-            const options = Array.from(optionInputs).map(input => input.value.trim()).filter(val => val !== '');
-            
-            // Clear previous errors
-            document.getElementById('editTypeError').textContent = '';
-            document.getElementById('editOptionsError').textContent = '';
-            
-            // Validation
-            if (!type) {
-                document.getElementById('editTypeError').textContent = 'Type is required';
-                return;
-            }
-            
-            if (options.length === 0) {
-                document.getElementById('editOptionsError').textContent = 'At least one option is required';
-                return;
-            }
-            
-            // Success
-            alert(`Variant Updated!\nType: ${type}\nOptions: ${options.join(', ')}`);
-            
-            // Close modal
-            bootstrap.Modal.getInstance(document.getElementById('editVariantModal')).hide();
-        }
-
-        // Confirm Delete
-        function confirmDelete() {
-            alert('Variant deleted successfully!');
-            bootstrap.Modal.getInstance(document.getElementById('deleteVariantModal')).hide();
-        }
-
-        // Search functionality
-        document.getElementById('searchVariant').addEventListener('input', function(e) {
-            const searchTerm = e.target.value.toLowerCase();
-            const rows = document.querySelectorAll('#variantsTableBody tr');
-            
-            rows.forEach(row => {
-                const type = row.cells[0].textContent.toLowerCase();
-                if (type.includes(searchTerm)) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-        });
-
-        // Clear search
-        document.getElementById('clearSearch').addEventListener('click', function() {
-            document.getElementById('searchVariant').value = '';
-            document.querySelectorAll('#variantsTableBody tr').forEach(row => {
-                row.style.display = '';
-            });
-        });
-    </script>
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+function selectAddr(el){
+  document.querySelectorAll('.addr-card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+function selectPay(el){
+  document.querySelectorAll('.pay-item').forEach(p=>{
+    p.classList.remove('selected');
+    p.querySelector('input').checked=false;
+  });
+  el.classList.add('selected');
+  el.querySelector('input').checked=true;
+}
+</script>
 </body>
 </html>

@@ -7,18 +7,18 @@ async function renderShop(req, res) {
     const products = await productService.getAllProducts();
     const materials = await categoryService.getAllCategories();
     const variants = await variantService.getAllVariants();
+    const wishlistedVariantIds = await productService.getWishlistedVariantIds(req.session.userId);
+
     res.render("user/productListing", {
       products,
       materials,
-      variants
+      variants,
+      wishlistedVariantIds,
     });
 
   } catch (error) {
     console.error("Error:", error);
-    req.session.message = {
-      type: "error",
-      text: "Something went wrong",
-    };
+    req.session.message = { type: "error", text: "Something went wrong" };
     return res.redirect("/");
   }
 }

@@ -1,5 +1,7 @@
 const Product = require("../../model/productSchema");
+const Variant = require("../../model/variantSchema");
 const User = require("../../model/userSchema");
+const Wishlist = require("../../model/wishlistSchema");
 const appError = require("../../utils/appError");
 
 function getLowestPrice(product) {
@@ -19,9 +21,23 @@ async function getAllProducts() {
       match: { isListed: true }, // 🔥 important
     })
     .lean();
-
+    let filteredProducts = products.filter((p) => p.category !== null);
+  const allVariants = await Variant.find({ isDeleted: false }).lean();
+  const optionMap = {};
+  allVariants.forEach((variant) => {
+    variant.options.forEach((opt) => {
+      optionMap[opt._id.toString()] = opt.value;
+    });
+  });
+  filteredProducts.forEach((product) => {
+    product.variants?.forEach((v) => {
+      v.resolvedOptions = v.options
+        ?.map((id) => optionMap[id.toString()])
+        .filter(Boolean);
+    });
+  });
   // remove products whose category is null
-  return products.filter((p) => p.category !== null);
+  return filteredProducts
 }
 
 async function getFilteredProducts(filters) {
@@ -98,6 +114,19 @@ async function getFilteredProducts(filters) {
     );
   }
 
+  const allVariants = await Variant.find({ isDeleted: false }).lean();
+  const optionMap = {};
+  allVariants.forEach(variant => {
+    variant.options.forEach(opt => {
+      optionMap[opt._id.toString()] = opt.value;
+    });
+  });
+  filteredProducts.forEach(product => {
+    product.variants?.forEach(v => {
+      v.resolvedOptions = v.options?.map(id => optionMap[id.toString()]).filter(Boolean);
+    });
+  });
+
   // PAGINATION
   const total = filteredProducts.length;
   const start = (page - 1) * limit;
@@ -110,8 +139,21 @@ async function getFilteredProducts(filters) {
     totalPages: Math.ceil(total / limit),
     totalProducts: total,
     startIndex,
-    endIndex
+    endIndex,
   };
 }
 
-module.exports = { getAllProducts, getFilteredProducts };
+async function getWishlistedVariantIds(userId) {
+  if (!userId) return [];
+
+  const wishlist = await Wishlist.findOne({ userId }).lean();
+  if (!wishlist) return [];
+
+  return wishlist.products.map((item) => item.variantId?.toString());
+}
+
+module.exports = {
+  getAllProducts,
+  getFilteredProducts,
+  getWishlistedVariantIds,
+};
