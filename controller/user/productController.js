@@ -64,5 +64,5 @@ async function getFilteredProducts(req, res) {
     });
   }
 }
- 
+
 module.exports = { renderShop,getFilteredProducts };

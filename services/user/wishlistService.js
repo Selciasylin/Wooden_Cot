@@ -2,7 +2,7 @@ const Wishlist = require("../../model/wishlistSchema");
 const Product = require("../../model/productSchema");
 const Variant = require("../../model/variantSchema");
 const User = require("../../model/userSchema");
-//const Cart = require("../../model/cartSchema");
+const Cart = require("../../model/cartSchema");
 const appError = require("../../utils/appError");
 
 async function getUser(userId) {
@@ -33,6 +33,7 @@ async function getWishlistProducts(userId, filters) {
     if (!item.productId) return false;
     return item.productId.name.toLowerCase().includes(search.toLowerCase());
   });
+  
   const totalProducts = products.length;
   const start = (page - 1) * limit;
   const end = start + limit;

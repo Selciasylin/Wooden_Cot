@@ -24,36 +24,50 @@ async function getCartProducts(userId, filters) {
   const validProducts = cart.products.filter((item) => item.productId);
   const variantsData = await Variant.find({ isDeleted: false }).lean();
 
-  const formattedProducts = validProducts.map((item) => {
+  // Cart items whose variant no longer exists (admin removed that combination)
+  const removedItemIds = [];
+
+  const formattedProducts = [];
+
+  validProducts.forEach((item) => {
     const variant = item.productId.variants.find(
       (v) => v._id.toString() === item.variantId.toString()
     );
 
-    const optionNames = variant
-      ? variant.options.map((optionId) => {
-          for (const variantType of variantsData) {
-            const found = variantType.options.find(
-              (opt) => opt._id.toString() === optionId.toString()
-            );
-            if (found) return found.value;
-          }
-          return optionId;
-        })
-      : [];
+    // Variant deleted by admin → mark this cart item for cleanup, skip it
+    if (!variant) {
+      removedItemIds.push(item._id);
+      return;
+    }
 
-    const price = variant ? variant.price : 0;
-    const stock = variant ? variant.quantity : 0;
+    const optionNames = variant.options.map((optionId) => {
+      for (const variantType of variantsData) {
+        const found = variantType.options.find(
+          (opt) => opt._id.toString() === optionId.toString()
+        );
+        if (found) return found.value;
+      }
+      return optionId;
+    });
 
-    return {
+    formattedProducts.push({
       cartItemId: item._id,
       productId: item.productId._id,
       productName: item.productId.name,
       image: item.productId.images[0],
-      variant: { options: optionNames, price, stock },
+      variant: { options: optionNames, price: variant.price, stock: variant.quantity },
       quantity: item.quantity,
-      itemTotal: price * item.quantity,
-    };
+      itemTotal: variant.price * item.quantity,
+    });
   });
+
+  // Clean up dead items from DB so they never come back
+  if (removedItemIds.length > 0) {
+    await Cart.updateOne(
+      { userId },
+      { $pull: { products: { _id: { $in: removedItemIds } } } }
+    );
+  }
 
   const subtotal = formattedProducts.reduce((total, item) => total + item.itemTotal, 0);
 

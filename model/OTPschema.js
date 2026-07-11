@@ -11,12 +11,16 @@ const otpSchema = new mongoose.Schema({
     required: true
   },
   otpPurpose: {
-    type: String, // signup / forgotPassword
+    type: String, // signup / forgotPassword / changeEmail
     required: true
   },
   otpExpiry: {
     type: Date,
     required: true
+  },
+  newEmail: {
+    type: String, // only used when otpPurpose === "changeEmail"
+    default: null
   }
 }, { timestamps: true });
 

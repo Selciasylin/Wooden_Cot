@@ -1,4 +1,3 @@
-
 const SHIPPING = 100;
 
 async function loadCart() {
@@ -24,10 +23,9 @@ async function loadCart() {
   document.getElementById("summaryCard").style.display = "block";
   document.getElementById("emptyState").style.display = "none";
 
-
   data.products.forEach((item) => {
     const variantBadges = item.variant.options
-      .map((opt) => `<span class="badge-variant">${opt}</span>`)
+      .map((opt) => `<span class="variant-badge">${opt}</span>`)
       .join("");
 
     const isMinusDisabled = item.quantity <= 1;
@@ -69,7 +67,8 @@ async function loadCart() {
     `;
   });
 
-  document.getElementById("itemCount").innerText = `${data.totalProducts} items`;
+  document.getElementById("itemCount").innerText =
+    `${data.totalProducts} items`;
   updateSummary(data.subtotal);
 }
 
@@ -83,7 +82,8 @@ async function changeQty(cartItemId, action) {
 
   if (data.status === "SUCCESS") {
     document.getElementById(`qty-${cartItemId}`).value = data.newQuantity;
-    document.getElementById(`total-${cartItemId}`).innerText = `₹${data.itemTotal.toLocaleString("en-IN")}`;
+    document.getElementById(`total-${cartItemId}`).innerText =
+      `₹${data.itemTotal.toLocaleString("en-IN")}`;
     updateSummary(data.subtotal);
     loadCart(); // reload to refresh disabled states on buttons
   } else {
@@ -96,11 +96,14 @@ function updateSummary(subtotal) {
   const shipping = SHIPPING;
   const total = subtotal - discount + shipping;
 
-  document.getElementById("summarySubtotal").innerText = `₹${subtotal.toLocaleString("en-IN")}`;
+  document.getElementById("summarySubtotal").innerText =
+    `₹${subtotal.toLocaleString("en-IN")}`;
   document.getElementById("summaryDiscount").innerText = "-₹0";
-  document.getElementById("summaryShipping").innerText = `₹${shipping.toLocaleString("en-IN")}`;
+  document.getElementById("summaryShipping").innerText =
+    `₹${shipping.toLocaleString("en-IN")}`;
   document.getElementById("summaryCoupon").innerText = "-₹0";
-  document.getElementById("summaryTotal").innerText = `₹${total.toLocaleString("en-IN")}`;
+  document.getElementById("summaryTotal").innerText =
+    `₹${total.toLocaleString("en-IN")}`;
 }
 
 let deleteCartItemId = null;
@@ -111,7 +114,9 @@ function openDeleteModal(id) {
 }
 
 document.getElementById("confirmDelete").addEventListener("click", async () => {
-  const res = await fetch(`/cart/remove/${deleteCartItemId}`, { method: "DELETE" });
+  const res = await fetch(`/cart/remove/${deleteCartItemId}`, {
+    method: "DELETE",
+  });
   const data = await res.json();
 
   showToast(data.message, data.status === "SUCCESS");

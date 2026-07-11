@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const passport = require("passport");
+const upload = require("../middleware/multer");
 const userController = require("../controller/user/userController");
 const homeController = require("../controller/user/homeController");
 const profileController = require("../controller/user/profileController");
@@ -11,6 +12,7 @@ const wishlistController = require("../controller/user/wishlistController");
 const cartController = require("../controller/user/cartController")
 const checkoutController = require("../controller/user/checkoutController");
 const { isLoggedIn, preventAuthAccess } = require("../middleware/authMiddleware");
+const orderController = require("../controller/user/orderController");
 const noCache = require("../middleware/noCacheMiddleware")
 
 router.use(
@@ -47,6 +49,9 @@ router.get("/address" ,isLoggedIn,addressController.renderAddress)
 router.post("/address" ,isLoggedIn, addressController.addAddress);
 router.put("/address/:id" ,isLoggedIn, addressController.updateAddress);
 router.delete("/address/:id", addressController.deleteAddress);
+router.post("/profile/uploadImage", isLoggedIn, upload.single("profileImage"), profileController.uploadProfileImage);
+router.post("/profile/changeEmail/initiate", isLoggedIn, profileController.initiateEmailChange);
+router.post("/profile/changeEmail/verify", isLoggedIn, profileController.verifyEmailChange);
 
 //productListing
 router.get("/shop",isLoggedIn,productController.renderShop)
@@ -76,6 +81,16 @@ router.get("/checkout/data", isLoggedIn, checkoutController.getCheckoutData);
 router.post("/checkout/address", isLoggedIn, checkoutController.addAddress);
 router.put("/address/edit/:id",isLoggedIn,checkoutController.updateAddress);
 router.delete("/address/delete/:id",isLoggedIn,checkoutController.deleteAddress);
- 
+
+// order
+router.post("/checkout/place-order", isLoggedIn, orderController.placeOrder);
+router.get("/orders", isLoggedIn, orderController.renderOrders);
+router.get("/orders/data", isLoggedIn, orderController.getOrdersData);
+router.get("/orders/data/:orderId", isLoggedIn, orderController.getOrderDetailsData);
+router.get("/orders/:orderId/invoice", isLoggedIn, orderController.downloadInvoice);
+router.get("/orders/:orderId", isLoggedIn, orderController.renderOrderDetails);
+router.patch("/orders/:orderId/cancel", isLoggedIn, orderController.cancelOrder);
+router.patch("/orders/:orderId/return", isLoggedIn, orderController.returnOrder);
+
 
 module.exports = router;

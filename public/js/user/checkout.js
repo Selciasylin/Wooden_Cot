@@ -338,25 +338,51 @@ selectedPayment = payment;
 });
 
 //place order modal
-document
-  .getElementById("openConfirmBtn")
-  .addEventListener("click", () => {
+
+document.getElementById("openConfirmBtn").addEventListener("click", async () => {
 
     if (!selectedAddressId) {
-      showToast(
-        "Please select an address",
-        false
-      );
+      showToast("Please select an address", false);
       return;
     }
 
-    new bootstrap.Modal(
-      document.getElementById(
-        "thankYouModal"
-      )
-    ).show();
+    const btn = document.getElementById("openConfirmBtn");
+    btn.disabled = true;
+    btn.innerHTML = `<i class="bi bi-lock-fill me-2"></i>Placing...`;
 
-});
+    try {
+      // 1. Send the order to the server
+      const res = await fetch("/checkout/place-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          addressId: selectedAddressId,
+          paymentMethod: selectedPayment,
+        }),
+      });
+
+      // 2. Read the server's response — THIS creates "data"
+      const data = await res.json();
+
+      // 3. Only now we can check data.status
+      if (data.status === "SUCCESS") {
+        // Point "Order Details" to the exact order that was just placed
+        document.getElementById("orderDetailsBtn").href =
+          `/orders/${data.orderId}`;
+
+        new bootstrap.Modal(
+          document.getElementById("thankYouModal")
+        ).show();
+      } else {
+        showToast(data.message, false);
+      }
+    } catch (err) {
+      showToast("Something went wrong", false);
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = `<i class="bi bi-lock-fill me-2"></i>Place Order`;
+    }
+  });
 // ─── Init ────────────────────────────────────────────────────────────────────
 document.addEventListener("DOMContentLoaded", () => {
   // Auto-select COD payment visually
@@ -364,4 +390,10 @@ document.addEventListener("DOMContentLoaded", () => {
   if (codItem) codItem.classList.add("selected");
 
   loadCheckout();
+  // If the user closes the thank-you modal, take them to their orders
+document
+  .getElementById("thankYouModal")
+  .addEventListener("hidden.bs.modal", () => {
+    window.location.href = "/orders";
+  });
 });

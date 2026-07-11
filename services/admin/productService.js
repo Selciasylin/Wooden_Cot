@@ -57,7 +57,7 @@ async function createProduct(data) {
   const product = await Product.create(data);
   return product;
 }
-
+ 
 // ───────── UPDATE PRODUCT ─────────
 async function updateProduct(id, data) {
   const product = await Product.findById(id);
@@ -76,11 +76,28 @@ async function updateProduct(id, data) {
     }
     seen.add(key);
   }
+  const mergedVariants = data.variants.map((incoming) => {
+    const incomingKey = [...incoming.options].sort().join("-");
+
+    const existing = product.variants.find(
+      (v) => v.options.map(String).sort().join("-") === incomingKey
+    );
+
+    if (existing) {
+      return {
+        _id: existing._id,        // keep old id (cart depends on this)
+        options: existing.options,
+        price: incoming.price,     // update new price
+        quantity: incoming.quantity, // update new stock
+      };
+    }
+    return incoming;
+  });
 
   product.name = data.name;
   product.category = data.category;
   product.description = data.description;
-  product.variants = data.variants;
+  product.variants = mergedVariants;
   if (data.images && data.images.length > 0) {
     product.images = data.images;
   }

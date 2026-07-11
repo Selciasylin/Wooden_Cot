@@ -78,6 +78,28 @@
             object-fit: cover;
             border: 3px solid #AE946D;
         }
+
+        .profile-img-upload-btn {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background-color: #AE946D;
+            color: #fff;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            cursor: pointer;
+            border: 2px solid white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        .profile-img-upload-btn:hover {
+            background-color: #9a8260;
+        }
         
         .account-card {
             background-color: white;
@@ -108,12 +130,26 @@
                 <div class="col-lg-3">
                     <div class="sidebar-menu shadow-sm p-4">
                         <!-- Profile Image and Name -->
+                                            
+                       <!-- Profile Image and Name -->
                         <div class="text-center mb-4">
-                            <img src="<%= user.profilePicture ? user.profilePicture : 'https://ui-avatars.com/api/?name=' + (user.firstName || 'User') + '&background=AE946D&color=fff' %>" class="profile-img mb-3">
-                            <h5 class="fw-semibold mb-1">
-                            <%= user.firstName || '' %> <%= user.lastName || '' %>
+                            <div class="position-relative d-inline-block">
+                                <img
+                                    id="profileImagePreview"
+                                    src="<%= user.profileImage ? user.profileImage : 'https://ui-avatars.com/api/?name=' + encodeURIComponent((user.firstName || 'User') + ' ' + (user.lastName || '')) + '&background=AE946D&color=fff' %>"
+                                    class="profile-img">
+
+                                <!-- Upload icon overlay -->
+                                <label for="profileImageInput" class="profile-img-upload-btn">
+                                    <i class="bi bi-camera-fill"></i>
+                                </label>
+                                <input type="file" id="profileImageInput" accept="image/*" style="display:none;">
+                            </div>
+
+                            <h5 class="fw-semibold mt-3 mb-1 text-truncate">
+                                <%= user.firstName || '' %> <%= user.lastName || '' %>
                             </h5>
-                            <p class="text-muted small mb-0"><%= user.email %></p>
+                            <p class="text-muted small mb-0 text-truncate"><%= user.email %></p>
                         </div>
 
                         <hr class="my-3">
@@ -189,13 +225,23 @@
                                         <button type="submit" class="btn btn-custom fw-semibold px-4">
                                             <i class="bi bi-check-circle me-2"></i>Save Details
                                         </button>
-                                        <button type="button" class="btn btn-outline-custom fw-semibold px-4" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
+                                       <button type="button" class="btn btn-outline-custom fw-semibold px-4"
+                                            <% if (user.googleId) { %>
+                                                disabled title="Not available for Google login accounts"
+                                            <% } else { %>
+                                                data-bs-toggle="modal" data-bs-target="#changePasswordModal"
+                                            <% } %>>
                                             <i class="bi bi-lock me-2"></i>Change Password
                                         </button>
-                                        <button type="button" class="btn btn-outline-custom fw-semibold px-4" data-bs-toggle="modal" data-bs-target="#changeEmailModal">
+
+                                        <button type="button" class="btn btn-outline-custom fw-semibold px-4"
+                                            <% if (user.googleId) { %>
+                                                disabled title="Not available for Google login accounts"
+                                            <% } else { %>
+                                                data-bs-toggle="modal" data-bs-target="#changeEmailModal"
+                                            <% } %>>
                                             <i class="bi bi-envelope me-2"></i>Change Email
                                         </button>
-                                    </div>
                                 </div>
                             </div>
                         </form>
@@ -239,36 +285,49 @@
     </div>
 
     <!-- Change Email Modal -->
-    <div class="modal fade" id="changeEmailModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header border-0">
-                    <h5 class="modal-title fw-bold">Change Email</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+   <div class="modal fade" id="changeEmailModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <h5 class="modal-title fw-bold">Change Email</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="emailModalMessage" class="mb-2"></div>
+
+                <!-- STEP 1: Enter new email + password -->
+                <div id="emailStep1">
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Current Email</label>
+                        <input type="email" class="form-control" value="<%= user.email %>" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newEmail" class="form-label small fw-semibold">New Email</label>
+                        <input type="email" class="form-control" id="newEmail" placeholder="Enter new email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="emailPassword" class="form-label small fw-semibold">Password (for verification)</label>
+                        <input type="password" class="form-control" id="emailPassword" placeholder="Enter your password" required>
+                    </div>
                 </div>
-                <div class="modal-body">
-                    <form id="changeEmailForm">
-                        <div class="mb-3">
-                            <label for="currentEmail" class="form-label small fw-semibold">Current Email</label>
-                            <input type="email" class="form-control" id="currentEmail" value="example@gmail.com" readonly>
-                        </div>
-                        <div class="mb-3">
-                            <label for="newEmail" class="form-label small fw-semibold">New Email</label>
-                            <input type="email" class="form-control" id="newEmail" placeholder="Enter new email" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="passwordConfirm" class="form-label small fw-semibold">Password (for verification)</label>
-                            <input type="password" class="form-control" id="passwordConfirm" placeholder="Enter your password" required>
-                        </div>
-                    </form>
+
+                <!-- STEP 2: OTP input (hidden initially) -->
+                <div id="emailStep2" style="display:none;">
+                    <p class="small text-muted">OTP sent to your new email. Enter it below to confirm.</p>
+                    <div class="mb-3">
+                        <label for="emailOtp" class="form-label small fw-semibold">Enter OTP</label>
+                        <input type="text" class="form-control" id="emailOtp" placeholder="6-digit OTP" maxlength="6">
+                    </div>
                 </div>
-                <div class="modal-footer border-0">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-custom" onclick="submitEmailChange()">Update Email</button>
-                </div>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-custom" id="emailStep1Btn" onclick="submitEmailChange()">Send OTP</button>
+                <button type="button" class="btn btn-custom" id="emailStep2Btn" style="display:none;" onclick="verifyEmailOtp()">Verify & Update</button>
             </div>
         </div>
     </div>
+</div>
     <%- include('../partials/logout') %>
 
     <!-- Footer -->
@@ -413,7 +472,113 @@
             showModalMessage("danger", "Server error. Please try again.");
         }
     }
+ // 🔹 Modal-level generic message helper (reuse pattern for email modal)
+    function showEmailModalMessage(type, message) {
+        const box = document.getElementById("emailModalMessage");
+        const alertDiv = document.createElement("div");
+        alertDiv.className = `alert alert-${type} text-center`;
+        alertDiv.innerText = message;
+        box.innerHTML = "";
+        box.appendChild(alertDiv);
+        setTimeout(() => alertDiv.remove(), 2500);
+    }
 
+    // 🔹 Profile Image Upload
+    document.getElementById("profileImageInput").addEventListener("change", async function () {
+        const file = this.files[0];
+        if (!file) return;
+
+        // Basic frontend validation
+        if (!file.type.startsWith("image/")) {
+            showToast("danger", "Please select a valid image file");
+            return;
+        }
+        if (file.size > 2 * 1024 * 1024) {
+            showToast("danger", "Image must be less than 2MB");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append("profileImage", file);
+
+        try {
+            const response = await fetch("/profile/uploadImage", {
+                method: "POST",
+                body: formData
+            });
+            const result = await response.json();
+
+            if (result.status === "SUCCESS") {
+                document.getElementById("profileImagePreview").src = result.imageUrl;
+                showToast("success", "Profile picture updated!");
+            } else {
+                showToast("danger", result.message);
+            }
+        } catch (error) {
+            showToast("danger", "Upload failed. Please try again.");
+        }
+    });
+
+    // 🔹 Change Email - Step 1: Send OTP
+    async function submitEmailChange() {
+        const newEmail = document.getElementById("newEmail").value.trim();
+        const password = document.getElementById("emailPassword").value.trim();
+
+        if (!newEmail || !password) {
+            showEmailModalMessage("danger", "All fields are required");
+            return;
+        }
+
+        try {
+            const response = await fetch("/profile/changeEmail/initiate", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ newEmail, password })
+            });
+            const result = await response.json();
+
+            if (result.status === "SUCCESS") {
+                showEmailModalMessage("success", "OTP sent to your new email");
+                // Switch to step 2
+                document.getElementById("emailStep1").style.display = "none";
+                document.getElementById("emailStep2").style.display = "block";
+                document.getElementById("emailStep1Btn").style.display = "none";
+                document.getElementById("emailStep2Btn").style.display = "inline-block";
+            } else {
+                showEmailModalMessage("danger", result.message);
+            }
+        } catch (error) {
+            showEmailModalMessage("danger", "Server error. Please try again.");
+        }
+    }
+
+    // 🔹 Change Email - Step 2: Verify OTP
+    async function verifyEmailOtp() {
+        const otp = document.getElementById("emailOtp").value.trim();
+
+        if (!otp) {
+            showEmailModalMessage("danger", "Please enter the OTP");
+            return;
+        }
+
+        try {
+            const response = await fetch("/profile/changeEmail/verify", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ otp })
+            });
+            const result = await response.json();
+
+            if (result.status === "SUCCESS") {
+                showToast("success", "Email updated successfully!");
+                setTimeout(() => location.reload(), 1000); // reload to reflect new email everywhere
+            } else {
+                showEmailModalMessage("danger", result.message);
+            }
+        } catch (error) {
+            showEmailModalMessage("danger", "Server error. Please try again.");
+        }
+    }
 </script>
 </body>
 </html>
